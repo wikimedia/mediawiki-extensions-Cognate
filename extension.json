@@ -1,0 +1,31 @@
+{
+  "name": "PageTitleInterlanguage",
+  "version": "0.0.1",
+  "author": [
+    "Gabriel Birke <gabriel.birke@wikimedia.de>"
+  ],
+  "url": "https://www.mediawiki.org/wiki/Extension:PageTitleInterlanguage",
+  "descriptionmsg": "pagetitleinterlanguage-desc",
+  "license-name": "MIT",
+  "type": "other",
+  "AutoloadClasses": {
+    "PageTitleInterlanguageHooks": "PageTitleInterlanguageHooks.hooks.php",
+    "PageTitleInterlanguageExtension": "PageTitleInterlanguageExtension.php"
+  },
+  "config": {
+    "PageTitleInterlanguageDatabase": {}
+  },
+  "Hooks": {
+    "PageContentSaveComplete": [ "PageTitleInterlanguageHooks::onPageContentSaveComplete" ],
+    "SkinTemplateOutputPageBeforeExec": [ "PageTitleInterlanguageHooks::onSkinTemplateOutputPageBeforeExec" ],
+    "ArticleDeleteComplete": [ "PageTitleInterlanguageHooks::onArticleDeleteComplete" ],
+    "LoadExtensionSchemaUpdates": [ "PageTitleInterlanguageHooks::onLoadExtensionSchemaUpdates" ],
+    "UnitTestsList": [ "PageTitleInterlanguageHooks::onUnitTestsList" ]
+  },
+  "MessagesDirs": {
+    "PageTitleInterlanguage": [
+      "i18n"
+    ]
+  },
+  "manifest_version": 1
+}
