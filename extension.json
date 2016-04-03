@@ -17,7 +17,7 @@
   },
   "Hooks": {
     "PageContentSaveComplete": [ "PageTitleInterlanguageHooks::onPageContentSaveComplete" ],
-    "SkinTemplateOutputPageBeforeExec": [ "PageTitleInterlanguageHooks::onSkinTemplateOutputPageBeforeExec" ],
+    "LanguageLinks": [ "PageTitleInterlanguageHooks::onLanguageLinks" ],
     "ArticleDeleteComplete": [ "PageTitleInterlanguageHooks::onArticleDeleteComplete" ],
     "LoadExtensionSchemaUpdates": [ "PageTitleInterlanguageHooks::onLoadExtensionSchemaUpdates" ],
     "UnitTestsList": [ "PageTitleInterlanguageHooks::onUnitTestsList" ]

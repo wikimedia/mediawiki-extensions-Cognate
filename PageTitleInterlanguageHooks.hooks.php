@@ -21,6 +21,7 @@ class PageTitleInterlanguageHooks {
 	 */
 	public static function onPageContentSaveComplete( $article, $user, $content, $summary, $isMinor, $isWatch, $section, $flags, $revision, $status, $baseRevId ) {
 		global $wgPageTitleInterlanguageWiki, $wgLanguageCode;
+		// TODO Only save when we're in the list of allowed name spaces (e.g. main name space)
 		$interlanguage = new PageTitleInterlanguageExtension( wfGetDB( DB_MASTER, [], $wgPageTitleInterlanguageWiki ) );
 		$interlanguage->savePage( $wgLanguageCode, $article->getTitle()->getDBkey() );
 		return true;
@@ -30,8 +31,24 @@ class PageTitleInterlanguageHooks {
 		// TODO remove language link from central storage
 	}
 
-	public static function onSkinTemplateOutputPageBeforeExec( &$skin, &$template ) {
-		// TODO insert language links in template data, similar to https://git.wikimedia.org/blob/mediawiki%2Fextensions%2FInterlanguage/master/InterlanguageExtension.php#L293
+	/**
+	 * @param Title $title
+	 * @param array $links
+	 * @param array $linkFlags
+	 * @return bool
+	 */
+	public static function onLanguageLinks( $title, &$links, &$linkFlags ) {
+		global $wgPageTitleInterlanguageWiki, $wgLanguageCode;
+		// TODO only modify when we're in the list of allowed name spaces (e.g. main name space)
+		$interlanguage = new PageTitleInterlanguageExtension( wfGetDB( DB_MASTER, [], $wgPageTitleInterlanguageWiki ) );
+		$dbKey = $title->getDBkey();
+		$languages = $interlanguage->getTranslationsForPage( $wgLanguageCode, $dbKey );
+		foreach( $languages as $lang ) {
+			if ( !isset( $links[$lang] ) ) {
+				$links[$lang] = $lang . ':' . $dbKey;
+			}
+		}
+		return true;
 	}
 
 	/**
