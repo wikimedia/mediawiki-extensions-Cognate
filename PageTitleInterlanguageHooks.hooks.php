@@ -40,6 +40,13 @@ class PageTitleInterlanguageHooks {
 	 * @return bool
 	 */
 	public static function onLoadExtensionSchemaUpdates( DatabaseUpdater $updater = null ) {
+		global $wgPageTitleInterlanguageWiki;
+		$interlanguageDb = wfGetDB( DB_MASTER, [], $wgPageTitleInterlanguageWiki );
+		if ( $updater->getDB()->getDBname() != $interlanguageDb->getDBname() ) {
+			return true;
+		}
+		// TODO: Ask someone if this will ever be executed when $wgPageTitleInterlanguageWiki is set
+
 		$dbDir = __DIR__ . '/db';
 		$updater->addExtensionUpdate( array( 'addTable', 'page_assessments', "$dbDir/addInterLanguageTable.sql", true ) );
 		return true;

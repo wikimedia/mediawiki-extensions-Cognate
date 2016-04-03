@@ -36,6 +36,13 @@ class PageTitleInterlanguageExtension {
 		return $this->db->insert( self::TABLE_NAME, $pageData, __METHOD__, [ 'IGNORE' ] );
 	}
 
+	/**
+	 * Get the language codes where a translations is available
+	 *
+	 * @param string $language Language code to exclude
+	 * @param string $title Page title
+	 * @return array language codes
+	 */
 	public function getTranslationsForPage( $language, $title ) {
 		$languages = [];
 		$result = $this->db->select( self::TABLE_NAME, ['ilt_language'], [
