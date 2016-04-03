@@ -13,7 +13,7 @@
     "PageTitleInterlanguageExtension": "PageTitleInterlanguageExtension.php"
   },
   "config": {
-    "PageTitleInterlanguageDatabase": {}
+    "PageTitleInterlanguageWiki": false
   },
   "Hooks": {
     "PageContentSaveComplete": [ "PageTitleInterlanguageHooks::onPageContentSaveComplete" ],
