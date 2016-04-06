@@ -20,8 +20,11 @@ class PageTitleInterlanguageHooks {
 	 * @return boolean
 	 */
 	public static function onPageContentSaveComplete( $article, $user, $content, $summary, $isMinor, $isWatch, $section, $flags, $revision, $status, $baseRevId ) {
-		global $wgPageTitleInterlanguageWiki, $wgLanguageCode;
-		// TODO Only save when we're in the list of allowed name spaces (e.g. main name space)
+		global $wgPageTitleInterlanguageWiki, $wgPageTitleInterlanguageNamespaces, $wgLanguageCode;
+		$title = $article->getTitle();
+		if ( !in_array( $title->getNamespace(), $wgPageTitleInterlanguageNamespaces ) ) {
+			return true;
+		}
 		$interlanguage = new PageTitleInterlanguageExtension( wfGetDB( DB_MASTER, [], $wgPageTitleInterlanguageWiki ) );
 		$interlanguage->savePage( $wgLanguageCode, $article->getTitle()->getDBkey() );
 		return true;
@@ -38,8 +41,10 @@ class PageTitleInterlanguageHooks {
 	 * @return bool
 	 */
 	public static function onLanguageLinks( $title, &$links, &$linkFlags ) {
-		global $wgPageTitleInterlanguageWiki, $wgLanguageCode;
-		// TODO only modify when we're in the list of allowed name spaces (e.g. main name space)
+		global $wgPageTitleInterlanguageWiki, $wgPageTitleInterlanguageNamespaces, $wgLanguageCode;
+		if ( !in_array( $title->getNamespace(), $wgPageTitleInterlanguageNamespaces ) ) {
+			return true;
+		}
 		$interlanguage = new PageTitleInterlanguageExtension( wfGetDB( DB_MASTER, [], $wgPageTitleInterlanguageWiki ) );
 		$dbKey = $title->getDBkey();
 		$languages = $interlanguage->getTranslationsForPage( $wgLanguageCode, $dbKey );
