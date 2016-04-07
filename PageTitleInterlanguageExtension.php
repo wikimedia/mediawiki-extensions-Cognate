@@ -5,6 +5,7 @@
  * @license GNU GPL v2+
  * @author Gabriel Birke < gabriel.birke@wikimedia.de >
  */
+// TODO Change name from "Extension" to "Store"
 class PageTitleInterlanguageExtension {
 
 	/**
@@ -19,6 +20,7 @@ class PageTitleInterlanguageExtension {
 	/**
 	 * @param DatabaseBase $db
 	 */
+	// TODO use load balancer and wiki id instead
 	public function __construct( DatabaseBase $db ) {
 		$this->db = $db;
 	}

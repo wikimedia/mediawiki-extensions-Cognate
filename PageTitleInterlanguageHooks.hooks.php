@@ -1,5 +1,7 @@
 <?php
 
+// TODO Make this testable by creating non-static methods and using an instance in the static methods
+// TODO Split into two hook handler classes, one handling page-reltaed stuff, the other handling database update and tests
 class PageTitleInterlanguageHooks {
 	/**
 	 * Occurs after the save page request has been processed.
@@ -19,7 +21,9 @@ class PageTitleInterlanguageHooks {
 	 *
 	 * @return boolean
 	 */
-	public static function onPageContentSaveComplete( $article, $user, $content, $summary, $isMinor, $isWatch, $section, $flags, $revision, $status, $baseRevId ) {
+	public static function onPageContentSaveComplete( WikiPage $article, User $user, Content $content,
+													  $summary, $isMinor, $isWatch, $section, $flags, $revision,
+													  Status $status, $baseRevId ) {
 		global $wgPageTitleInterlanguageWiki, $wgPageTitleInterlanguageNamespaces, $wgLanguageCode;
 		$title = $article->getTitle();
 		if ( !in_array( $title->getNamespace(), $wgPageTitleInterlanguageNamespaces ) ) {
@@ -58,16 +62,18 @@ class PageTitleInterlanguageHooks {
 
 	/**
 	 * Run database updates
+	 *
+	 * Only runs the update when $wgPageTitleInterlanguageWiki is false (i.e. for testing and
+	 * when updating the "main" wiktionary project.
+	 *
 	 * @param DatabaseUpdater $updater DatabaseUpdater object
 	 * @return bool
 	 */
 	public static function onLoadExtensionSchemaUpdates( DatabaseUpdater $updater = null ) {
 		global $wgPageTitleInterlanguageWiki;
-		$interlanguageDb = wfGetDB( DB_MASTER, [], $wgPageTitleInterlanguageWiki );
-		if ( $updater->getDB()->getDBname() != $interlanguageDb->getDBname() ) {
+		if ( $wgPageTitleInterlanguageWiki ) {
 			return true;
 		}
-		// TODO: Ask someone if this will ever be executed when $wgPageTitleInterlanguageWiki is set
 
 		$dbDir = __DIR__ . '/db';
 		$updater->addExtensionUpdate( array( 'addTable', 'page_assessments', "$dbDir/addInterLanguageTable.sql", true ) );
@@ -75,7 +81,7 @@ class PageTitleInterlanguageHooks {
 	}
 	
 	public static function onUnitTestsList( &$files ) {
-		$files = array_merge( $files, glob( __DIR__ . '/tests/phpunit/*Test.php' ) );
+		$files = array_merge( $files, __DIR__ . '/tests/phpunit' );
 		return true;
 	}
 }
