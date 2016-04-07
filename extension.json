@@ -10,7 +10,7 @@
   "type": "other",
   "AutoloadClasses": {
     "CognateHooks": "CognateHooks.hooks.php",
-    "CognateExtension": "CognateExtension.php"
+    "CognateStore": "CognateStore.php"
   },
   "config": {
     "CognateWiki": false,

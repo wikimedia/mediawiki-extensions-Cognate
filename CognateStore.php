@@ -1,28 +1,31 @@
-<?php
+	<?php
 
 
 /**
  * @license GNU GPL v2+
  * @author Gabriel Birke < gabriel.birke@wikimedia.de >
  */
-// TODO Change name from "Extension" to "Store"
-class CognateExtension {
+class CognateStore {
 
 	/**
-	 * Database object, not necessarily the current wiki DB.
-	 *
-	 * @var DatabaseBase
+	 * @var LoadBalancer
 	 */
-	private $db;
+	private $loadBalancer;
+
+	/**
+	 * @var string
+	 */
+	private $wikiName;
 
 	const TABLE_NAME = 'inter_language_titles';
 
 	/**
-	 * @param DatabaseBase $db
+	 * @param LoadBalancer $loadBalancer
+	 * @param string $wikiName
 	 */
-	// TODO use load balancer and wiki id instead
-	public function __construct( DatabaseBase $db ) {
-		$this->db = $db;
+	public function __construct( LoadBalancer $loadBalancer, $wikiName ) {
+		$this->loadBalancer = $loadBalancer;
+		$this->wikiName = $wikiName;
 	}
 
 	/**
@@ -35,7 +38,8 @@ class CognateExtension {
 			'ilt_language' => $language,
 			'ilt_title' => $title
 		];
-		return $this->db->insert( self::TABLE_NAME, $pageData, __METHOD__, [ 'IGNORE' ] );
+		$db = $this->loadBalancer->getConnection( DB_MASTER, [], $this->wikiName );
+		return $db->insert( self::TABLE_NAME, $pageData, __METHOD__, [ 'IGNORE' ] );
 	}
 
 	/**
@@ -47,8 +51,9 @@ class CognateExtension {
 	 */
 	public function getTranslationsForPage( $language, $title ) {
 		$languages = [];
-		$result = $this->db->select( self::TABLE_NAME, ['ilt_language'], [
-			'ilt_language != ' . $this->db->addQuotes( $language ),
+		$db = $this->loadBalancer->getConnection( DB_SLAVE, [], $this->wikiName );
+		$result = $db->select( self::TABLE_NAME, ['ilt_language'], [
+			'ilt_language != ' . $db->addQuotes( $language ),
 			'ilt_title' => $title
 		] );
 		while( $row = $result->fetchRow() ) {

@@ -29,7 +29,7 @@ class CognateHooks {
 		if ( !in_array( $title->getNamespace(), $wgCognateNamespaces ) ) {
 			return true;
 		}
-		$interlanguage = new CognateExtension( wfGetDB( DB_MASTER, [], $wgCognateWiki ) );
+		$interlanguage = new CognateStore( wfGetLB(), $wgCognateWiki );
 		$interlanguage->savePage( $wgLanguageCode, $article->getTitle()->getDBkey() );
 		return true;
 	}
@@ -49,7 +49,7 @@ class CognateHooks {
 		if ( !in_array( $title->getNamespace(), $wgCognateNamespaces ) ) {
 			return true;
 		}
-		$interlanguage = new CognateExtension( wfGetDB( DB_MASTER, [], $wgCognateWiki ) );
+		$interlanguage = new CognateStore( wfGetLB(), $wgCognateWiki );
 		$dbKey = $title->getDBkey();
 		$languages = $interlanguage->getTranslationsForPage( $wgLanguageCode, $dbKey );
 		foreach( $languages as $lang ) {
