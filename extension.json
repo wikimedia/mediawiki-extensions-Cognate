@@ -1,30 +1,30 @@
 {
-  "name": "PageTitleInterlanguage",
+  "name": "Cognate",
   "version": "0.0.1",
   "author": [
     "Gabriel Birke <gabriel.birke@wikimedia.de>"
   ],
-  "url": "https://www.mediawiki.org/wiki/Extension:PageTitleInterlanguage",
-  "descriptionmsg": "pagetitleinterlanguage-desc",
+  "url": "https://www.mediawiki.org/wiki/Extension:Cognate",
+  "descriptionmsg": "cognate-desc",
   "license-name": "MIT",
   "type": "other",
   "AutoloadClasses": {
-    "PageTitleInterlanguageHooks": "PageTitleInterlanguageHooks.hooks.php",
-    "PageTitleInterlanguageExtension": "PageTitleInterlanguageExtension.php"
+    "CognateHooks": "CognateHooks.hooks.php",
+    "CognateExtension": "CognateExtension.php"
   },
   "config": {
-    "PageTitleInterlanguageWiki": false,
-    "PageTitleInterlanguageNamespaces": [ 0 ]
+    "CognateWiki": false,
+    "CognateNamespaces": [ 0 ]
   },
   "Hooks": {
-    "PageContentSaveComplete": [ "PageTitleInterlanguageHooks::onPageContentSaveComplete" ],
-    "LanguageLinks": [ "PageTitleInterlanguageHooks::onLanguageLinks" ],
-    "ArticleDeleteComplete": [ "PageTitleInterlanguageHooks::onArticleDeleteComplete" ],
-    "LoadExtensionSchemaUpdates": [ "PageTitleInterlanguageHooks::onLoadExtensionSchemaUpdates" ],
-    "UnitTestsList": [ "PageTitleInterlanguageHooks::onUnitTestsList" ]
+    "PageContentSaveComplete": [ "CognateHooks::onPageContentSaveComplete" ],
+    "LanguageLinks": [ "CognateHooks::onLanguageLinks" ],
+    "ArticleDeleteComplete": [ "CognateHooks::onArticleDeleteComplete" ],
+    "LoadExtensionSchemaUpdates": [ "CognateHooks::onLoadExtensionSchemaUpdates" ],
+    "UnitTestsList": [ "CognateHooks::onUnitTestsList" ]
   },
   "MessagesDirs": {
-    "PageTitleInterlanguage": [
+    "Cognate": [
       "i18n"
     ]
   },

@@ -2,7 +2,7 @@
 
 // TODO Make this testable by creating non-static methods and using an instance in the static methods
 // TODO Split into two hook handler classes, one handling page-reltaed stuff, the other handling database update and tests
-class PageTitleInterlanguageHooks {
+class CognateHooks {
 	/**
 	 * Occurs after the save page request has been processed.
 	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/PageContentSaveComplete
@@ -24,12 +24,12 @@ class PageTitleInterlanguageHooks {
 	public static function onPageContentSaveComplete( WikiPage $article, User $user, Content $content,
 													  $summary, $isMinor, $isWatch, $section, $flags, $revision,
 													  Status $status, $baseRevId ) {
-		global $wgPageTitleInterlanguageWiki, $wgPageTitleInterlanguageNamespaces, $wgLanguageCode;
+		global $wgCognateWiki, $wgCognateNamespaces, $wgLanguageCode;
 		$title = $article->getTitle();
-		if ( !in_array( $title->getNamespace(), $wgPageTitleInterlanguageNamespaces ) ) {
+		if ( !in_array( $title->getNamespace(), $wgCognateNamespaces ) ) {
 			return true;
 		}
-		$interlanguage = new PageTitleInterlanguageExtension( wfGetDB( DB_MASTER, [], $wgPageTitleInterlanguageWiki ) );
+		$interlanguage = new CognateExtension( wfGetDB( DB_MASTER, [], $wgCognateWiki ) );
 		$interlanguage->savePage( $wgLanguageCode, $article->getTitle()->getDBkey() );
 		return true;
 	}
@@ -45,11 +45,11 @@ class PageTitleInterlanguageHooks {
 	 * @return bool
 	 */
 	public static function onLanguageLinks( $title, &$links, &$linkFlags ) {
-		global $wgPageTitleInterlanguageWiki, $wgPageTitleInterlanguageNamespaces, $wgLanguageCode;
-		if ( !in_array( $title->getNamespace(), $wgPageTitleInterlanguageNamespaces ) ) {
+		global $wgCognateWiki, $wgCognateNamespaces, $wgLanguageCode;
+		if ( !in_array( $title->getNamespace(), $wgCognateNamespaces ) ) {
 			return true;
 		}
-		$interlanguage = new PageTitleInterlanguageExtension( wfGetDB( DB_MASTER, [], $wgPageTitleInterlanguageWiki ) );
+		$interlanguage = new CognateExtension( wfGetDB( DB_MASTER, [], $wgCognateWiki ) );
 		$dbKey = $title->getDBkey();
 		$languages = $interlanguage->getTranslationsForPage( $wgLanguageCode, $dbKey );
 		foreach( $languages as $lang ) {
@@ -63,15 +63,15 @@ class PageTitleInterlanguageHooks {
 	/**
 	 * Run database updates
 	 *
-	 * Only runs the update when $wgPageTitleInterlanguageWiki is false (i.e. for testing and
+	 * Only runs the update when $wgCognateWiki is false (i.e. for testing and
 	 * when updating the "main" wiktionary project.
 	 *
 	 * @param DatabaseUpdater $updater DatabaseUpdater object
 	 * @return bool
 	 */
 	public static function onLoadExtensionSchemaUpdates( DatabaseUpdater $updater = null ) {
-		global $wgPageTitleInterlanguageWiki;
-		if ( $wgPageTitleInterlanguageWiki ) {
+		global $wgCognateWiki;
+		if ( $wgCognateWiki ) {
 			return true;
 		}
 

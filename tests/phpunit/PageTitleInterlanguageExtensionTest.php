@@ -6,15 +6,15 @@
  * @author Gabriel Birke < gabriel.birke@wikimedia.de >
  * @group Database
  */
-class PageTitleInterlanguageExtensionTest extends MediaWikiTestCase {
+class CognateExtensionTest extends MediaWikiTestCase {
 	
-	/** @var  PageTitleInterlanguageExtension */
+	/** @var  CognateExtension */
 	private $interlanguage;
 
 	protected function setUp() {
 		parent::setUp();
 		$this->tablesUsed = [ 'inter_language_titles' ];
-		$this->interlanguage = new PageTitleInterlanguageExtension( wfGetDB( DB_MASTER ) );
+		$this->interlanguage = new CognateExtension( wfGetDB( DB_MASTER ) );
 	}
 
 	public function testSavePageCreatesNewEntry() {

@@ -6,7 +6,7 @@
  * @author Gabriel Birke < gabriel.birke@wikimedia.de >
  */
 // TODO Change name from "Extension" to "Store"
-class PageTitleInterlanguageExtension {
+class CognateExtension {
 
 	/**
 	 * Database object, not necessarily the current wiki DB.
