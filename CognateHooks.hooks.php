@@ -1,7 +1,7 @@
 <?php
 
-// TODO Make this testable by creating non-static methods and using an instance in the static methods
-// TODO Split into two hook handler classes, one handling page-reltaed stuff, the other handling database update and tests
+// TODO Make this class testable by creating non-static public methods for each hook and using an instance in the static methods, see https://git.wikimedia.org/blob/mediawiki%2Fextensions%2FWikibase/master/client%2FWikibaseClient.hooks.php
+// TODO Split into two hook handler classes, one handling page-related stuff, the other handling database update and tests
 class CognateHooks {
 	/**
 	 * Occurs after the save page request has been processed.
@@ -57,6 +57,8 @@ class CognateHooks {
 				$links[$lang] = $lang . ':' . $dbKey;
 			}
 		}
+		// TODO Move InterwikiSorter class from the wikibase extension to its own extension and use it to sort the language links
+		// See https://git.wikimedia.org/blob/mediawiki%2Fextensions%2FWikibase/master/client%2Fincludes%2FInterwikiSorter.php
 		return true;
 	}
 
