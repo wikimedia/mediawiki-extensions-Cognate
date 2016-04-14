@@ -1,5 +1,4 @@
-	<?php
-
+<?php
 
 /**
  * @license GNU GPL v2+
@@ -65,6 +64,7 @@ class CognateStore {
 		while( $row = $result->fetchRow() ) {
 			$languages[] = $row[ 'ilt_language' ];
 		}
+
 		return $languages;
 	}
 
