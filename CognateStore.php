@@ -39,7 +39,10 @@ class CognateStore {
 			'ilt_title' => $title
 		];
 		$db = $this->loadBalancer->getConnection( DB_MASTER, [], $this->wikiName );
-		return $db->insert( self::TABLE_NAME, $pageData, __METHOD__, [ 'IGNORE' ] );
+		$result = $db->insert( self::TABLE_NAME, $pageData, __METHOD__, [ 'IGNORE' ] );
+		$this->loadBalancer->reuseConnection( $db );
+
+		return $result;
 	}
 
 	/**
@@ -51,11 +54,14 @@ class CognateStore {
 	 */
 	public function getTranslationsForPage( $language, $title ) {
 		$languages = [];
+
 		$db = $this->loadBalancer->getConnection( DB_SLAVE, [], $this->wikiName );
 		$result = $db->select( self::TABLE_NAME, ['ilt_language'], [
 			'ilt_language != ' . $db->addQuotes( $language ),
 			'ilt_title' => $title
 		] );
+		$this->loadBalancer->reuseConnection( $db );
+
 		while( $row = $result->fetchRow() ) {
 			$languages[] = $row[ 'ilt_language' ];
 		}
