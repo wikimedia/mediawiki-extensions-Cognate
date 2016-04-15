@@ -104,7 +104,7 @@ class CognateHooks {
 
 		$dbDir = __DIR__ . '/db';
 		$updater->addExtensionUpdate(
-			array( 'addTable', 'page_assessments', "$dbDir/addInterLanguageTable.sql", true )
+			array( 'addTable', 'inter_language_titles', "$dbDir/addInterLanguageTable.sql", true )
 		);
 
 		return true;
