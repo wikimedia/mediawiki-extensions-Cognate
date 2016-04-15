@@ -14,8 +14,6 @@ class CognateStoreTest extends MediaWikiTestCase {
 		parent::setUp();
 		$this->tablesUsed = [ 'inter_language_titles' ];
 		$this->interlanguage = new CognateStore( wfGetLB(), false );
-		// TODO Find a way to handle the page 'UTPage' that gets added by MediaWikiTestCase::addCoreDBData
-		// UTPage interferes with the first test
 	}
 
 	public function testSavePageCreatesNewEntry() {
@@ -23,7 +21,7 @@ class CognateStoreTest extends MediaWikiTestCase {
 		$this->assertSelect(
 			'inter_language_titles',
 			[ 'ilt_language', 'ilt_title' ],
-			[ ],
+			[ 'ilt_title != "UTPage"' ],
 			[ [ 'en', 'My_test_page' ] ]
 		);
 	}
@@ -34,7 +32,7 @@ class CognateStoreTest extends MediaWikiTestCase {
 		$this->assertSelect(
 			'inter_language_titles',
 			[ 'ilt_language', 'ilt_title' ],
-			[ ],
+			[ 'ilt_title != "UTPage"' ],
 			[ [ 'en', 'My_second_test_page' ] ]
 		);
 	}
