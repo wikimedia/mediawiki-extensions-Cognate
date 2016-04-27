@@ -61,7 +61,7 @@ class CognateStore {
 		] );
 		$this->loadBalancer->reuseConnection( $dbr );
 
-		while( $row = $result->fetchRow() ) {
+		while ( $row = $result->fetchRow() ) {
 			$languages[] = $row[ 'ilt_language' ];
 		}
 
