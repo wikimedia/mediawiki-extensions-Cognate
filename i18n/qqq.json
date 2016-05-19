@@ -1,8 +1,8 @@
 {
-  "@metadata": {
-    "authors": [
-      "Addshore"
-    ]
-  },
-  "cognate-desc": "{{desc|name=Cognate|url=https://www.mediawiki.org/wiki/Extension:Cognate}}"
+	"@metadata": {
+		"authors": [
+			"Addshore"
+		]
+	},
+	"cognate-desc": "{{desc|name=Cognate|url=https://www.mediawiki.org/wiki/Extension:Cognate}}"
 }
