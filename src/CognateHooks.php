@@ -43,8 +43,8 @@ class CognateHooks {
 		if ( !$title->inNamespaces( $wgCognateNamespaces ) ) {
 			return true;
 		}
-		$interlanguage = MediaWikiServices::getInstance()->getService( 'CognateStore' );
-		$interlanguage->savePage( $wgLanguageCode, $title->getDBkey() );
+		$store = MediaWikiServices::getInstance()->getService( 'CognateStore' );
+		$store->savePage( $wgLanguageCode, $title->getDBkey() );
 
 		return true;
 	}
@@ -68,8 +68,8 @@ class CognateHooks {
 			$updates[] = new MWCallableUpdate(
 				function () use ( $title ){
 					global $wgLanguageCode;
-					$interlanguage = MediaWikiServices::getInstance()->getService( 'CognateStore' );
-					$interlanguage->deletePage( $wgLanguageCode, $title->getDBkey() );
+					$store = MediaWikiServices::getInstance()->getService( 'CognateStore' );
+					$store->deletePage( $wgLanguageCode, $title->getDBkey() );
 				},
 				__METHOD__
 			);
@@ -91,9 +91,9 @@ class CognateHooks {
 			return true;
 		}
 
-		$interlanguage = MediaWikiServices::getInstance()->getService( 'CognateStore' );
+		$store = MediaWikiServices::getInstance()->getService( 'CognateStore' );
 		$dbKey = $title->getDBkey();
-		$languages = $interlanguage->getTranslationsForPage( $wgLanguageCode, $dbKey );
+		$languages = $store->getTranslationsForPage( $wgLanguageCode, $dbKey );
 
 		foreach( $languages as $lang ) {
 			if ( !isset( $links[$lang] ) ) {
