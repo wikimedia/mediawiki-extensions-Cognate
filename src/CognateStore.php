@@ -11,20 +11,13 @@ class CognateStore {
 	 */
 	private $loadBalancer;
 
-	/**
-	 * @var string
-	 */
-	private $wikiName;
-
 	const TABLE_NAME = 'inter_language_titles';
 
 	/**
 	 * @param LoadBalancer $loadBalancer
-	 * @param string $wikiName
 	 */
-	public function __construct( LoadBalancer $loadBalancer, $wikiName ) {
+	public function __construct( LoadBalancer $loadBalancer ) {
 		$this->loadBalancer = $loadBalancer;
-		$this->wikiName = $wikiName;
 	}
 
 	/**
@@ -37,9 +30,8 @@ class CognateStore {
 			'ilt_language' => $language,
 			'ilt_title' => $title
 		];
-		$dbw = $this->loadBalancer->getConnection( DB_MASTER, [], $this->wikiName );
+		$dbw = $this->loadBalancer->getConnectionRef( DB_MASTER );
 		$result = $dbw->insert( self::TABLE_NAME, $pageData, __METHOD__, [ 'IGNORE' ] );
-		$this->loadBalancer->reuseConnection( $dbw );
 
 		return $result;
 	}
@@ -54,12 +46,11 @@ class CognateStore {
 	public function getTranslationsForPage( $language, $title ) {
 		$languages = [];
 
-		$dbr = $this->loadBalancer->getConnection( DB_SLAVE, [], $this->wikiName );
+		$dbr = $this->loadBalancer->getConnectionRef( DB_SLAVE );
 		$result = $dbr->select( self::TABLE_NAME, ['ilt_language'], [
 			'ilt_language != ' . $dbr->addQuotes( $language ),
 			'ilt_title' => $title
 		] );
-		$this->loadBalancer->reuseConnection( $dbr );
 
 		while ( $row = $result->fetchRow() ) {
 			$languages[] = $row[ 'ilt_language' ];

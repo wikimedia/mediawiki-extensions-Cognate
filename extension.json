@@ -13,7 +13,8 @@
     "CognateStore": "src/CognateStore.php"
   },
   "config": {
-    "CognateWiki": false,
+    "CognateDb": false,
+    "CognateCluster": false,
     "CognateNamespaces": [ 0 ]
   },
   "ServiceWiringFiles": [

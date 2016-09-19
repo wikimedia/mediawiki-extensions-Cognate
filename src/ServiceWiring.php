@@ -7,9 +7,14 @@ use MediaWiki\MediaWikiServices;
 
 return [
 	'CognateStore' => function( MediaWikiServices $services ) {
-		return new CognateStore(
-			$services->getDBLoadBalancer(),
-			$services->getMainConfig()->get( 'CognateWiki' )
-		);
+		$lbFactory = $services->getDBLoadBalancerFactory();
+		$cognateDb = $services->getMainConfig()->get( 'CognateDb' );
+		$cognateCluster = $services->getMainConfig()->get( 'CognateCluster' );
+		if ( $cognateCluster ) {
+			$lb = $lbFactory->getExternalLB( $cognateCluster, $cognateDb );
+		} else {
+			$lb = $lbFactory->getMainLB( $cognateDb );
+		}
+		return new CognateStore( $lb );
 	},
 ];
