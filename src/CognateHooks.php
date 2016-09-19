@@ -2,6 +2,8 @@
 
 // TODO Make this class testable by creating non-static public methods for each hook and using an instance in the static methods, see https://git.wikimedia.org/blob/mediawiki%2Fextensions%2FWikibase/master/client%2FWikibaseClient.hooks.php
 // TODO Split into two hook handler classes, one handling page-related stuff, the other handling database update and tests
+use MediaWiki\MediaWikiServices;
+
 class CognateHooks {
 
 	/**
@@ -35,13 +37,13 @@ class CognateHooks {
 		Status $status,
 		$baseRevId
 	) {
-		global $wgCognateWiki, $wgCognateNamespaces, $wgLanguageCode;
+		global $wgCognateNamespaces, $wgLanguageCode;
 
 		$title = $article->getTitle();
 		if ( !in_array( $title->getNamespace(), $wgCognateNamespaces ) ) {
 			return true;
 		}
-		$interlanguage = new CognateStore( wfGetLB(), $wgCognateWiki );
+		$interlanguage = MediaWikiServices::getInstance()->getService( 'CognateStore' );
 		$interlanguage->savePage( $wgLanguageCode, $article->getTitle()->getDBkey() );
 
 		return true;
@@ -65,13 +67,13 @@ class CognateHooks {
 	 * @return bool
 	 */
 	public static function onLanguageLinks( $title, &$links, &$linkFlags ) {
-		global $wgCognateWiki, $wgCognateNamespaces, $wgLanguageCode;
+		global $wgCognateNamespaces, $wgLanguageCode;
 
 		if ( !in_array( $title->getNamespace(), $wgCognateNamespaces ) ) {
 			return true;
 		}
 
-		$interlanguage = new CognateStore( wfGetLB(), $wgCognateWiki );
+		$interlanguage = MediaWikiServices::getInstance()->getService( 'CognateStore' );
 		$dbKey = $title->getDBkey();
 		$languages = $interlanguage->getTranslationsForPage( $wgLanguageCode, $dbKey );
 

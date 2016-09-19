@@ -16,6 +16,9 @@
     "CognateWiki": false,
     "CognateNamespaces": [ 0 ]
   },
+  "ServiceWiringFiles": [
+    "src/ServiceWiring.php"
+  ],
   "Hooks": {
     "PageContentSaveComplete": [ "CognateHooks::onPageContentSaveComplete" ],
     "LanguageLinks": [ "CognateHooks::onLanguageLinks" ],
