@@ -1,80 +1,28 @@
 <?php
 
-// TODO Make this class testable by creating non-static public methods for each hook and using an instance in the static methods, see https://git.wikimedia.org/blob/mediawiki%2Fextensions%2FWikibase/master/client%2FWikibaseClient.hooks.php
-// TODO Split into two hook handler classes, one handling page-related stuff, the other handling database update and tests
 use MediaWiki\MediaWikiServices;
 
 class CognateHooks {
 
-	/**
-	 * Occurs after the save page request has been processed.
-	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/PageContentSaveComplete
-	 *
-	 * @param WikiPage $article
-	 * @param User $user
-	 * @param Content $content
-	 * @param string $summary
-	 * @param boolean $isMinor
-	 * @param boolean $isWatch
-	 * @param $section Deprecated
-	 * @param integer $flags
-	 * @param {Revision|null} $revision
-	 * @param Status $status
-	 * @param integer $baseRevId
-	 *
-	 * @return boolean
-	 */
-	public static function onPageContentSaveComplete(
-		WikiPage $article,
-		User $user,
-		Content $content,
-		$summary,
-		$isMinor,
-		$isWatch,
-		$section,
-		$flags,
-		$revision,
-		Status $status,
-		$baseRevId
-	) {
-		global $wgCognateNamespaces, $wgLanguageCode;
-
-		$title = $article->getTitle();
-		if ( !$title->inNamespaces( $wgCognateNamespaces ) ) {
-			return true;
-		}
-		$store = MediaWikiServices::getInstance()->getService( 'CognateStore' );
-		$store->savePage( $wgLanguageCode, $title->getDBkey() );
-
+	public static function onPageContentSaveComplete() {
+		call_user_func_array(
+			[
+				MediaWikiServices::getInstance()->getService( 'CognatePageHookHandler' ),
+				'onPageContentSaveComplete'
+			],
+			func_get_args()
+		);
 		return true;
 	}
 
-	/**
-	 * @param WikiPage $page
-	 * @param Content|null $content
-	 * @param DataUpdate[] $updates
-	 *
-	 * @return bool
-	 */
-	public static function onWikiPageDeletionUpdates(
-		WikiPage $page,
-		Content $content = null,
-		array &$updates
-	) {
-		global $wgCognateNamespaces;
-
-		$title = $page->getTitle();
-		if ( $title->inNamespaces( $wgCognateNamespaces ) ) {
-			$updates[] = new MWCallableUpdate(
-				function () use ( $title ){
-					global $wgLanguageCode;
-					$store = MediaWikiServices::getInstance()->getService( 'CognateStore' );
-					$store->deletePage( $wgLanguageCode, $title->getDBkey() );
-				},
-				__METHOD__
-			);
-		}
-
+	public static function onWikiPageDeletionUpdates() {
+		call_user_func_array(
+			[
+				MediaWikiServices::getInstance()->getService( 'CognatePageHookHandler' ),
+				'onWikiPageDeletionUpdates'
+			],
+			func_get_args()
+		);
 		return true;
 	}
 

@@ -17,4 +17,11 @@ return [
 		}
 		return new CognateStore( $lb );
 	},
+
+	'CognatePageHookHandler' => function( MediaWikiServices $services ) {
+		return new CognatePageHookHandler(
+			$services->getMainConfig()->get( 'CognateNamespaces' ),
+			$services->getMainConfig()->get( 'LanguageCode' )
+		);
+	},
 ];

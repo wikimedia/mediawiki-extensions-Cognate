@@ -9,7 +9,8 @@ class ServiceWiringTest extends MediaWikiTestCase {
 
 	public function provideServices() {
 		return [
-			[ 'CognateStore', CognateStore::class ]
+			[ 'CognateStore', CognateStore::class ],
+			[ 'CognatePageHookHandler', CognatePageHookHandler::class ],
 		];
 	}
 

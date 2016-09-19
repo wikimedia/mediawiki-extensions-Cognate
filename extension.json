@@ -10,7 +10,8 @@
   "type": "other",
   "AutoloadClasses": {
     "CognateHooks": "src/CognateHooks.php",
-    "CognateStore": "src/CognateStore.php"
+    "CognateStore": "src/CognateStore.php",
+    "CognatePageHookHandler": "src/hooks/CognatePageHookHandler.php"
   },
   "config": {
     "CognateDb": false,
