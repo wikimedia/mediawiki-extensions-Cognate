@@ -102,7 +102,7 @@ class CognateHooks {
 			return true;
 		}
 
-		$dbDir = __DIR__ . '/db';
+		$dbDir = __DIR__ . '/../db';
 		$updater->addExtensionUpdate(
 			array( 'addTable', 'inter_language_titles', "$dbDir/addInterLanguageTable.sql", true )
 		);

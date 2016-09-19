@@ -9,8 +9,8 @@
   "license-name": "MIT",
   "type": "other",
   "AutoloadClasses": {
-    "CognateHooks": "CognateHooks.hooks.php",
-    "CognateStore": "CognateStore.php"
+    "CognateHooks": "src/CognateHooks.php",
+    "CognateStore": "src/CognateStore.php"
   },
   "config": {
     "CognateWiki": false,
