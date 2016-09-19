@@ -40,24 +40,42 @@ class CognateHooks {
 		global $wgCognateNamespaces, $wgLanguageCode;
 
 		$title = $article->getTitle();
-		if ( !in_array( $title->getNamespace(), $wgCognateNamespaces ) ) {
+		if ( !$title->inNamespaces( $wgCognateNamespaces ) ) {
 			return true;
 		}
 		$interlanguage = MediaWikiServices::getInstance()->getService( 'CognateStore' );
-		$interlanguage->savePage( $wgLanguageCode, $article->getTitle()->getDBkey() );
+		$interlanguage->savePage( $wgLanguageCode, $title->getDBkey() );
 
 		return true;
 	}
 
-	public static function onArticleDeleteComplete(
-		&$article,
-		User &$user,
-		$reason,
-		$id,
+	/**
+	 * @param WikiPage $page
+	 * @param Content|null $content
+	 * @param DataUpdate[] $updates
+	 *
+	 * @return bool
+	 */
+	public static function onWikiPageDeletionUpdates(
+		WikiPage $page,
 		Content $content = null,
-		LogEntry $logEntry
+		array &$updates
 	) {
-		// TODO remove language link from central storage
+		global $wgCognateNamespaces;
+
+		$title = $page->getTitle();
+		if ( $title->inNamespaces( $wgCognateNamespaces ) ) {
+			$updates[] = new MWCallableUpdate(
+				function () use ( $title ){
+					global $wgLanguageCode;
+					$interlanguage = MediaWikiServices::getInstance()->getService( 'CognateStore' );
+					$interlanguage->deletePage( $wgLanguageCode, $title->getDBkey() );
+				},
+				__METHOD__
+			);
+		}
+
+		return true;
 	}
 
 	/**

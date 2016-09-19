@@ -46,4 +46,15 @@ class CognateStoreTest extends MediaWikiTestCase {
 		$this->assertArrayEquals( [ 'de', 'eo' ], $languages );
 	}
 
+	public function testSaveAndDeletePageResultsInNoEntry() {
+		$this->interlanguage->savePage( 'en', 'My_test_page' );
+		$this->interlanguage->deletePage( 'en', 'My_test_page' );
+		$this->assertSelect(
+			'inter_language_titles',
+			[ 'ilt_language', 'ilt_title' ],
+			[ 'ilt_title != "UTPage"' ],
+			[]
+		);
+	}
+
 }

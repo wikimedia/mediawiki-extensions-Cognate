@@ -23,7 +23,7 @@
   "Hooks": {
     "PageContentSaveComplete": [ "CognateHooks::onPageContentSaveComplete" ],
     "LanguageLinks": [ "CognateHooks::onLanguageLinks" ],
-    "ArticleDeleteComplete": [ "CognateHooks::onArticleDeleteComplete" ],
+    "WikiPageDeletionUpdates": [ "CognateHooks::onWikiPageDeletionUpdates" ],
     "LoadExtensionSchemaUpdates": [ "CognateHooks::onLoadExtensionSchemaUpdates" ],
     "UnitTestsList": [ "CognateHooks::onUnitTestsList" ]
   },

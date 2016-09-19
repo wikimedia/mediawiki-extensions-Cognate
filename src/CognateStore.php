@@ -37,6 +37,23 @@ class CognateStore {
 	}
 
 	/**
+	 * @param string $language Language code, taken from $wgLanguageCode
+	 * @param string $title Page title
+	 * @return bool
+	 */
+	public function deletePage( $language, $title ) {
+		$pageData = [
+			'ilt_language' => $language,
+			'ilt_title' => $title
+		];
+		$dbw = $this->loadBalancer->getConnection( DB_MASTER );
+		$result = $dbw->delete( self::TABLE_NAME, $pageData, __METHOD__ );
+		$this->loadBalancer->reuseConnection( $dbw );
+
+		return $result;
+	}
+
+	/**
 	 * Get the language codes where a translations is available
 	 *
 	 * @param string $language Language code to exclude
