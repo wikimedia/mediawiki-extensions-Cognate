@@ -26,6 +26,17 @@ class CognateHooks {
 		return true;
 	}
 
+	public static function onArticleUndelete() {
+		call_user_func_array(
+			[
+				MediaWikiServices::getInstance()->getService( 'CognatePageHookHandler' ),
+				'onArticleUndelete'
+			],
+			func_get_args()
+		);
+		return true;
+	}
+
 	/**
 	 * @param Title $title
 	 * @param array $links

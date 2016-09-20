@@ -141,4 +141,48 @@ class CognatePageHookHandlerTest extends MediaWikiTestCase {
 		return $updates;
 	}
 
+	public function test_onArticleUndelete_namespaceMatch() {
+		$this->store->expects( $this->never() )
+			->method( 'deletePage' );
+		$this->store->expects( $this->once() )
+			->method( 'savePage' )
+			->with( 'abc2', 'ArticleDbKey' );
+
+		$this->call_onArticleUndelete(
+			[ 0 ],
+			'abc2',
+			new TitleValue( 0, 'ArticleDbKey' )
+		);
+	}
+
+	public function test_onArticleUndelete_noNamespaceMatch() {
+		$this->store->expects( $this->never() )
+			->method( 'deletePage' );
+		$this->store->expects( $this->never() )
+			->method( 'savePage' );
+
+		$this->call_onArticleUndelete(
+			[ 120 ],
+			'abc2',
+			new TitleValue( 0, 'ArticleDbKey' )
+		);
+	}
+
+	/**
+	 * @param int[] $namespaces
+	 * @param string $language
+	 * @param LinkTarget $linkTarget
+	 */
+	private function call_onArticleUndelete(
+		array $namespaces,
+		$language,
+		LinkTarget $linkTarget
+	) {
+		$handler = new CognatePageHookHandler( $namespaces, $language );
+		$handler->onArticleUndelete(
+			Title::newFromLinkTarget( $linkTarget ),
+			null, null, null
+		);
+	}
+
 }

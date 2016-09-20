@@ -91,4 +91,25 @@ class CognatePageHookHandler {
 		}
 	}
 
+	/**
+	 * When one or more revisions of an article are restored
+	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/ArticleUndelete
+	 *
+	 * @param Title $title
+	 * @param bool $create
+	 * @param string $comment
+	 * @param int $oldPageId
+	 */
+	public function onArticleUndelete(
+		Title $title,
+		$create,
+		$comment,
+		$oldPageId
+	) {
+		if ( $title->inNamespaces( $this->namespaces ) ) {
+			$store = MediaWikiServices::getInstance()->getService( 'CognateStore' );
+			$store->savePage( $this->languageCode, $title->getDBkey() );
+		}
+	}
+
 }
