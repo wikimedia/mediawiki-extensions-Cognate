@@ -45,7 +45,7 @@ class CognatePageHookHandlerTest extends MediaWikiTestCase {
 		$this->store->expects( $this->never() )
 			->method( 'savePage' );
 
-		$this->call_onPageContentSaveComplete( [ 120 ], 'abc2', new TitleValue( 0, 'ArticleDbKey' ) );
+		$this->call_onPageContentSaveComplete( [ NS_PROJECT ], 'abc2', new TitleValue( 0, 'ArticleDbKey' ) );
 	}
 
 	/**
@@ -101,7 +101,7 @@ class CognatePageHookHandlerTest extends MediaWikiTestCase {
 			->method( 'savePage' );
 
 		$updates = $this->call_onWikiPageDeletionUpdates(
-			[ 120 ],
+			[ NS_PROJECT ],
 			'abc2',
 			new TitleValue( 0, 'ArticleDbKey' )
 		);
@@ -162,7 +162,7 @@ class CognatePageHookHandlerTest extends MediaWikiTestCase {
 			->method( 'savePage' );
 
 		$this->call_onArticleUndelete(
-			[ 120 ],
+			[ NS_PROJECT ],
 			'abc2',
 			new TitleValue( 0, 'ArticleDbKey' )
 		);
@@ -183,6 +183,98 @@ class CognatePageHookHandlerTest extends MediaWikiTestCase {
 			Title::newFromLinkTarget( $linkTarget ),
 			null, null, null
 		);
+	}
+
+	public function test_onTitleMoveComplete_namespaceMatch() {
+		$this->store->expects( $this->once() )
+			->method( 'deletePage' )
+			->with( 'abc2', new TitleValue( 0, 'ArticleDbKeyOld' ) );
+		$this->store->expects( $this->once() )
+			->method( 'savePage' )
+			->with( 'abc2', new TitleValue( 0, 'ArticleDbKeyNew' ) );
+
+		$this->call_onTitleMoveComplete(
+			[ 0 ],
+			'abc2',
+			new TitleValue( 0, 'ArticleDbKeyOld' ),
+			new TitleValue( 0, 'ArticleDbKeyNew' )
+		);
+	}
+
+	public function test_onTitleMoveComplete_noNamespaceMatch() {
+		$this->store->expects( $this->never() )
+			->method( 'deletePage' );
+		$this->store->expects( $this->never() )
+			->method( 'savePage' );
+
+		$this->call_onTitleMoveComplete(
+			[ NS_PROJECT ],
+			'abc2',
+			new TitleValue( 0, 'ArticleDbKeyOld' ),
+			new TitleValue( 0, 'ArticleDbKeyNew' )
+		);
+	}
+
+	public function test_onTitleMoveComplete_namespaceMatchOld() {
+		$this->store->expects( $this->once() )
+			->method( 'deletePage' )
+			->with( 'abc2', new TitleValue( NS_PROJECT, 'ArticleDbKeyOld' ) );
+		$this->store->expects( $this->never() )
+			->method( 'savePage' );
+
+		$this->call_onTitleMoveComplete(
+			[ NS_PROJECT ],
+			'abc2',
+			new TitleValue( NS_PROJECT, 'ArticleDbKeyOld' ),
+			new TitleValue( 0, 'ArticleDbKeyNew' )
+		);
+	}
+
+	public function test_onTitleMoveComplete_namespaceMatchNew() {
+		$this->store->expects( $this->never() )
+			->method( 'deletePage' );
+		$this->store->expects( $this->once() )
+			->method( 'savePage' )
+			->with( 'abc2', new TitleValue( NS_PROJECT, 'ArticleDbKeyNew' ) );
+
+		$this->call_onTitleMoveComplete(
+			[ NS_PROJECT ],
+			'abc2',
+			new TitleValue( 0, 'ArticleDbKeyOld' ),
+			new TitleValue( NS_PROJECT, 'ArticleDbKeyNew' )
+		);
+	}
+
+	/**
+	 * @param int[] $namespaces
+	 * @param string $language
+	 * @param LinkTarget $linkTarget
+	 */
+	private function call_onTitleMoveComplete(
+		array $namespaces,
+		$language,
+		LinkTarget $linkTarget,
+		LinkTarget $newLinkTarget
+	) {
+		$handler = new CognatePageHookHandler( $namespaces, $language );
+		$handler->onTitleMoveComplete(
+			Title::newFromLinkTarget( $linkTarget ),
+			Title::newFromLinkTarget( $newLinkTarget ),
+			User::newFromId( 0 ),
+			null,
+			null,
+			null,
+			$this->getMockRevision()
+		);
+	}
+
+	/**
+	 * @return PHPUnit_Framework_MockObject_MockObject|Revision
+	 */
+	private function getMockRevision() {
+		return $this->getMockBuilder( 'Revision' )
+			->disableOriginalConstructor()
+			->getMock();
 	}
 
 }

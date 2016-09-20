@@ -123,6 +123,38 @@ class CognatePageHookHandler {
 	}
 
 	/**
+	 * Occurs whenever a request to move an article is completed, after the database transaction commits.
+	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/TitleMoveComplete
+	 *
+	 * @param Title $title
+	 * @param Title $newTitle
+	 * @param User $user
+	 * @param int $oldid
+	 * @param int $newid
+	 * @param string $reason
+	 * @param Revision $revision
+	 */
+	public function onTitleMoveComplete(
+		Title $title,
+		Title $newTitle,
+		User $user,
+		$oldid,
+		$newid,
+		$reason,
+		Revision $revision
+	) {
+		$oldTitleValue = $title->getTitleValue();
+		$newTitleValue = $newTitle->getTitleValue();
+		$store = $this->getStore();
+		if ( $this->isActionableTarget( $oldTitleValue ) ) {
+			$store->deletePage( $this->languageCode, $oldTitleValue );
+		}
+		if ( $this->isActionableTarget( $newTitleValue ) ) {
+			$store->savePage( $this->languageCode, $newTitleValue );
+		}
+	}
+
+	/**
 	 * Actionable targets have a namespace id that is:
 	 *  - One of the default MediaWiki (between NS_MAIN and NS_CATEGORY_TALK
 	 *  - Defined as a namespace to record in the configuration

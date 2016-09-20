@@ -26,6 +26,7 @@
     "LanguageLinks": [ "CognateHooks::onLanguageLinks" ],
     "WikiPageDeletionUpdates": [ "CognateHooks::onWikiPageDeletionUpdates" ],
     "ArticleUndelete": [ "CognateHooks::onArticleUndelete" ],
+    "TitleMoveComplete": [ "CognateHooks::onTitleMoveComplete" ],
     "LoadExtensionSchemaUpdates": [ "CognateHooks::onLoadExtensionSchemaUpdates" ],
     "UnitTestsList": [ "CognateHooks::onUnitTestsList" ]
   },

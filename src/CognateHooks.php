@@ -37,6 +37,17 @@ class CognateHooks {
 		return true;
 	}
 
+	public static function onTitleMoveComplete() {
+		call_user_func_array(
+			[
+				MediaWikiServices::getInstance()->getService( 'CognatePageHookHandler' ),
+				'onTitleMoveComplete'
+			],
+			func_get_args()
+		);
+		return true;
+	}
+
 	/**
 	 * @param Title $title
 	 * @param array $links
