@@ -34,7 +34,7 @@ class CognatePageHookHandlerTest extends MediaWikiTestCase {
 			->method( 'deletePage' );
 		$this->store->expects( $this->once() )
 			->method( 'savePage' )
-			->with( 'abc2', 'ArticleDbKey' );
+			->with( 'abc2', new TitleValue( 0, 'ArticleDbKey' ) );
 
 		$this->call_onPageContentSaveComplete( [ 0 ], 'abc2', new TitleValue( 0, 'ArticleDbKey' ) );
 	}
@@ -80,7 +80,7 @@ class CognatePageHookHandlerTest extends MediaWikiTestCase {
 	public function test_onWikiPageDeletionUpdates_namespaceMatch() {
 		$this->store->expects( $this->once() )
 			->method( 'deletePage' )
-			->with( 'abc2', 'ArticleDbKey' );
+			->with( 'abc2', new TitleValue( 0, 'ArticleDbKey' ) );
 		$this->store->expects( $this->never() )
 			->method( 'savePage' );
 
@@ -146,7 +146,7 @@ class CognatePageHookHandlerTest extends MediaWikiTestCase {
 			->method( 'deletePage' );
 		$this->store->expects( $this->once() )
 			->method( 'savePage' )
-			->with( 'abc2', 'ArticleDbKey' );
+			->with( 'abc2', new TitleValue( 0, 'ArticleDbKey' ) );
 
 		$this->call_onArticleUndelete(
 			[ 0 ],

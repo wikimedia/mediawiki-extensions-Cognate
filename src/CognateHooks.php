@@ -50,11 +50,12 @@ class CognateHooks {
 			return true;
 		}
 
+		/** @var CognateStore $store */
 		$store = MediaWikiServices::getInstance()->getService( 'CognateStore' );
-		$dbKey = $title->getDBkey();
-		$languages = $store->getTranslationsForPage( $wgLanguageCode, $dbKey );
+		$languages = $store->getLinksForPage( $wgLanguageCode, $title );
 
-		foreach( $languages as $lang ) {
+		$dbKey = $title->getDBkey();
+		foreach ( $languages as $lang ) {
 			if ( !isset( $links[$lang] ) ) {
 				$links[$lang] = $lang . ':' . $dbKey;
 			}
@@ -68,23 +69,20 @@ class CognateHooks {
 	/**
 	 * Run database updates
 	 *
-	 * Only runs the update when $wgCognateWiki is false (i.e. for testing and
-	 * when updating the "main" wiktionary project.
+	 * Only runs the update when both $wgCognateDb and $wgCognateCluster are false
+	 * i.e. for testing.
 	 *
 	 * @param DatabaseUpdater $updater DatabaseUpdater object
 	 * @return bool
 	 */
 	public static function onLoadExtensionSchemaUpdates( DatabaseUpdater $updater = null ) {
-		global $wgCognateWiki;
+		global $wgCognateDb, $wgCognateCluster;
 
-		if ( $wgCognateWiki ) {
-			return true;
+		if ( $wgCognateDb === false && $wgCognateCluster === false ) {
+			$updater->addExtensionUpdate(
+				[ 'addTable', 'cognate_titles', __DIR__ . '/../db/addCognateTitles.sql', true ]
+			);
 		}
-
-		$dbDir = __DIR__ . '/../db';
-		$updater->addExtensionUpdate(
-			array( 'addTable', 'inter_language_titles', "$dbDir/addInterLanguageTable.sql", true )
-		);
 
 		return true;
 	}
