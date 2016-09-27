@@ -15,7 +15,10 @@ return [
 		} else {
 			$lb = $lbFactory->getMainLB( $cognateDb );
 		}
-		return new CognateStore( $lb );
+		return new CognateStore(
+			$lb,
+			new StringNormalizer()
+		);
 	},
 
 	'CognatePageHookHandler' => function( MediaWikiServices $services ) {

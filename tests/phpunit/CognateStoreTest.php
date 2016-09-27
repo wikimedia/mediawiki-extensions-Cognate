@@ -24,7 +24,7 @@ class CognateStoreTest extends MediaWikiTestCase {
 			'cognate_titles',
 			[ 'cgti_site', 'cgti_title', 'cgti_key', 'cgti_namespace' ],
 			[ 'cgti_title != "UTPage"' ],
-			[ [ 'en', 'My_test_page',  'My_test_page', 0 ] ]
+			[ [ 'en', 'My_test_page',  'My test page', 0 ] ]
 		);
 	}
 
@@ -35,7 +35,7 @@ class CognateStoreTest extends MediaWikiTestCase {
 			'cognate_titles',
 			[ 'cgti_site', 'cgti_title', 'cgti_key', 'cgti_namespace' ],
 			[ 'cgti_title != "UTPage"' ],
-			[ [ 'en', 'My_second_test_page',  'My_second_test_page', 0 ] ]
+			[ [ 'en', 'My_second_test_page',  'My second test page', 0 ] ]
 		);
 	}
 

@@ -14,13 +14,21 @@ class CognateStore {
 	 */
 	private $loadBalancer;
 
+	/**
+	 * @var StringNormalizer
+	 */
+	private $stringNormalizer;
+
 	const TITLES_TABLE_NAME = 'cognate_titles';
+
 
 	/**
 	 * @param ILoadBalancer $loadBalancer
+	 * @param StringNormalizer $stringNormalizer
 	 */
-	public function __construct( ILoadBalancer $loadBalancer ) {
+	public function __construct( ILoadBalancer $loadBalancer, StringNormalizer $stringNormalizer ) {
 		$this->loadBalancer = $loadBalancer;
+		$this->stringNormalizer = $stringNormalizer;
 	}
 
 	/**
@@ -34,7 +42,7 @@ class CognateStore {
 			'cgti_site' => $siteLinkPrefix,
 			'cgti_title' => $linkTarget->getDBkey(),
 			'cgti_namespace' => $linkTarget->getNamespace(),
-			'cgti_key' => $linkTarget->getDBkey(),// TODO normalize
+			'cgti_key' => $this->stringNormalizer->normalize( $linkTarget->getDBkey() ),
 		];
 		$dbw = $this->loadBalancer->getConnectionRef( DB_MASTER );
 		$result = $dbw->insert( self::TITLES_TABLE_NAME, $pageData, __METHOD__, [ 'IGNORE' ] );
@@ -72,7 +80,7 @@ class CognateStore {
 			[ 'cgti_site' ],
 			[
 				'cgti_site != ' . $dbr->addQuotes( $siteLinkPrefix ),
-				'cgti_key' => $linkTarget->getDBkey(),// TODO normalize
+				'cgti_key' => $this->stringNormalizer->normalize( $linkTarget->getDBkey() ),
 				'cgti_namespace' => $linkTarget->getNamespace(),
 			]
 		);

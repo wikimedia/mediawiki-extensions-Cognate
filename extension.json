@@ -11,6 +11,7 @@
   "AutoloadClasses": {
     "CognateHooks": "src/CognateHooks.php",
     "CognateStore": "src/CognateStore.php",
+    "StringNormalizer": "src/StringNormalizer.php",
     "CognatePageHookHandler": "src/hooks/CognatePageHookHandler.php"
   },
   "config": {
