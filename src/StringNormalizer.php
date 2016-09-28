@@ -1,5 +1,7 @@
 <?php
 
+namespace Cognate;
+
 /**
  * @license GNU GPL v2+
  * @author Addshore

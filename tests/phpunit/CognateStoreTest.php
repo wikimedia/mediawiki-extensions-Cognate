@@ -1,13 +1,17 @@
 <?php
 
+namespace Cognate\Tests;
+
+use Cognate\CognateStore;
 use MediaWiki\MediaWikiServices;
+use TitleValue;
 
 /**
  * @license GNU GPL v2+
  * @author Gabriel Birke < gabriel.birke@wikimedia.de >
  * @group Database
  */
-class CognateStoreTest extends MediaWikiTestCase {
+class CognateStoreTest extends \MediaWikiTestCase {
 
 	/** @var CognateStore */
 	private $store;

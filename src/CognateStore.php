@@ -1,5 +1,8 @@
 <?php
 
+namespace Cognate;
+
+use ILoadBalancer;
 use MediaWiki\Linker\LinkTarget;
 
 /**

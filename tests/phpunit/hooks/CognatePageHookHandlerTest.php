@@ -1,12 +1,23 @@
 <?php
 
+namespace Cognate\Tests;
+
+use Cognate\CognatePageHookHandler;
+use Cognate\CognateStore;
+use DeferrableUpdate;
 use MediaWiki\Linker\LinkTarget;
+use PHPUnit_Framework_MockObject_MockObject;
+use Revision;
+use Title;
+use TitleValue;
+use User;
+use WikiPage;
 
 /**
  * @license GNU GPL v2+
  * @author Addshore
  */
-class CognatePageHookHandlerTest extends MediaWikiTestCase {
+class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 
 	/**
 	 * @var PHPUnit_Framework_MockObject_MockObject|CognateStore

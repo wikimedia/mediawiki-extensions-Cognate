@@ -1,9 +1,13 @@
 <?php
+
+namespace Cognate;
+
+use MediaWiki\MediaWikiServices;
+
 /**
  * Cognate wiring for MediaWiki services.
  */
 
-use MediaWiki\MediaWikiServices;
 
 return [
 	'CognateStore' => function( MediaWikiServices $services ) {

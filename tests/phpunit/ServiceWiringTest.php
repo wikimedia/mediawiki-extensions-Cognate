@@ -1,11 +1,16 @@
 <?php
+
+namespace Cognate\Tests;
+
+use Cognate\CognatePageHookHandler;
+use Cognate\CognateStore;
 use MediaWiki\MediaWikiServices;
 
 /**
  * @license GNU GPL v2+
  * @author Addshore
  */
-class ServiceWiringTest extends MediaWikiTestCase {
+class ServiceWiringTest extends \MediaWikiTestCase {
 
 	public function provideServices() {
 		return [

@@ -9,10 +9,10 @@
   "license-name": "MIT",
   "type": "other",
   "AutoloadClasses": {
-    "CognateHooks": "src/CognateHooks.php",
-    "CognateStore": "src/CognateStore.php",
-    "StringNormalizer": "src/StringNormalizer.php",
-    "CognatePageHookHandler": "src/hooks/CognatePageHookHandler.php"
+    "Cognate\\CognateHooks": "src/CognateHooks.php",
+    "Cognate\\CognateStore": "src/CognateStore.php",
+    "Cognate\\StringNormalizer": "src/StringNormalizer.php",
+    "Cognate\\CognatePageHookHandler": "src/hooks/CognatePageHookHandler.php"
   },
   "config": {
     "CognateDb": false,
@@ -23,13 +23,13 @@
     "src/ServiceWiring.php"
   ],
   "Hooks": {
-    "PageContentSaveComplete": [ "CognateHooks::onPageContentSaveComplete" ],
-    "LanguageLinks": [ "CognateHooks::onLanguageLinks" ],
-    "WikiPageDeletionUpdates": [ "CognateHooks::onWikiPageDeletionUpdates" ],
-    "ArticleUndelete": [ "CognateHooks::onArticleUndelete" ],
-    "TitleMoveComplete": [ "CognateHooks::onTitleMoveComplete" ],
-    "LoadExtensionSchemaUpdates": [ "CognateHooks::onLoadExtensionSchemaUpdates" ],
-    "UnitTestsList": [ "CognateHooks::onUnitTestsList" ]
+    "PageContentSaveComplete": [ "Cognate\\CognateHooks::onPageContentSaveComplete" ],
+    "LanguageLinks": [ "Cognate\\CognateHooks::onLanguageLinks" ],
+    "WikiPageDeletionUpdates": [ "Cognate\\CognateHooks::onWikiPageDeletionUpdates" ],
+    "ArticleUndelete": [ "Cognate\\CognateHooks::onArticleUndelete" ],
+    "TitleMoveComplete": [ "Cognate\\CognateHooks::onTitleMoveComplete" ],
+    "LoadExtensionSchemaUpdates": [ "Cognate\\CognateHooks::onLoadExtensionSchemaUpdates" ],
+    "UnitTestsList": [ "Cognate\\CognateHooks::onUnitTestsList" ]
   },
   "MessagesDirs": {
     "Cognate": [

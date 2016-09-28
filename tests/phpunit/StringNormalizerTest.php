@@ -1,10 +1,14 @@
 <?php
 
+namespace Cognate\Tests;
+
+use Cognate\StringNormalizer;
+
 /**
  * @license GNU GPL v2+
  * @author Addshore
  */
-class StringNormalizerTest extends MediaWikiTestCase {
+class StringNormalizerTest extends \MediaWikiTestCase {
 
 	public function provideNormalizations() {
 		return [

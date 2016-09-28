@@ -1,6 +1,10 @@
 <?php
 
+namespace Cognate;
+
+use DatabaseUpdater;
 use MediaWiki\MediaWikiServices;
+use Title;
 
 class CognateHooks {
 

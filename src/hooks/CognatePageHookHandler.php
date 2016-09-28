@@ -1,8 +1,19 @@
 <?php
 
+namespace Cognate;
+
+use Content;
+use DeferrableUpdate;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MediaWikiServices;
+use MWCallableUpdate;
+use Revision;
+use Status;
+use Title;
+use TitleValue;
+use User;
 use Wikimedia\Assert\Assert;
+use WikiPage;
 
 /**
  * @license GNU GPL v2+
