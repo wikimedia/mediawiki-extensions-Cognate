@@ -29,20 +29,23 @@ class CognateStore {
 	 * @param ILoadBalancer $loadBalancer
 	 * @param StringNormalizer $stringNormalizer
 	 */
-	public function __construct( ILoadBalancer $loadBalancer, StringNormalizer $stringNormalizer ) {
+	public function __construct(
+		ILoadBalancer $loadBalancer,
+		StringNormalizer $stringNormalizer
+	) {
 		$this->loadBalancer = $loadBalancer;
 		$this->stringNormalizer = $stringNormalizer;
 	}
 
 	/**
-	 * @param string $siteLinkPrefix The prefix for generated links
+	 * @param string $languageCode The language code of the site
 	 * @param LinkTarget $linkTarget
 	 *
 	 * @return bool
 	 */
-	public function savePage( $siteLinkPrefix, LinkTarget $linkTarget ) {
+	public function savePage( $languageCode, LinkTarget $linkTarget ) {
 		$pageData = [
-			'cgti_site' => $siteLinkPrefix,
+			'cgti_site' => $languageCode,
 			'cgti_title' => $linkTarget->getDBkey(),
 			'cgti_namespace' => $linkTarget->getNamespace(),
 			'cgti_key' => $this->stringNormalizer->normalize( $linkTarget->getDBkey() ),
@@ -54,14 +57,14 @@ class CognateStore {
 	}
 
 	/**
-	 * @param string $siteLinkPrefix The prefix for generated links
+	 * @param string $languageCode The language code of the site
 	 * @param LinkTarget $linkTarget
 	 *
 	 * @return bool
 	 */
-	public function deletePage( $siteLinkPrefix, LinkTarget $linkTarget ) {
+	public function deletePage( $languageCode, LinkTarget $linkTarget ) {
 		$pageData = [
-			'cgti_site' => $siteLinkPrefix,
+			'cgti_site' => $languageCode,
 			'cgti_title' => $linkTarget->getDBkey(),
 			'cgti_namespace' => $linkTarget->getNamespace(),
 		];
@@ -72,28 +75,28 @@ class CognateStore {
 	}
 
 	/**
-	 * @param string $siteLinkPrefix The prefix for generated links
+	 * @param string $languageCode The language code of the site being linked from
 	 * @param LinkTarget $linkTarget
-	 * @return string[] language codes
+	 * @return string[] language codes, excluding the language passed into this method.
 	 */
-	public function getLinksForPage( $siteLinkPrefix, LinkTarget $linkTarget ) {
+	public function getLinksForPage( $languageCode, LinkTarget $linkTarget ) {
 		$dbr = $this->loadBalancer->getConnectionRef( DB_SLAVE );
 		$result = $dbr->select(
 			self::TITLES_TABLE_NAME,
 			[ 'cgti_site' ],
 			[
-				'cgti_site != ' . $dbr->addQuotes( $siteLinkPrefix ),
+				'cgti_site != ' . $dbr->addQuotes( $languageCode ),
 				'cgti_key' => $this->stringNormalizer->normalize( $linkTarget->getDBkey() ),
 				'cgti_namespace' => $linkTarget->getNamespace(),
 			]
 		);
 
-		$siteLinkPrefixes = [];
+		$languageCodes = [];
 		while ( $row = $result->fetchRow() ) {
-			$siteLinkPrefixes[] = $row[ 'cgti_site' ];
+			$languageCodes[] = $row[ 'cgti_site' ];
 		}
 
-		return $siteLinkPrefixes;
+		return $languageCodes;
 	}
 
 }

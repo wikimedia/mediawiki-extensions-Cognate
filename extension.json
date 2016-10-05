@@ -10,13 +10,22 @@
   "type": "other",
   "AutoloadClasses": {
     "Cognate\\CognateHooks": "src/CognateHooks.php",
+    "Cognate\\CognateRepo": "src/CognateRepo.php",
     "Cognate\\CognateStore": "src/CognateStore.php",
+    "Cognate\\CacheInvalidator": "src/CacheInvalidator.php",
+    "Cognate\\LocalJobSubmitJob": "src/LocalJobSubmitJob.php",
+    "Cognate\\CacheUpdateJob": "src/CacheUpdateJob.php",
     "Cognate\\StringNormalizer": "src/StringNormalizer.php",
     "Cognate\\CognatePageHookHandler": "src/hooks/CognatePageHookHandler.php"
+  },
+  "JobClasses": {
+    "CognateLocalJobSubmitJob": "Cognate\\LocalJobSubmitJob",
+    "CognateCacheUpdateJob": "Cognate\\CacheUpdateJob"
   },
   "config": {
     "CognateDb": false,
     "CognateCluster": false,
+    "CognateGroup": false,
     "CognateNamespaces": [ 0 ]
   },
   "ServiceWiringFiles": [

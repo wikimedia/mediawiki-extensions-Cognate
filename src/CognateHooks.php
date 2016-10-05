@@ -65,9 +65,9 @@ class CognateHooks {
 			return true;
 		}
 
-		/** @var CognateStore $store */
-		$store = MediaWikiServices::getInstance()->getService( 'CognateStore' );
-		$languages = $store->getLinksForPage( $wgLanguageCode, $title );
+		/** @var CognateRepo $repo */
+		$repo = MediaWikiServices::getInstance()->getService( 'CognateRepo' );
+		$languages = $repo->getLinksForPage( $wgLanguageCode, $title );
 
 		$dbKey = $title->getDBkey();
 		foreach ( $languages as $lang ) {

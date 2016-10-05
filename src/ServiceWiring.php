@@ -2,6 +2,7 @@
 
 namespace Cognate;
 
+use JobQueueGroup;
 use MediaWiki\MediaWikiServices;
 
 /**
@@ -10,6 +11,18 @@ use MediaWiki\MediaWikiServices;
 
 
 return [
+	'CognateRepo' => function( MediaWikiServices $services ) {
+		/** @var CognateStore $store */
+		$store = $services->getService( 'CognateStore' );
+		/** @var CacheInvalidator $cacheInvalidator */
+		$cacheInvalidator = $services->getService( 'CognateCacheInvalidator' );
+
+		return new CognateRepo(
+			$store,
+			$cacheInvalidator
+		);
+	},
+
 	'CognateStore' => function( MediaWikiServices $services ) {
 		$lbFactory = $services->getDBLoadBalancerFactory();
 		$cognateDb = $services->getMainConfig()->get( 'CognateDb' );
@@ -19,6 +32,7 @@ return [
 		} else {
 			$lb = $lbFactory->getMainLB( $cognateDb );
 		}
+
 		return new CognateStore(
 			$lb,
 			new StringNormalizer()
@@ -30,5 +44,9 @@ return [
 			$services->getMainConfig()->get( 'CognateNamespaces' ),
 			$services->getMainConfig()->get( 'LanguageCode' )
 		);
+	},
+
+	'CognateCacheInvalidator' => function( MediaWikiServices $services ) {
+		return new CacheInvalidator( JobQueueGroup::singleton() );
 	},
 ];

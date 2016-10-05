@@ -3,6 +3,7 @@
 namespace Cognate\Tests;
 
 use Cognate\CognatePageHookHandler;
+use Cognate\CognateRepo;
 use Cognate\CognateStore;
 use DeferrableUpdate;
 use MediaWiki\Linker\LinkTarget;
@@ -22,28 +23,28 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 	/**
 	 * @var PHPUnit_Framework_MockObject_MockObject|CognateStore
 	 */
-	private $store;
+	private $repo;
 
 	public function setUp() {
 		parent::setUp();
-		$store = $this->getMockBuilder( CognateStore::class )
+		$repo = $this->getMockBuilder( CognateRepo::class )
 			->disableOriginalConstructor()
 			->getMock();
-		$this->store = $store;
+		$this->repo = $repo;
 		$this->overrideMwServices(
 			null,
 			[
-				'CognateStore' => function () use ( $store ) {
-					return $store;
+				'CognateRepo' => function () use ( $repo ) {
+					return $repo;
 				},
 			]
 		);
 	}
 
 	public function test_onPageContentSaveComplete_namespaceMatch() {
-		$this->store->expects( $this->never() )
+		$this->repo->expects( $this->never() )
 			->method( 'deletePage' );
-		$this->store->expects( $this->once() )
+		$this->repo->expects( $this->once() )
 			->method( 'savePage' )
 			->with( 'abc2', new TitleValue( 0, 'ArticleDbKey' ) );
 
@@ -51,9 +52,9 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 	}
 
 	public function test_onPageContentSaveComplete_noNamespaceMatch() {
-		$this->store->expects( $this->never() )
+		$this->repo->expects( $this->never() )
 			->method( 'deletePage' );
-		$this->store->expects( $this->never() )
+		$this->repo->expects( $this->never() )
 			->method( 'savePage' );
 
 		$this->call_onPageContentSaveComplete( [ NS_PROJECT ], 'abc2', new TitleValue( 0, 'ArticleDbKey' ) );
@@ -89,10 +90,10 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 	}
 
 	public function test_onWikiPageDeletionUpdates_namespaceMatch() {
-		$this->store->expects( $this->once() )
+		$this->repo->expects( $this->once() )
 			->method( 'deletePage' )
 			->with( 'abc2', new TitleValue( 0, 'ArticleDbKey' ) );
-		$this->store->expects( $this->never() )
+		$this->repo->expects( $this->never() )
 			->method( 'savePage' );
 
 		$updates = $this->call_onWikiPageDeletionUpdates(
@@ -106,9 +107,9 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 	}
 
 	public function test_onWikiPageDeletionUpdates_noNamespaceMatch() {
-		$this->store->expects( $this->never() )
+		$this->repo->expects( $this->never() )
 			->method( 'deletePage' );
-		$this->store->expects( $this->never() )
+		$this->repo->expects( $this->never() )
 			->method( 'savePage' );
 
 		$updates = $this->call_onWikiPageDeletionUpdates(
@@ -153,9 +154,9 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 	}
 
 	public function test_onArticleUndelete_namespaceMatch() {
-		$this->store->expects( $this->never() )
+		$this->repo->expects( $this->never() )
 			->method( 'deletePage' );
-		$this->store->expects( $this->once() )
+		$this->repo->expects( $this->once() )
 			->method( 'savePage' )
 			->with( 'abc2', new TitleValue( 0, 'ArticleDbKey' ) );
 
@@ -167,9 +168,9 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 	}
 
 	public function test_onArticleUndelete_noNamespaceMatch() {
-		$this->store->expects( $this->never() )
+		$this->repo->expects( $this->never() )
 			->method( 'deletePage' );
-		$this->store->expects( $this->never() )
+		$this->repo->expects( $this->never() )
 			->method( 'savePage' );
 
 		$this->call_onArticleUndelete(
@@ -197,10 +198,10 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 	}
 
 	public function test_onTitleMoveComplete_namespaceMatch() {
-		$this->store->expects( $this->once() )
+		$this->repo->expects( $this->once() )
 			->method( 'deletePage' )
 			->with( 'abc2', new TitleValue( 0, 'ArticleDbKeyOld' ) );
-		$this->store->expects( $this->once() )
+		$this->repo->expects( $this->once() )
 			->method( 'savePage' )
 			->with( 'abc2', new TitleValue( 0, 'ArticleDbKeyNew' ) );
 
@@ -213,9 +214,9 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 	}
 
 	public function test_onTitleMoveComplete_noNamespaceMatch() {
-		$this->store->expects( $this->never() )
+		$this->repo->expects( $this->never() )
 			->method( 'deletePage' );
-		$this->store->expects( $this->never() )
+		$this->repo->expects( $this->never() )
 			->method( 'savePage' );
 
 		$this->call_onTitleMoveComplete(
@@ -227,10 +228,10 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 	}
 
 	public function test_onTitleMoveComplete_namespaceMatchOld() {
-		$this->store->expects( $this->once() )
+		$this->repo->expects( $this->once() )
 			->method( 'deletePage' )
 			->with( 'abc2', new TitleValue( NS_PROJECT, 'ArticleDbKeyOld' ) );
-		$this->store->expects( $this->never() )
+		$this->repo->expects( $this->never() )
 			->method( 'savePage' );
 
 		$this->call_onTitleMoveComplete(
@@ -242,9 +243,9 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 	}
 
 	public function test_onTitleMoveComplete_namespaceMatchNew() {
-		$this->store->expects( $this->never() )
+		$this->repo->expects( $this->never() )
 			->method( 'deletePage' );
-		$this->store->expects( $this->once() )
+		$this->repo->expects( $this->once() )
 			->method( 'savePage' )
 			->with( 'abc2', new TitleValue( NS_PROJECT, 'ArticleDbKeyNew' ) );
 
