@@ -28,8 +28,7 @@
     "WikiPageDeletionUpdates": [ "Cognate\\CognateHooks::onWikiPageDeletionUpdates" ],
     "ArticleUndelete": [ "Cognate\\CognateHooks::onArticleUndelete" ],
     "TitleMoveComplete": [ "Cognate\\CognateHooks::onTitleMoveComplete" ],
-    "LoadExtensionSchemaUpdates": [ "Cognate\\CognateHooks::onLoadExtensionSchemaUpdates" ],
-    "UnitTestsList": [ "Cognate\\CognateHooks::onUnitTestsList" ]
+    "LoadExtensionSchemaUpdates": [ "Cognate\\CognateHooks::onLoadExtensionSchemaUpdates" ]
   },
   "MessagesDirs": {
     "Cognate": [

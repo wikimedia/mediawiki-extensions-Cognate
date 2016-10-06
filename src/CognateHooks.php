@@ -102,9 +102,4 @@ class CognateHooks {
 		return true;
 	}
 
-	public static function onUnitTestsList( &$files ) {
-		$files = array_merge( $files, __DIR__ . '/tests/phpunit' );
-		return true;
-	}
-
 }
