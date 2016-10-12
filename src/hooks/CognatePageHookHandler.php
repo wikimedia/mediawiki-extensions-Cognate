@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MediaWikiServices;
 use Wikimedia\Assert\Assert;
 
@@ -34,7 +35,7 @@ class CognatePageHookHandler {
 	 * Occurs after the save page request has been processed.
 	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/PageContentSaveComplete
 	 *
-	 * @param WikiPage $article
+	 * @param WikiPage $page
 	 * @param User $user
 	 * @param Content $content
 	 * @param string $summary
@@ -47,7 +48,7 @@ class CognatePageHookHandler {
 	 * @param integer $baseRevId
 	 */
 	public function onPageContentSaveComplete(
-		WikiPage $article,
+		WikiPage $page,
 		User $user,
 		Content $content,
 		$summary,
@@ -59,9 +60,9 @@ class CognatePageHookHandler {
 		Status $status,
 		$baseRevId
 	) {
-		if ( $article->getTitle()->inNamespaces( $this->namespaces ) ) {
-			$store = MediaWikiServices::getInstance()->getService( 'CognateStore' );
-			$store->savePage( $this->languageCode, $article->getTitle()->getDBkey() );
+		$titleValue = $page->getTitle()->getTitleValue();
+		if ( $this->isActionableTarget( $titleValue ) ) {
+			$this->getStore()->savePage( $this->languageCode, $titleValue );
 		}
 	}
 
@@ -78,17 +79,26 @@ class CognatePageHookHandler {
 		Content $content = null,
 		array &$updates
 	) {
-		$title = $page->getTitle();
+		$titleValue = $page->getTitle()->getTitleValue();
 		$language = $this->languageCode;
-		if ( $title->inNamespaces( $this->namespaces ) ) {
-			$updates[] = new MWCallableUpdate(
-				function () use ( $title, $language ){
-					$store = MediaWikiServices::getInstance()->getService( 'CognateStore' );
-					$store->deletePage( $language, $title->getDBkey() );
-				},
-				__METHOD__
-			);
+		if ( $this->isActionableTarget( $titleValue ) ) {
+			$updates[] = $this->newDeferrableDelete( $titleValue, $language );
 		}
+	}
+
+	/**
+	 * @param TitleValue $titleValue
+	 * @param string $language
+	 *
+	 * @return MWCallableUpdate
+	 */
+	private function newDeferrableDelete( TitleValue $titleValue, $language ) {
+		return new MWCallableUpdate(
+			function () use ( $language, $titleValue ){
+				$this->getStore()->deletePage( $language, $titleValue );
+			},
+			__METHOD__
+		);
 	}
 
 	/**
@@ -106,10 +116,30 @@ class CognatePageHookHandler {
 		$comment,
 		$oldPageId
 	) {
-		if ( $title->inNamespaces( $this->namespaces ) ) {
-			$store = MediaWikiServices::getInstance()->getService( 'CognateStore' );
-			$store->savePage( $this->languageCode, $title->getDBkey() );
+		$titleValue = $title->getTitleValue();
+		if ( $this->isActionableTarget( $titleValue ) ) {
+			$this->getStore()->savePage( $this->languageCode, $titleValue );
 		}
+	}
+
+	/**
+	 * Actionable targets have a namespace id that is:
+	 *  - One of the default MediaWiki (between NS_MAIN and NS_CATEGORY_TALK
+	 *  - Defined as a namespace to record in the configuration
+	 * @param LinkTarget $linkTarget
+	 * @return bool
+	 */
+	private function isActionableTarget( LinkTarget $linkTarget ) {
+		$namespace = $linkTarget->getNamespace();
+		return in_array( $namespace, $this->namespaces ) &&
+			$namespace >= NS_MAIN && $namespace <= NS_CATEGORY_TALK;
+	}
+
+	/**
+	 * @return CognateStore
+	 */
+	private function getStore() {
+		return MediaWikiServices::getInstance()->getService( 'CognateStore' );
 	}
 
 }
