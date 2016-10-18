@@ -99,4 +99,33 @@ class CognateStore {
 		return $languageCodes;
 	}
 
+	/**
+	 * @param array $titleDetailsArray where each element contains the keys 'site', 'namespace', 'title'
+	 *        e.g. [ [ 'site' => 'en', 'namespace' => 0, 'title' => 'Berlin' ] ]
+	 *
+	 * @return bool
+	 */
+	public function addTitles( array $titleDetailsArray ) {
+		$dbw = $this->loadBalancer->getConnectionRef( DB_MASTER );
+
+		$toInsert = [];
+		foreach ( $titleDetailsArray as $titleDetails ) {
+			$toInsert[] = [
+				'cgti_site' => $titleDetails['site'],
+				'cgti_namespace' => $titleDetails['namespace'],
+				'cgti_title' => $titleDetails['title'],
+				'cgti_key' => $this->stringNormalizer->normalize( $titleDetails['title'] ),
+			];
+		}
+
+		$result = $dbw->insert(
+			CognateStore::TITLES_TABLE_NAME,
+			$toInsert,
+			__METHOD__,
+			[ 'IGNORE' ]
+		);
+
+		return (bool)$result;
+	}
+
 }

@@ -63,4 +63,40 @@ class CognateStoreTest extends \MediaWikiTestCase {
 		);
 	}
 
+	public function testAddTitles_noTitles() {
+		$this->store->addTitles( [] );
+		$this->assertSelect(
+			'cognate_titles',
+			[ 'cgti_site', 'cgti_title', 'cgti_key', 'cgti_namespace' ],
+			[ 'cgti_title != "UTPage"' ],
+			[]
+		);
+	}
+
+	public function testAddTitles_oneTitle() {
+		$this->store->addTitles( [ [ 'site' => 'en', 'namespace' => 0, 'title' => 'Berlin' ] ] );
+		$this->assertSelect(
+			'cognate_titles',
+			[ 'cgti_site', 'cgti_title', 'cgti_key', 'cgti_namespace' ],
+			[ 'cgti_title != "UTPage"' ],
+			[ [ 'en', 'Berlin', 'Berlin', '0' ] ]
+		);
+	}
+
+	public function testAddTitles_multipleTitle() {
+		$this->store->addTitles( [
+			[ 'site' => 'en', 'namespace' => 0, 'title' => 'Berlin' ],
+			[ 'site' => 'fr', 'namespace' => 1, 'title' => 'Foo' ],
+		] );
+		$this->assertSelect(
+			'cognate_titles',
+			[ 'cgti_site', 'cgti_title', 'cgti_key', 'cgti_namespace' ],
+			[ 'cgti_title != "UTPage"' ],
+			[
+				[ 'en', 'Berlin', 'Berlin', '0' ],
+				[ 'fr', 'Foo', 'Foo', '1' ],
+			]
+		);
+	}
+
 }
