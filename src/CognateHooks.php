@@ -76,8 +76,6 @@ class CognateHooks {
 			}
 		}
 
-		// TODO Move InterwikiSorter class from the wikibase extension to its own extension and use it to sort the language links
-		// See https://git.wikimedia.org/blob/mediawiki%2Fextensions%2FWikibase/master/client%2Fincludes%2FInterwikiSorter.php
 		return true;
 	}
 
