@@ -2,7 +2,8 @@
   "name": "Cognate",
   "version": "0.0.1",
   "author": [
-    "Gabriel Birke <gabriel.birke@wikimedia.de>"
+    "Gabriel Birke <gabriel.birke@wikimedia.de>",
+    "Addshore"
   ],
   "url": "https://www.mediawiki.org/wiki/Extension:Cognate",
   "descriptionmsg": "cognate-desc",
