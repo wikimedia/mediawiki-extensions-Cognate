@@ -27,13 +27,16 @@ class CognateStore {
 
 	/**
 	 * @param ILoadBalancer $loadBalancer
+	 * @param string $databaseName
 	 * @param StringNormalizer $stringNormalizer
 	 */
 	public function __construct(
 		ILoadBalancer $loadBalancer,
+		$databaseName,
 		StringNormalizer $stringNormalizer
 	) {
 		$this->loadBalancer = $loadBalancer;
+		$this->databaseName = $databaseName;
 		$this->stringNormalizer = $stringNormalizer;
 	}
 
@@ -50,7 +53,7 @@ class CognateStore {
 			'cgti_namespace' => $linkTarget->getNamespace(),
 			'cgti_key' => $this->stringNormalizer->normalize( $linkTarget->getDBkey() ),
 		];
-		$dbw = $this->loadBalancer->getConnectionRef( DB_MASTER );
+		$dbw = $this->loadBalancer->getConnectionRef( DB_MASTER, [], $this->databaseName );
 		$result = $dbw->insert( self::TITLES_TABLE_NAME, $pageData, __METHOD__, [ 'IGNORE' ] );
 
 		return $result;
@@ -68,7 +71,7 @@ class CognateStore {
 			'cgti_title' => $linkTarget->getDBkey(),
 			'cgti_namespace' => $linkTarget->getNamespace(),
 		];
-		$dbw = $this->loadBalancer->getConnectionRef( DB_MASTER );
+		$dbw = $this->loadBalancer->getConnectionRef( DB_MASTER, [], $this->databaseName  );
 		$result = $dbw->delete( self::TITLES_TABLE_NAME, $pageData, __METHOD__ );
 
 		return (bool)$result;
@@ -80,7 +83,7 @@ class CognateStore {
 	 * @return string[] language codes, excluding the language passed into this method.
 	 */
 	public function getLinksForPage( $languageCode, LinkTarget $linkTarget ) {
-		$dbr = $this->loadBalancer->getConnectionRef( DB_SLAVE );
+		$dbr = $this->loadBalancer->getConnectionRef( DB_SLAVE, [], $this->databaseName  );
 		$result = $dbr->select(
 			self::TITLES_TABLE_NAME,
 			[ 'cgti_site' ],

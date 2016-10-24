@@ -35,6 +35,7 @@ return [
 
 		return new CognateStore(
 			$lb,
+			$cognateDb,
 			new StringNormalizer()
 		);
 	},
