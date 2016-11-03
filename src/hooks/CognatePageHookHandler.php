@@ -73,7 +73,7 @@ class CognatePageHookHandler {
 	) {
 		$titleValue = $page->getTitle()->getTitleValue();
 		if ( $this->isActionableTarget( $titleValue ) ) {
-			$this->getStore()->savePage( $this->languageCode, $titleValue );
+			$this->getRepo()->savePage( $this->languageCode, $titleValue );
 		}
 	}
 
@@ -106,7 +106,7 @@ class CognatePageHookHandler {
 	private function newDeferrableDelete( TitleValue $titleValue, $language ) {
 		return new MWCallableUpdate(
 			function () use ( $language, $titleValue ){
-				$this->getStore()->deletePage( $language, $titleValue );
+				$this->getRepo()->deletePage( $language, $titleValue );
 			},
 			__METHOD__
 		);
@@ -129,7 +129,7 @@ class CognatePageHookHandler {
 	) {
 		$titleValue = $title->getTitleValue();
 		if ( $this->isActionableTarget( $titleValue ) ) {
-			$this->getStore()->savePage( $this->languageCode, $titleValue );
+			$this->getRepo()->savePage( $this->languageCode, $titleValue );
 		}
 	}
 
@@ -156,12 +156,12 @@ class CognatePageHookHandler {
 	) {
 		$oldTitleValue = $title->getTitleValue();
 		$newTitleValue = $newTitle->getTitleValue();
-		$store = $this->getStore();
+		$repo = $this->getRepo();
 		if ( $this->isActionableTarget( $oldTitleValue ) ) {
-			$store->deletePage( $this->languageCode, $oldTitleValue );
+			$repo->deletePage( $this->languageCode, $oldTitleValue );
 		}
 		if ( $this->isActionableTarget( $newTitleValue ) ) {
-			$store->savePage( $this->languageCode, $newTitleValue );
+			$repo->savePage( $this->languageCode, $newTitleValue );
 		}
 	}
 
@@ -179,10 +179,10 @@ class CognatePageHookHandler {
 	}
 
 	/**
-	 * @return CognateStore
+	 * @return CognateRepo
 	 */
-	private function getStore() {
-		return MediaWikiServices::getInstance()->getService( 'CognateStore' );
+	private function getRepo() {
+		return MediaWikiServices::getInstance()->getService( 'CognateRepo' );
 	}
 
 }

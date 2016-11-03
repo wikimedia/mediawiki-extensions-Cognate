@@ -3,6 +3,7 @@
 namespace Cognate\Tests;
 
 use Cognate\CognatePageHookHandler;
+use Cognate\CognateRepo;
 use Cognate\CognateStore;
 use MediaWiki\MediaWikiServices;
 
@@ -14,6 +15,7 @@ class ServiceWiringTest extends \MediaWikiTestCase {
 
 	public function provideServices() {
 		return [
+			[ 'CognateRepo', CognateRepo::class ],
 			[ 'CognateStore', CognateStore::class ],
 			[ 'CognatePageHookHandler', CognatePageHookHandler::class ],
 		];
