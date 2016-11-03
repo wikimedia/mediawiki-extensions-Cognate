@@ -7,6 +7,7 @@ use DeferrableUpdate;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MediaWikiServices;
 use MWCallableUpdate;
+use MWException;
 use Revision;
 use Status;
 use Title;
@@ -32,6 +33,11 @@ class CognatePageHookHandler {
 	private $namespaces;
 
 	/**
+	 * @var callable
+	 */
+	private $newRevisionFromIdCallable;
+
+	/**
 	 * CognatePageHookHandler constructor.
 	 *
 	 * @param int[] $namespaces array of namespace ids the hooks should operate on
@@ -40,6 +46,25 @@ class CognatePageHookHandler {
 	public function __construct( array $namespaces, $languageCode ) {
 		$this->namespaces = $namespaces;
 		$this->languageCode = $languageCode;
+		$this->newRevisionFromIdCallable = function ( $id ) {
+			return Revision::newFromId( $id );
+		};
+	}
+
+	/**
+	 * Overrides the use of Revision::newFromId in this class
+	 * This is intended for use while testing and will fail if MW_PHPUNIT_TEST is not defined.
+	 *
+	 * @param callable $callback
+	 * @throws MWException
+	 */
+	public function overrideRevisionNewFromId( callable $callback ) {
+		if ( !defined( 'MW_PHPUNIT_TEST' ) ) {
+			throw new MWException(
+				'Cannot override Revision::newFromId callback in operation.'
+			);
+		}
+		$this->newRevisionFromIdCallable = $callback;
 	}
 
 	/**
@@ -71,10 +96,10 @@ class CognatePageHookHandler {
 		Status $status,
 		$baseRevId
 	) {
-		$titleValue = $page->getTitle()->getTitleValue();
-		if ( $this->isActionableTarget( $titleValue ) ) {
-			$this->getRepo()->savePage( $this->languageCode, $titleValue );
-		}
+		$this->onContentChange(
+			$page->getTitle()->getTitleValue(),
+			$content
+		);
 	}
 
 	/**
@@ -127,10 +152,20 @@ class CognatePageHookHandler {
 		$comment,
 		$oldPageId
 	) {
-		$titleValue = $title->getTitleValue();
-		if ( $this->isActionableTarget( $titleValue ) ) {
-			$this->getRepo()->savePage( $this->languageCode, $titleValue );
-		}
+		$revision = $this->newRevisionFromId( $title->getLatestRevID() );
+		$this->onContentChange(
+			$title->getTitleValue(),
+			$revision->getContent( Revision::RAW )
+		);
+	}
+
+	/**
+	 * @param int $id
+	 *
+	 * @return null|Revision
+	 */
+	private function newRevisionFromId( $id ) {
+		return call_user_func( $this->newRevisionFromIdCallable, $id );
 	}
 
 	/**
@@ -183,6 +218,16 @@ class CognatePageHookHandler {
 	 */
 	private function getRepo() {
 		return MediaWikiServices::getInstance()->getService( 'CognateRepo' );
+	}
+
+	private function onContentChange( TitleValue $titleValue, Content $content ) {
+		if ( $this->isActionableTarget( $titleValue ) ) {
+			if ( $content->isRedirect() ) {
+				$this->getRepo()->deletePage( $this->languageCode, $titleValue );
+			} else {
+				$this->getRepo()->savePage( $this->languageCode, $titleValue );
+			}
+		}
 	}
 
 }

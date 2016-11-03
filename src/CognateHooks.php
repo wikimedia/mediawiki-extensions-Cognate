@@ -19,14 +19,10 @@ class CognateHooks {
 		return true;
 	}
 
-	public static function onWikiPageDeletionUpdates() {
-		call_user_func_array(
-			[
-				MediaWikiServices::getInstance()->getService( 'CognatePageHookHandler' ),
-				'onWikiPageDeletionUpdates'
-			],
-			func_get_args()
-		);
+	public static function onWikiPageDeletionUpdates( $page, $content, &$updates ) {
+		MediaWikiServices::getInstance()
+			->getService( 'CognatePageHookHandler' )
+			->onWikiPageDeletionUpdates( $page, $content, $updates );
 		return true;
 	}
 

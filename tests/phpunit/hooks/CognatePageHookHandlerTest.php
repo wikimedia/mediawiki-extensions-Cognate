@@ -5,6 +5,7 @@ namespace Cognate\Tests;
 use Cognate\CognatePageHookHandler;
 use Cognate\CognateRepo;
 use Cognate\CognateStore;
+use Content;
 use DeferrableUpdate;
 use MediaWiki\Linker\LinkTarget;
 use PHPUnit_Framework_MockObject_MockObject;
@@ -41,23 +42,39 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 		);
 	}
 
-	public function test_onPageContentSaveComplete_namespaceMatch() {
+	public function test_onPageContentSaveComplete_namespaceMatch_noRedirect() {
 		$this->repo->expects( $this->never() )
 			->method( 'deletePage' );
 		$this->repo->expects( $this->once() )
 			->method( 'savePage' )
 			->with( 'abc2', new TitleValue( 0, 'ArticleDbKey' ) );
 
-		$this->call_onPageContentSaveComplete( [ 0 ], 'abc2', new TitleValue( 0, 'ArticleDbKey' ) );
+		$this->call_onPageContentSaveComplete(
+			[ 0 ], 'abc2', new TitleValue( 0, 'ArticleDbKey' )
+		);
 	}
 
-	public function test_onPageContentSaveComplete_noNamespaceMatch() {
+	public function test_onPageContentSaveComplete_namespaceMatch_redirect() {
+		$this->repo->expects( $this->once() )
+			->method( 'deletePage' )
+			->with( 'abc2', new TitleValue( 0, 'ArticleDbKey' ) );
+		$this->repo->expects( $this->never() )
+			->method( 'savePage' );
+
+		$this->call_onPageContentSaveComplete(
+			[ 0 ], 'abc2', new TitleValue( 0, 'ArticleDbKey' ), true
+		);
+	}
+
+	public function test_onPageContentSaveComplete_noNamespaceMatch_noRedirect() {
 		$this->repo->expects( $this->never() )
 			->method( 'deletePage' );
 		$this->repo->expects( $this->never() )
 			->method( 'savePage' );
 
-		$this->call_onPageContentSaveComplete( [ NS_PROJECT ], 'abc2', new TitleValue( 0, 'ArticleDbKey' ) );
+		$this->call_onPageContentSaveComplete(
+			[ NS_PROJECT ], 'abc2', new TitleValue( 0, 'ArticleDbKey' )
+		);
 	}
 
 	/**
@@ -68,7 +85,8 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 	private function call_onPageContentSaveComplete(
 		array $namespaces,
 		$language,
-		LinkTarget $linkTarget
+		LinkTarget $linkTarget,
+		$latestRevisionIsRedirect = false
 	) {
 		/** @var WikiPage|PHPUnit_Framework_MockObject_MockObject $mockWikiPage */
 		$mockWikiPage = $this->getMockBuilder( 'WikiPage' )
@@ -78,11 +96,16 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 			->method( 'getTitle' )
 			->willReturn( Title::newFromLinkTarget( $linkTarget ) );
 
+		$content = $this->getMock( 'Content' );
+		$content->expects( $this->any() )
+			->method( 'isRedirect' )
+			->will( $this->returnValue( $latestRevisionIsRedirect ) );
+
 		$handler = new CognatePageHookHandler( $namespaces, $language );
 		$handler->onPageContentSaveComplete(
 			$mockWikiPage,
 			User::newFromId( 0 ),
-			$this->getMock( 'Content' ),
+			$content,
 			null, null, null, null, null, null,
 			$this->getMock( 'Status' ),
 			null
@@ -153,7 +176,7 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 		return $updates;
 	}
 
-	public function test_onArticleUndelete_namespaceMatch() {
+	public function test_onArticleUndelete_namespaceMatch_noRedirect() {
 		$this->repo->expects( $this->never() )
 			->method( 'deletePage' );
 		$this->repo->expects( $this->once() )
@@ -167,7 +190,22 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 		);
 	}
 
-	public function test_onArticleUndelete_noNamespaceMatch() {
+	public function test_onArticleUndelete_namespaceMatch_redirect() {
+		$this->repo->expects( $this->once() )
+			->method( 'deletePage' )
+			->with( 'abc2', new TitleValue( 0, 'ArticleDbKey' ) );
+		$this->repo->expects( $this->never() )
+			->method( 'savePage' );
+
+		$this->call_onArticleUndelete(
+			[ 0 ],
+			'abc2',
+			new TitleValue( 0, 'ArticleDbKey' ),
+			true
+		);
+	}
+
+	public function test_onArticleUndelete_noNamespaceMatch_noRedirect() {
 		$this->repo->expects( $this->never() )
 			->method( 'deletePage' );
 		$this->repo->expects( $this->never() )
@@ -188,11 +226,23 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 	private function call_onArticleUndelete(
 		array $namespaces,
 		$language,
-		LinkTarget $linkTarget
+		LinkTarget $linkTarget,
+		$latestRevIsRedirect = false
 	) {
 		$handler = new CognatePageHookHandler( $namespaces, $language );
+		$handler->overrideRevisionNewFromId( function() use ( $latestRevIsRedirect ) {
+			$content = $this->getMockContent();
+			$content->expects( $this->any() )
+				->method( 'isRedirect' )
+				->will( $this->returnValue( $latestRevIsRedirect ) );
+			$revision = $this->getMockRevision();
+			$revision->expects( $this->any() )
+				->method( 'getContent' )
+				->will( $this->returnValue( $content ) );
+			return $revision;
+		} );
 		$handler->onArticleUndelete(
-			Title::newFromLinkTarget( $linkTarget ),
+			$this->getMockTitle( $linkTarget ),
 			null, null, null
 		);
 	}
@@ -284,9 +334,46 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 	 * @return PHPUnit_Framework_MockObject_MockObject|Revision
 	 */
 	private function getMockRevision() {
-		return $this->getMockBuilder( 'Revision' )
+		return $this->getMockBuilder( Revision::class )
 			->disableOriginalConstructor()
 			->getMock();
+	}
+
+	/**
+	 * @return PHPUnit_Framework_MockObject_MockObject|Content
+	 */
+	private function getMockContent() {
+		return $this->getMockBuilder( Content::class )
+			->disableOriginalConstructor()
+			->getMock();
+	}
+
+	/**
+	 * @param LinkTarget $value
+	 *
+	 * @return PHPUnit_Framework_MockObject_MockObject|Title
+	 */
+	private function getMockTitle( LinkTarget $value ) {
+		$mock = $this->getMockBuilder( Title::class )
+			->disableOriginalConstructor()
+			->getMock();
+		foreach ( get_class_methods( $value ) as $methodName ) {
+			if ( strstr( $methodName, '__' ) ) {
+				continue;
+			}
+			$mock->expects( $this->any() )
+				->method( $methodName )
+				->will( $this->returnCallback( function() use ( $value, $methodName ) {
+					return call_user_func_array( [ $value, $methodName ], func_get_args() );
+				} ) );
+		}
+		$mock->expects( $this->any() )
+			->method( 'getTitleValue' )
+			->will( $this->returnValue( $value ) );
+		$mock->expects( $this->any() )
+			->method( 'getLatestRevID' )
+			->will( $this->returnValue( 5566778899 ) );
+		return $mock;
 	}
 
 }
