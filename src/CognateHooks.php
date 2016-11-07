@@ -61,14 +61,20 @@ class CognateHooks {
 			return true;
 		}
 
+		$presentLanguages = [];
+		foreach ( $links as $linkString ) {
+			$linkParts = explode( ':', $linkString, 2 );
+			$presentLanguages[$linkParts[0]] = true;
+		}
+
 		/** @var CognateRepo $repo */
 		$repo = MediaWikiServices::getInstance()->getService( 'CognateRepo' );
-		$languages = $repo->getLinksForPage( $wgLanguageCode, $title );
+		$cognateLanguages = $repo->getLinksForPage( $wgLanguageCode, $title );
 
 		$dbKey = $title->getDBkey();
-		foreach ( $languages as $lang ) {
-			if ( !isset( $links[$lang] ) ) {
-				$links[$lang] = $lang . ':' . $dbKey;
+		foreach ( $cognateLanguages as $lang ) {
+			if ( !array_key_exists( $lang, $presentLanguages ) ) {
+				$links[] = $lang . ':' . $dbKey;
 			}
 		}
 
