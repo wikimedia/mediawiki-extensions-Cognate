@@ -98,11 +98,17 @@ class CognateHooks {
 	public static function onLoadExtensionSchemaUpdates( DatabaseUpdater $updater = null ) {
 		global $wgCognateDb, $wgCognateCluster;
 
-		if ( $wgCognateDb === false && $wgCognateCluster === false ) {
-			$updater->addExtensionUpdate(
-				[ 'addTable', 'cognate_titles', __DIR__ . '/../db/addCognateTitles.sql', true ]
-			);
+		// The Updater can only deal with the main wiki db, so skip if something else is configured
+		if ( $wgCognateDb !== false || $wgCognateCluster !== false ) {
+			return true;
 		}
+
+		$updater->addExtensionUpdate(
+			[ 'addTable', 'cognate_titles', __DIR__ . '/../db/addCognateTitles.sql', true ]
+		);
+		$updater->addExtensionUpdate(
+			[ 'addTable', 'cognate_sites', __DIR__ . '/../db/addCognateSites.sql', true ]
+		);
 
 		return true;
 	}

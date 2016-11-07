@@ -21,7 +21,10 @@ class CognateStoreTest extends \MediaWikiTestCase {
 
 	protected function setUp() {
 		parent::setUp();
-		$this->tablesUsed = [ CognateStore::TITLES_TABLE_NAME ];
+		$this->tablesUsed = [
+			CognateStore::TITLES_TABLE_NAME,
+			'cognate_sites',
+		];
 		$this->store = MediaWikiServices::getInstance()->getService( 'CognateStore' );
 	}
 
@@ -98,6 +101,28 @@ class CognateStoreTest extends \MediaWikiTestCase {
 			[
 				[ 'en', 'Berlin', 'Berlin', '0' ],
 				[ 'fr', 'Foo', 'Foo', '1' ],
+			]
+		);
+	}
+
+	public function testAddSites_noSites() {
+		$this->store->addSites( [] );
+		$this->assertSelect(
+			'cognate_sites',
+			[ 'cgsi_dbname', 'cgsi_interwiki' ],
+			[],
+			[]
+		);
+	}
+
+	public function testAddSites_oneSite() {
+		$this->store->addSites( [ 'enwiktionary' => 'en' ] );
+		$this->assertSelect(
+			'cognate_sites',
+			[ 'cgsi_dbname', 'cgsi_interwiki' ],
+			[],
+			[
+				[ 'enwiktionary', 'en' ],
 			]
 		);
 	}

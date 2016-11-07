@@ -131,4 +131,27 @@ class CognateStore {
 		return (bool)$result;
 	}
 
+	/**
+	 * @param string[] $sites keys of site dbname => values of site language
+	 *            eg. 'enwiktionary' => 'en'
+	 */
+	public function addSites( array $sites ) {
+		$dbw = $this->loadBalancer->getConnectionRef( DB_MASTER, [], $this->databaseName );
+
+		$toInsert = [];
+		foreach ( $sites as $dbname => $languageCode ) {
+			$toInsert[] = [
+				'cgsi_dbname' => $dbname,
+				'cgsi_interwiki' => $languageCode,
+			];
+		}
+
+		$dbw->insert(
+			'cognate_sites',
+			$toInsert,
+			__METHOD__,
+			[ 'IGNORE' ]
+		);
+	}
+
 }
