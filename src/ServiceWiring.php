@@ -9,7 +9,6 @@ use MediaWiki\MediaWikiServices;
  * Cognate wiring for MediaWiki services.
  */
 
-
 return [
 	'CognateRepo' => function( MediaWikiServices $services ) {
 		/** @var CognateStore $store */
@@ -28,7 +27,7 @@ return [
 		$cognateDb = $services->getMainConfig()->get( 'CognateDb' );
 		$cognateCluster = $services->getMainConfig()->get( 'CognateCluster' );
 		if ( $cognateCluster ) {
-			$lb = $lbFactory->getExternalLB( $cognateCluster, $cognateDb );
+			$lb = $lbFactory->getExternalLB( $cognateCluster );
 		} else {
 			$lb = $lbFactory->getMainLB( $cognateDb );
 		}
