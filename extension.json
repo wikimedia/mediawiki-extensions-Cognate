@@ -17,6 +17,7 @@
     "Cognate\\LocalJobSubmitJob": "src/LocalJobSubmitJob.php",
     "Cognate\\CacheUpdateJob": "src/CacheUpdateJob.php",
     "Cognate\\StringNormalizer": "src/StringNormalizer.php",
+    "Cognate\\StringHasher": "src/StringHasher.php",
     "Cognate\\CognatePageHookHandler": "src/hooks/CognatePageHookHandler.php"
   },
   "JobClasses": {
@@ -26,7 +27,6 @@
   "config": {
     "CognateDb": false,
     "CognateCluster": false,
-    "CognateGroup": false,
     "CognateNamespaces": [ 0 ]
   },
   "ServiceWiringFiles": [

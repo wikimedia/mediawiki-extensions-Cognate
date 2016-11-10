@@ -18,7 +18,8 @@ return [
 
 		return new CognateRepo(
 			$store,
-			$cacheInvalidator
+			$cacheInvalidator,
+			$services->getTitleFormatter()
 		);
 	},
 
@@ -35,14 +36,15 @@ return [
 		return new CognateStore(
 			$lb,
 			$cognateDb,
-			new StringNormalizer()
+			new StringNormalizer(),
+			new StringHasher()
 		);
 	},
 
 	'CognatePageHookHandler' => function( MediaWikiServices $services ) {
 		return new CognatePageHookHandler(
 			$services->getMainConfig()->get( 'CognateNamespaces' ),
-			$services->getMainConfig()->get( 'LanguageCode' )
+			$services->getMainConfig()->get( 'DBname' )
 		);
 	},
 

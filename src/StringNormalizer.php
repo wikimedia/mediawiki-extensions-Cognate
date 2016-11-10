@@ -3,27 +3,35 @@
 namespace Cognate;
 
 /**
+ * BIG WARNING!!!!!   L(・o・)」
+ * Any changes in this class that result in different normalizations will require the
+ * cognate_titles table to be rebuilt.
+ *
  * @license GNU GPL v2+
  * @author Addshore
  */
 class StringNormalizer {
 
+	/**
+	 * @var string[]
+	 */
 	private $replacements = [
 		'’' => '\'',
 		'…' => '...',
-		'_' => ' ',
+		' ' => '_',
 	];
 
 	/**
 	 * @param string $string
 	 *
-	 * @return mixed
+	 * @return string
 	 */
 	public function normalize( $string ) {
-		foreach ( $this->replacements as $find => $replacement ) {
-			$string = str_replace( $find, $replacement, $string );
-		}
-		return $string;
+		return str_replace(
+			array_keys( $this->replacements ),
+			array_values( $this->replacements ),
+			$string
+		);
 	}
 
 }

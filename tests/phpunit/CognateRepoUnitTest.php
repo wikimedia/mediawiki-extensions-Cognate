@@ -8,6 +8,7 @@ use Cognate\CognateStore;
 use MediaWiki\Linker\LinkTarget;
 use PHPUnit_Framework_MockObject_MockObject;
 use Title;
+use TitleFormatter;
 use TitleValue;
 
 /**
@@ -40,11 +41,11 @@ class CognateRepoUnitTest extends \MediaWikiTestCase {
 			$mock->expects( $this->never() )->method( 'invalidate' );
 		}
 		foreach ( $expectedInvalidateCalls as $key => $details ) {
-			list( $languageCode, $linkTarget ) = $details;
+			list( $dbName, $linkTarget ) = $details;
 			$mock->expects( $this->at( $key ) )
 				->method( 'invalidate' )
-				->will( $this->returnCallback( function( $param1, Title $param2 ) use ( $languageCode, $linkTarget ) {
-					$this->assertEquals( $languageCode, $param1 );
+				->will( $this->returnCallback( function( $param1, Title $param2 ) use ( $dbName, $linkTarget ) {
+					$this->assertEquals( $dbName, $param1 );
 					/** @var LinkTarget $linkTarget */
 					$this->assertInstanceOf( Title::class, $param2 );
 					$this->assertEquals( $linkTarget->getDBkey(), $param2->getDBkey() );
@@ -54,28 +55,49 @@ class CognateRepoUnitTest extends \MediaWikiTestCase {
 		return $mock;
 	}
 
+	/**
+	 * @return PHPUnit_Framework_MockObject_MockObject|TitleFormatter
+	 */
+	private function getMockTitleFormatter() {
+		$mock = $this->getMock( 'TitleFormatter' );
+		$mock->expects( $this->any() )
+			->method( 'formatTitle' )
+			->will( $this->returnCallback( function( $ns, $title, $fragment, $interwiki ) {
+				return "$interwiki:$ns:$title";
+			} ) );
+		return $mock;
+	}
+
 	public function testSavePage_successAndInvalidate() {
 		$titleValue = new TitleValue( 0, 'My_test_page' );
 		$store = $this->getMockStore();
 		$store->expects( $this->once() )
-			->method( 'savePage' )
-			->with( 'gg', $titleValue )
+			->method( 'insertPage' )
+			->with( 'siteName', $titleValue )
 			->will( $this->returnValue( true ) );
 
-		$repo = new CognateRepo( $store, $this->getMockCacheInvalidator( [ [ 'gg', $titleValue ] ] ) );
-		$repo->savePage( 'gg', $titleValue );
+		$repo = new CognateRepo(
+			$store,
+			$this->getMockCacheInvalidator( [ [ 'siteName', $titleValue ] ] ),
+			$this->getMockTitleFormatter()
+		);
+		$repo->savePage( 'siteName', $titleValue );
 	}
 
 	public function testSavePage_failAndNoInvalidate() {
 		$titleValue = new TitleValue( 0, 'My_test_page' );
 		$store = $this->getMockStore();
 		$store->expects( $this->once() )
-			->method( 'savePage' )
-			->with( 'gg', $titleValue )
+			->method( 'insertPage' )
+			->with( 'siteName', $titleValue )
 			->will( $this->returnValue( false ) );
 
-		$repo = new CognateRepo( $store, $this->getMockCacheInvalidator( [] ) );
-		$repo->savePage( 'gg', $titleValue );
+		$repo = new CognateRepo(
+			$store,
+			$this->getMockCacheInvalidator( [] ),
+			$this->getMockTitleFormatter()
+		);
+		$repo->savePage( 'siteName', $titleValue );
 	}
 
 	public function testDeletePage_successAndInvalidate() {
@@ -83,11 +105,15 @@ class CognateRepoUnitTest extends \MediaWikiTestCase {
 		$store = $this->getMockStore();
 		$store->expects( $this->once() )
 			->method( 'deletePage' )
-			->with( 'gg', $titleValue )
+			->with( 'siteName', $titleValue )
 			->will( $this->returnValue( true ) );
 
-		$repo = new CognateRepo( $store, $this->getMockCacheInvalidator( [ [ 'gg', $titleValue ] ] ) );
-		$repo->deletePage( 'gg', $titleValue );
+		$repo = new CognateRepo(
+			$store,
+			$this->getMockCacheInvalidator( [ [ 'siteName', $titleValue ] ] ),
+			$this->getMockTitleFormatter()
+		);
+		$repo->deletePage( 'siteName', $titleValue );
 	}
 
 	public function testDeletePage_failAndNoInvalidate() {
@@ -95,24 +121,37 @@ class CognateRepoUnitTest extends \MediaWikiTestCase {
 		$store = $this->getMockStore();
 		$store->expects( $this->once() )
 			->method( 'deletePage' )
-			->with( 'gg', $titleValue )
+			->with( 'siteName', $titleValue )
 			->will( $this->returnValue( false ) );
 
-		$repo = new CognateRepo( $store, $this->getMockCacheInvalidator( [] ) );
-		$repo->deletePage( 'gg', $titleValue );
+		$repo = new CognateRepo(
+			$store,
+			$this->getMockCacheInvalidator( [] ),
+			$this->getMockTitleFormatter()
+		);
+		$repo->deletePage( 'siteName', $titleValue );
 	}
 
 	public function testGetLinksForPage_passesThrough() {
 		$titleValue = new TitleValue( 0, 'My_test_page' );
 		$store = $this->getMockStore();
 		$store->expects( $this->once() )
-			->method( 'getLinksForPage' )
-			->with( 'gg', $titleValue )
-			->will( $this->returnValue( [ 'foo' ] ) );
+			->method( 'selectLinkDetailsForPage' )
+			->with( 'siteName', $titleValue )
+			->will( $this->returnValue( [ [
+					'namespaceID' => 0,
+					'title' => 'bar',
+					'interwiki' => 'foo',
+				] ]
+			) );
 
-		$repo = new CognateRepo( $store, $this->getMockCacheInvalidator( [] ) );
-		$result = $repo->getLinksForPage( 'gg', $titleValue );
-		$this->assertEquals( [ 'foo' ], $result );
+		$repo = new CognateRepo(
+			$store,
+			$this->getMockCacheInvalidator( [] ),
+			$this->getMockTitleFormatter()
+		);
+		$result = $repo->getLinksForPage( 'siteName', $titleValue );
+		$this->assertEquals( [ 'foo:0:bar' ], $result );
 	}
 
 }

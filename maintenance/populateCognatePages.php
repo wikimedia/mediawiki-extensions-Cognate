@@ -12,24 +12,24 @@ if ( getenv( 'MW_INSTALL_PATH' ) !== false ) {
 }
 
 /**
- * Maintenance script for populating the cognate titles table.
+ * Maintenance script for populating the cognate page and title tables.
  *
  * @license GPL-2.0+
  * @author Addshore
  */
-class PopulateCognateTitles extends Maintenance {
+class PopulateCognatePages extends Maintenance {
 
 	public function __construct() {
 		parent::__construct();
 
-		$this->addDescription( 'Populate the cognate titles table' );
-		$this->addOption( 'start', "The page ID to start from.", false, true );
+		$this->addDescription( 'Populate the Cognate page and title tables' );
+		$this->addOption( 'start', 'The page ID to start from.', false, true );
 		$this->setBatchSize( 100 );
 	}
 
 	public function execute() {
 		$services = MediaWikiServices::getInstance();
-		$languageCode = $services->getMainConfig()->get( 'LanguageCode' );
+		$dbName = $services->getMainConfig()->get( 'DBname' );
 		$namespaces = $services->getMainConfig()->get( 'CognateNamespaces' );
 		$namespaces = array_filter(
 			array_map( 'intval', $namespaces ),
@@ -55,6 +55,7 @@ class PopulateCognateTitles extends Maintenance {
 		$end = $dbr->selectField( 'page', 'MAX(page_id)', '', __METHOD__ );
 		$blockStart = $start;
 		$blockEnd = $blockStart + $this->mBatchSize - 1;
+		$loadBalancerFactory = $services->getDBLoadBalancerFactory();
 
 		while ( $blockStart <= $end ) {
 
@@ -64,6 +65,7 @@ class PopulateCognateTitles extends Maintenance {
 				[
 					"page_id BETWEEN $blockStart AND $blockEnd",
 					'page_namespace IN (' . $dbr->makeList( $namespaces ) . ')',
+					'page_is_redirect = 0'
 				],
 				__METHOD__
 			);
@@ -71,14 +73,14 @@ class PopulateCognateTitles extends Maintenance {
 			$titleDetails = [];
 			foreach ( $rows as $key => $row ) {
 				$titleDetails[] = [
-					'site' => $languageCode,
+					'site' => $dbName,
 					'namespace' => $row->page_namespace,
 					'title' => $row->page_title,
 				];
 			}
 
 			$numberOfRows = count( $titleDetails );
-			$success = $store->addTitles( $titleDetails );
+			$success = $store->insertPages( $titleDetails );
 
 			if ( $success ) {
 				$this->output( "Inserted $numberOfRows rows.\n" );
@@ -89,6 +91,8 @@ class PopulateCognateTitles extends Maintenance {
 			$blockStart += $this->mBatchSize;
 			$blockEnd += $this->mBatchSize;
 			$this->output( "Pass finished.\n" );
+
+			$loadBalancerFactory->waitForReplication();
 		}
 
 		$this->output( "Done.\n" );
@@ -97,5 +101,5 @@ class PopulateCognateTitles extends Maintenance {
 
 }
 
-$maintClass = PopulateCognateTitles::class;
+$maintClass = PopulateCognatePages::class;
 require_once RUN_MAINTENANCE_IF_MAIN;

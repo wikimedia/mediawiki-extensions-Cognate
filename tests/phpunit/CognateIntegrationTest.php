@@ -3,6 +3,7 @@
 namespace Cognate\Tests;
 
 use Cognate\CognateRepo;
+use Cognate\CognateStore;
 use DeferredUpdates;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MediaWikiServices;
@@ -23,10 +24,23 @@ use WikiPage;
 class CognateIntegrationTest extends MediaWikiTestCase {
 
 	private $pageName;
+	private $dbName;
 
 	public function setUp() {
 		parent::setUp();
-		$this->pageName = __CLASS__ . '-pageName';
+
+		$services = MediaWikiServices::getInstance();
+		$config = $services->getMainConfig();
+		$this->pageName = 'CognateIntegrationTest-pageName';
+		$this->dbName = $config->get( 'DBname' );
+		$this->tablesUsed[] = CognateStore::TITLES_TABLE_NAME;
+		$this->tablesUsed[] = CognateStore::PAGES_TABLE_NAME;
+		$this->tablesUsed[] = CognateStore::SITES_TABLE_NAME;
+
+		// Insert the current site to our sites table
+		/** @var CognateStore $store */
+		$store = $services->getService( 'CognateStore' );
+		$store->insertSites( [ $this->dbName => $this->dbName . '-prefix' ] );
 	}
 
 	public function testNoPagesByDefault() {
@@ -84,9 +98,8 @@ class CognateIntegrationTest extends MediaWikiTestCase {
 	}
 
 	private function assertTitle( LinkTarget $target ) {
-		global $wgLanguageCode;
 		$this->assertEquals(
-			[ $wgLanguageCode ],
+			[ str_replace( '_', ' ', $this->dbName ) . '-prefix:' . $target->getDBkey() ],
 			$this->getRepo()->getLinksForPage( 'xxx', $target )
 		);
 	}

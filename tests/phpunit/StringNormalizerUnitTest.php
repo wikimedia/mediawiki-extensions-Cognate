@@ -15,7 +15,7 @@ class StringNormalizerTest extends \MediaWikiTestCase {
 	public function provideNormalizations() {
 		return [
 			[ 'JustAString', 'JustAString' ],
-			[ 'Foo_bar', 'Foo bar' ],
+			[ 'Foo bar', 'Foo_bar' ],
 			[ 'Apostrophe’', 'Apostrophe\'' ],
 			[ 'ellipsis…', 'ellipsis...' ],
 		];

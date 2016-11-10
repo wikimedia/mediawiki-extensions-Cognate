@@ -60,7 +60,7 @@ class CognateHooks {
 	 * @return bool
 	 */
 	public static function onLanguageLinks( $title, &$links, &$linkFlags ) {
-		global $wgCognateNamespaces, $wgLanguageCode;
+		global $wgCognateNamespaces, $wgDBname;
 
 		if ( !in_array( $title->getNamespace(), $wgCognateNamespaces ) ) {
 			return true;
@@ -74,12 +74,12 @@ class CognateHooks {
 
 		/** @var CognateRepo $repo */
 		$repo = MediaWikiServices::getInstance()->getService( 'CognateRepo' );
-		$cognateLanguages = $repo->getLinksForPage( $wgLanguageCode, $title );
+		$cognateLinks = $repo->getLinksForPage( $wgDBname, $title );
 
-		$dbKey = $title->getDBkey();
-		foreach ( $cognateLanguages as $lang ) {
-			if ( !array_key_exists( $lang, $presentLanguages ) ) {
-				$links[] = $lang . ':' . $dbKey;
+		foreach ( $cognateLinks as $cognateLink ) {
+			$cognateLinkParts = explode( ':', $cognateLink, 2 );
+			if ( !array_key_exists( $cognateLinkParts[0], $presentLanguages ) ) {
+				$links[] = $cognateLink;
 			}
 		}
 
@@ -95,7 +95,7 @@ class CognateHooks {
 	 * @param DatabaseUpdater $updater DatabaseUpdater object
 	 * @return bool
 	 */
-	public static function onLoadExtensionSchemaUpdates( DatabaseUpdater $updater = null ) {
+	public static function onLoadExtensionSchemaUpdates( DatabaseUpdater $updater ) {
 		global $wgCognateDb, $wgCognateCluster;
 
 		// The Updater can only deal with the main wiki db, so skip if something else is configured
@@ -103,6 +103,9 @@ class CognateHooks {
 			return true;
 		}
 
+		$updater->addExtensionUpdate(
+			[ 'addTable', 'cognate_pages', __DIR__ . '/../db/addCognatePages.sql', true ]
+		);
 		$updater->addExtensionUpdate(
 			[ 'addTable', 'cognate_titles', __DIR__ . '/../db/addCognateTitles.sql', true ]
 		);

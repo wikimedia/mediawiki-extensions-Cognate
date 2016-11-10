@@ -81,13 +81,13 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 
 	/**
 	 * @param int[] $namespaces
-	 * @param string $language
+	 * @param string $dbName
 	 * @param LinkTarget $linkTarget
 	 * @param bool $latestRevisionIsRedirect
 	 */
 	private function call_onPageContentSaveComplete(
 		array $namespaces,
-		$language,
+		$dbName,
 		LinkTarget $linkTarget,
 		$latestRevisionIsRedirect = false
 	) {
@@ -104,7 +104,7 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 			->method( 'isRedirect' )
 			->will( $this->returnValue( $latestRevisionIsRedirect ) );
 
-		$handler = new CognatePageHookHandler( $namespaces, $language );
+		$handler = new CognatePageHookHandler( $namespaces, $dbName );
 		$handler->onPageContentSaveComplete(
 			$mockWikiPage,
 			User::newFromId( 0 ),
@@ -149,14 +149,14 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 
 	/**
 	 * @param int[] $namespaces
-	 * @param string $language
+	 * @param string $dbName
 	 * @param LinkTarget $linkTarget
 	 *
 	 * @return DeferrableUpdate[]
 	 */
 	private function call_onWikiPageDeletionUpdates(
 		array $namespaces,
-		$language,
+		$dbName,
 		LinkTarget $linkTarget
 	) {
 		$updates = [];
@@ -169,7 +169,7 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 			->method( 'getTitle' )
 			->will( $this->returnValue( Title::newFromLinkTarget( $linkTarget ) ) );
 
-		$handler = new CognatePageHookHandler( $namespaces, $language );
+		$handler = new CognatePageHookHandler( $namespaces, $dbName );
 		$handler->onWikiPageDeletionUpdates(
 			$mockWikiPage,
 			null,
@@ -223,17 +223,17 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 
 	/**
 	 * @param int[] $namespaces
-	 * @param string $language
+	 * @param string $dbName
 	 * @param LinkTarget $linkTarget
 	 * @param bool $latestRevIsRedirect
 	 */
 	private function call_onArticleUndelete(
 		array $namespaces,
-		$language,
+		$dbName,
 		LinkTarget $linkTarget,
 		$latestRevIsRedirect = false
 	) {
-		$handler = new CognatePageHookHandler( $namespaces, $language );
+		$handler = new CognatePageHookHandler( $namespaces, $dbName );
 		$handler->overrideRevisionNewFromId( function() use ( $latestRevIsRedirect ) {
 			$content = $this->getMockContent();
 			$content->expects( $this->any() )
@@ -313,17 +313,17 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 
 	/**
 	 * @param int[] $namespaces
-	 * @param string $language
+	 * @param string $dbName
 	 * @param LinkTarget $linkTarget
 	 * @param LinkTarget $newLinkTarget
 	 */
 	private function call_onTitleMoveComplete(
 		array $namespaces,
-		$language,
+		$dbName,
 		LinkTarget $linkTarget,
 		LinkTarget $newLinkTarget
 	) {
-		$handler = new CognatePageHookHandler( $namespaces, $language );
+		$handler = new CognatePageHookHandler( $namespaces, $dbName );
 		$handler->onTitleMoveComplete(
 			Title::newFromLinkTarget( $linkTarget ),
 			Title::newFromLinkTarget( $newLinkTarget ),

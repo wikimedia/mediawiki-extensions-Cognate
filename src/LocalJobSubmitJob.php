@@ -16,27 +16,25 @@ class LocalJobSubmitJob extends Job {
 	/**
 	 * @var string
 	 */
-	private $languageCode;
+	private $dbName;
 
 	public function __construct( Title $title, array $params = [] ) {
 		parent::__construct( 'CognateLocalJobSubmitJob', $title, $params );
-		$this->languageCode = $params['languageCode'];
+		$this->dbName = $params['dbName'];
 	}
 
 	public function run() {
 		$job = new CacheUpdateJob( $this->getTitle() );
 
-		/** @var CognateRepo $repo */
-		$repo = MediaWikiServices::getInstance()->getService( 'CognateRepo' );
-		$group = MediaWikiServices::getInstance()->getMainConfig()->get( 'CognateGroup' );
-		$languages = $repo->getLinksForPage( $this->languageCode, $this->getTitle() );
+		/** @var CognateStore $store */
+		$store = MediaWikiServices::getInstance()->getService( 'CognateStore' );
+		$sites = $store->selectSitesForPage( $this->getTitle() );
 		// In the case of a delete causing cache invalidations we need to add the local site back to
 		// the list as it has already been removed from the database.
-		$languages[] = $this->languageCode;
+		$sites[] = $this->dbName;
 
-		foreach ( array_unique( $languages ) as $language ) {
-			$wiki = $language . $group;
-			JobQueueGroup::singleton( $wiki )->push( $job );
+		foreach ( array_unique( $sites ) as $dbName ) {
+			JobQueueGroup::singleton( $dbName )->push( $job );
 		}
 	}
 }

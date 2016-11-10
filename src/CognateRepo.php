@@ -4,6 +4,7 @@ namespace Cognate;
 
 use MediaWiki\Linker\LinkTarget;
 use Title;
+use TitleFormatter;
 
 /**
  * @license GNU GPL v2+
@@ -21,25 +22,32 @@ class CognateRepo {
 	 */
 	private $cacheInvalidator;
 
+	/**
+	 * @var TitleFormatter
+	 */
+	private $titleFormatter;
+
 	public function __construct(
 		CognateStore $store,
-		CacheInvalidator $cacheInvalidator
+		CacheInvalidator $cacheInvalidator,
+		TitleFormatter $titleFormatter
 	) {
 		$this->store = $store;
 		$this->cacheInvalidator = $cacheInvalidator;
+		$this->titleFormatter = $titleFormatter;
 	}
 
 	/**
-	 * @param string $languageCode The language code of the site
+	 * @param string $dbName The dbName for the site
 	 * @param LinkTarget $linkTarget
 	 *
 	 * @return bool
 	 */
-	public function savePage( $languageCode, LinkTarget $linkTarget ) {
-		$success = $this->store->savePage( $languageCode, $linkTarget );
+	public function savePage( $dbName, LinkTarget $linkTarget ) {
+		$success = $this->store->insertPage( $dbName, $linkTarget );
 		if ( $success ) {
 			$this->cacheInvalidator->invalidate(
-				$languageCode,
+				$dbName,
 				Title::newFromLinkTarget( $linkTarget )
 			);
 		}
@@ -48,16 +56,16 @@ class CognateRepo {
 	}
 
 	/**
-	 * @param string $languageCode The language code of the site
+	 * @param string $dbName The dbName for the site
 	 * @param LinkTarget $linkTarget
 	 *
 	 * @return bool
 	 */
-	public function deletePage( $languageCode, LinkTarget $linkTarget ) {
-		$success = $this->store->deletePage( $languageCode, $linkTarget );
+	public function deletePage( $dbName, LinkTarget $linkTarget ) {
+		$success = $this->store->deletePage( $dbName, $linkTarget );
 		if ( $success ) {
 			$this->cacheInvalidator->invalidate(
-				$languageCode,
+				$dbName,
 				Title::newFromLinkTarget( $linkTarget )
 			);
 		}
@@ -66,12 +74,23 @@ class CognateRepo {
 	}
 
 	/**
-	 * @param string $languageCode The language code of the site being linked from
-	 * @param LinkTarget $linkTarget
-	 * @return string[] language codes, excluding the language passed into this method.
+	 * @param string $dbName The dbName of the site being linked from
+	 * @param LinkTarget $linkTarget of the page the links should be retrieved for
+	 *
+	 * @return string[] interwiki links
 	 */
-	public function getLinksForPage( $languageCode, LinkTarget $linkTarget ) {
-		return $this->store->getLinksForPage( $languageCode, $linkTarget );
+	public function getLinksForPage( $dbName, LinkTarget $linkTarget ) {
+		$linkDetails = $this->store->selectLinkDetailsForPage( $dbName, $linkTarget );
+		$links = [];
+		foreach ( $linkDetails as $data ) {
+			$links[] = $this->titleFormatter->formatTitle(
+				$data['namespaceID'],
+				$data['title'],
+				'',
+				$data['interwiki']
+			);
+		}
+		return $links;
 	}
 
 }

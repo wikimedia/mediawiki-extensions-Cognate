@@ -43,7 +43,7 @@ class PopulateCognateSites extends Maintenance {
 		$this->output( "Inserting sites.\n" );
 		/** @var CognateStore $store */
 		$store = $services->getService( 'CognateStore' );
-		$store->addSites( $sites );
+		$store->insertSites( $sites );
 
 		$this->output( "Done.\n" );
 		return true;

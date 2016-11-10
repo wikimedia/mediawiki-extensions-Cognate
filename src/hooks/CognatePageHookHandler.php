@@ -24,7 +24,7 @@ class CognatePageHookHandler {
 	/**
 	 * @var string
 	 */
-	private $languageCode;
+	private $dbName;
 
 	/**
 	 * @var int[]
@@ -40,11 +40,11 @@ class CognatePageHookHandler {
 	 * CognatePageHookHandler constructor.
 	 *
 	 * @param int[] $namespaces array of namespace ids the hooks should operate on
-	 * @param string $languageCode the language code of the current site
+	 * @param string $dbName The dbName of the current site
 	 */
-	public function __construct( array $namespaces, $languageCode ) {
+	public function __construct( array $namespaces, $dbName ) {
 		$this->namespaces = $namespaces;
-		$this->languageCode = $languageCode;
+		$this->dbName = $dbName;
 		$this->newRevisionFromIdCallable = function ( $id ) {
 			return Revision::newFromId( $id );
 		};
@@ -115,22 +115,21 @@ class CognatePageHookHandler {
 		array &$updates
 	) {
 		$titleValue = $page->getTitle()->getTitleValue();
-		$language = $this->languageCode;
 		if ( $this->isActionableTarget( $titleValue ) ) {
-			$updates[] = $this->newDeferrableDelete( $titleValue, $language );
+			$updates[] = $this->newDeferrableDelete( $titleValue, $this->dbName );
 		}
 	}
 
 	/**
 	 * @param TitleValue $titleValue
-	 * @param string $language
+	 * @param string $dbName
 	 *
 	 * @return MWCallableUpdate
 	 */
-	private function newDeferrableDelete( TitleValue $titleValue, $language ) {
+	private function newDeferrableDelete( TitleValue $titleValue, $dbName ) {
 		return new MWCallableUpdate(
-			function () use ( $language, $titleValue ){
-				$this->getRepo()->deletePage( $language, $titleValue );
+			function () use ( $dbName, $titleValue ){
+				$this->getRepo()->deletePage( $dbName, $titleValue );
 			},
 			__METHOD__
 		);
@@ -192,10 +191,10 @@ class CognatePageHookHandler {
 		$newTitleValue = $newTitle->getTitleValue();
 		$repo = $this->getRepo();
 		if ( $this->isActionableTarget( $oldTitleValue ) ) {
-			$repo->deletePage( $this->languageCode, $oldTitleValue );
+			$repo->deletePage( $this->dbName, $oldTitleValue );
 		}
 		if ( $this->isActionableTarget( $newTitleValue ) ) {
-			$repo->savePage( $this->languageCode, $newTitleValue );
+			$repo->savePage( $this->dbName, $newTitleValue );
 		}
 	}
 
@@ -222,9 +221,9 @@ class CognatePageHookHandler {
 	private function onContentChange( TitleValue $titleValue, Content $content ) {
 		if ( $this->isActionableTarget( $titleValue ) ) {
 			if ( $content->isRedirect() ) {
-				$this->getRepo()->deletePage( $this->languageCode, $titleValue );
+				$this->getRepo()->deletePage( $this->dbName, $titleValue );
 			} else {
-				$this->getRepo()->savePage( $this->languageCode, $titleValue );
+				$this->getRepo()->savePage( $this->dbName, $titleValue );
 			}
 		}
 	}

@@ -21,12 +21,12 @@ class CacheInvalidator {
 	}
 
 	/**
-	 * @param string $languageCode
+	 * @param string $dbName
 	 * @param Title $title
 	 */
-	public function invalidate( $languageCode, Title $title ) {
+	public function invalidate( $dbName, Title $title ) {
 		$this->jobQueueGroup->push(
-			new LocalJobSubmitJob( $title, [ 'languageCode' => $languageCode ] )
+			new LocalJobSubmitJob( $title, [ 'dbName' => $dbName ] )
 		);
 	}
 }

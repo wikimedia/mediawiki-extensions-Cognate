@@ -2,6 +2,7 @@
 
 namespace Cognate;
 
+use DBConnRef;
 use ILoadBalancer;
 use MediaWiki\Linker\LinkTarget;
 
@@ -22,8 +23,14 @@ class CognateStore {
 	 */
 	private $stringNormalizer;
 
-	const TITLES_TABLE_NAME = 'cognate_titles';
+	/**
+	 * @var StringHasher
+	 */
+	private $stringHasher;
 
+	const PAGES_TABLE_NAME = 'cognate_pages';
+	const SITES_TABLE_NAME = 'cognate_sites';
+	const TITLES_TABLE_NAME = 'cognate_titles';
 
 	/**
 	 * @param ILoadBalancer $loadBalancer
@@ -33,116 +40,196 @@ class CognateStore {
 	public function __construct(
 		ILoadBalancer $loadBalancer,
 		$databaseName,
-		StringNormalizer $stringNormalizer
+		StringNormalizer $stringNormalizer,
+		StringHasher $stringHasher
 	) {
 		$this->loadBalancer = $loadBalancer;
 		$this->databaseName = $databaseName;
 		$this->stringNormalizer = $stringNormalizer;
+		$this->stringHasher = $stringHasher;
 	}
 
 	/**
-	 * @param string $languageCode The language code of the site
+	 * @param int $db
+	 * @return DBConnRef
+	 */
+	private function getDB( $db ) {
+		return $this->loadBalancer->getConnectionRef(
+			$db,
+			[],
+			$this->databaseName
+		);
+	}
+
+	/**
+	 * Adds a page to the database. As well as adding the data to the pages table this also
+	 * includes adding the data to the titles table where needed.
+	 *
+	 * @param string $dbName The dbName for the site
 	 * @param LinkTarget $linkTarget
 	 *
 	 * @return bool
 	 */
-	public function savePage( $languageCode, LinkTarget $linkTarget ) {
-		$pageData = [
-			'cgti_site' => $languageCode,
-			'cgti_title' => $linkTarget->getDBkey(),
-			'cgti_namespace' => $linkTarget->getNamespace(),
-			'cgti_key' => $this->stringNormalizer->normalize( $linkTarget->getDBkey() ),
-		];
-		$dbw = $this->loadBalancer->getConnectionRef( DB_MASTER, [], $this->databaseName );
-		$result = $dbw->insert( self::TITLES_TABLE_NAME, $pageData, __METHOD__, [ 'IGNORE' ] );
-
-		return $result;
+	public function insertPage( $dbName, LinkTarget $linkTarget ) {
+		return $this->insertPages( [ [
+			'site' => $dbName,
+			'namespace' => $linkTarget->getNamespace(),
+			'title' => $linkTarget->getDBkey(),
+		] ] );
 	}
 
 	/**
-	 * @param string $languageCode The language code of the site
+	 * Note: this method will not remove any relevant entries from the titles table
+	 *
+	 * @param string $dbName The dbName for the site
 	 * @param LinkTarget $linkTarget
 	 *
 	 * @return bool
 	 */
-	public function deletePage( $languageCode, LinkTarget $linkTarget ) {
+	public function deletePage( $dbName, LinkTarget $linkTarget ) {
 		$pageData = [
-			'cgti_site' => $languageCode,
-			'cgti_title' => $linkTarget->getDBkey(),
-			'cgti_namespace' => $linkTarget->getNamespace(),
+			'cgpa_site' => $this->getStringHash( $dbName ),
+			'cgpa_title' => $this->getStringHash( $linkTarget->getDBkey() ),
+			'cgpa_namespace' => $linkTarget->getNamespace(),
 		];
-		$dbw = $this->loadBalancer->getConnectionRef( DB_MASTER, [], $this->databaseName  );
-		$result = $dbw->delete( self::TITLES_TABLE_NAME, $pageData, __METHOD__ );
+		$dbw = $this->getDB( DB_MASTER );
+		$result = $dbw->delete( self::PAGES_TABLE_NAME, $pageData, __METHOD__ );
 
 		return (bool)$result;
 	}
 
 	/**
-	 * @param string $languageCode The language code of the site being linked from
-	 * @param LinkTarget $linkTarget
-	 * @return string[] language codes, excluding the language passed into this method.
+	 * @param string $dbName The dbName of the site being linked from
+	 * @param LinkTarget $linkTarget of the page the links should be retrieved for
+	 *
+	 * @return array[] details used to create interwiki links. Each array will look like:
+	 *                 [ 'interwiki' => 'en', 'namespaceID' => 0, 'title' => 'Berlin' ]
 	 */
-	public function getLinksForPage( $languageCode, LinkTarget $linkTarget ) {
-		$dbr = $this->loadBalancer->getConnectionRef( DB_SLAVE, [], $this->databaseName  );
+	public function selectLinkDetailsForPage( $dbName, LinkTarget $linkTarget ) {
+		$dbr = $this->getDB( DB_REPLICA );
 		$result = $dbr->select(
-			self::TITLES_TABLE_NAME,
-			[ 'cgti_site' ],
 			[
-				'cgti_site != ' . $dbr->addQuotes( $languageCode ),
-				'cgti_key' => $this->stringNormalizer->normalize( $linkTarget->getDBkey() ),
-				'cgti_namespace' => $linkTarget->getNamespace(),
-			]
+				self::TITLES_TABLE_NAME,
+				self::PAGES_TABLE_NAME,
+				self::SITES_TABLE_NAME,
+			],
+			[
+				'cgsi_interwiki',
+				'cgpa_namespace',
+				'cgti_raw',
+			],
+			[
+				'cgsi_dbname != ' . $dbr->addQuotes( $dbName ),
+				'cgti_normalized_key' => $this->getNormalizedStringHash( $linkTarget->getDBkey() ),
+				'cgpa_namespace' => $linkTarget->getNamespace(),
+				'cgti_raw_key = cgpa_title',
+				'cgpa_site = cgsi_key',
+			],
+			__METHOD__
 		);
 
-		$languageCodes = [];
+		$linkDetails = [];
 		while ( $row = $result->fetchRow() ) {
-			$languageCodes[] = $row[ 'cgti_site' ];
-		}
-
-		return $languageCodes;
-	}
-
-	/**
-	 * @param array $titleDetailsArray where each element contains the keys 'site', 'namespace', 'title'
-	 *        e.g. [ [ 'site' => 'en', 'namespace' => 0, 'title' => 'Berlin' ] ]
-	 *
-	 * @return bool
-	 */
-	public function addTitles( array $titleDetailsArray ) {
-		$dbw = $this->loadBalancer->getConnectionRef( DB_MASTER );
-
-		$toInsert = [];
-		foreach ( $titleDetailsArray as $titleDetails ) {
-			$toInsert[] = [
-				'cgti_site' => $titleDetails['site'],
-				'cgti_namespace' => $titleDetails['namespace'],
-				'cgti_title' => $titleDetails['title'],
-				'cgti_key' => $this->stringNormalizer->normalize( $titleDetails['title'] ),
+			$linkDetails[] = [
+				'interwiki' => $row['cgsi_interwiki'],
+				'namespaceID' => intval( $row['cgpa_namespace'] ),
+				'title' => $row['cgti_raw'],
 			];
 		}
 
-		$result = $dbw->insert(
+		return $linkDetails;
+	}
+
+	/**
+	 * @param LinkTarget $linkTarget
+	 *
+	 * @return string[] array of dbnames
+	 */
+	public function selectSitesForPage( LinkTarget $linkTarget ) {
+		$dbr = $this->getDB( DB_REPLICA );
+		$result = $dbr->select(
+			[
+				self::TITLES_TABLE_NAME,
+				self::PAGES_TABLE_NAME,
+				self::SITES_TABLE_NAME,
+			],
+			[ 'cgsi_dbname' ],
+			[
+				'cgti_normalized_key' => $this->getNormalizedStringHash( $linkTarget->getDBkey() ),
+				'cgpa_namespace' => $linkTarget->getNamespace(),
+				'cgti_raw_key = cgpa_title',
+				'cgpa_site = cgsi_key',
+			],
+			__METHOD__
+		);
+
+		$sites = [];
+		while ( $row = $result->fetchRow() ) {
+			$sites[] = $row[ 'cgsi_dbname' ];
+		}
+
+		return $sites;
+	}
+
+	/**
+	 * Adds pages to the database. As well as adding the data to the pages table this also
+	 * includes adding the data to the titles table where needed.
+	 *
+	 * @param array $pageDetailsArray where each element contains the keys 'site', 'namespace', 'title'
+	 *        e.g. [ [ 'site' => 'enwiktionary', 'namespace' => 0, 'title' => 'Berlin' ] ]
+	 *
+	 * @return bool
+	 */
+	public function insertPages( array $pageDetailsArray ) {
+		$dbw = $this->getDB( DB_MASTER );
+
+		$pagesToInsert = [];
+		$titlesToInsert = [];
+		foreach ( $pageDetailsArray as $pageDetails ) {
+			$titleHash = $this->getStringHash( $pageDetails['title'] );
+			$normalizedTitleHash = $this->getNormalizedStringHash( $pageDetails['title'] );
+			$siteHash = $this->getStringHash( $pageDetails['site'] );
+			$pagesToInsert[] = [
+				'cgpa_site' => $siteHash,
+				'cgpa_namespace' => $pageDetails['namespace'],
+				'cgpa_title' => $titleHash,
+			];
+			$titlesToInsert[] = [
+				'cgti_raw' => $pageDetails['title'],
+				'cgti_raw_key' => $titleHash,
+				'cgti_normalized_key' => $normalizedTitleHash,
+			];
+		}
+
+		$titlesSuccess = $dbw->insert(
 			CognateStore::TITLES_TABLE_NAME,
-			$toInsert,
+			$titlesToInsert,
+			__METHOD__,
+			[ 'IGNORE' ]
+		);
+		$pagesSuccess = $dbw->insert(
+			CognateStore::PAGES_TABLE_NAME,
+			$pagesToInsert,
 			__METHOD__,
 			[ 'IGNORE' ]
 		);
 
-		return (bool)$result;
+		return $titlesSuccess && $pagesSuccess;
 	}
 
 	/**
-	 * @param string[] $sites keys of site dbname => values of site language
-	 *            eg. 'enwiktionary' => 'en'
+	 * @param string[] $sites keys of site dbname => values of interwiki prefix
+	 *        e.g. 'enwiktionary' => 'en'
 	 */
-	public function addSites( array $sites ) {
-		$dbw = $this->loadBalancer->getConnectionRef( DB_MASTER, [], $this->databaseName );
+	public function insertSites( array $sites ) {
+		$dbw = $this->getDB( DB_MASTER );
 
 		$toInsert = [];
-		foreach ( $sites as $dbname => $languageCode ) {
+		foreach ( $sites as $dbname => $interwikiPrefix ) {
 			$toInsert[] = [
+				'cgsi_key' => $this->getStringHash( $dbname ),
 				'cgsi_dbname' => $dbname,
-				'cgsi_interwiki' => $languageCode,
+				'cgsi_interwiki' => $interwikiPrefix,
 			];
 		}
 
@@ -151,6 +238,26 @@ class CognateStore {
 			$toInsert,
 			__METHOD__,
 			[ 'IGNORE' ]
+		);
+	}
+
+	/**
+	 * @param string $string
+	 *
+	 * @return int
+	 */
+	private function getStringHash( $string ) {
+		return $this->stringHasher->hash( $string );
+	}
+
+	/**
+	 * @param string $string
+	 *
+	 * @return int
+	 */
+	private function getNormalizedStringHash( $string ) {
+		return $this->stringHasher->hash(
+			$this->stringNormalizer->normalize( $string )
 		);
 	}
 
