@@ -13,7 +13,6 @@ use Status;
 use Title;
 use TitleValue;
 use User;
-use Wikimedia\Assert\Assert;
 use WikiPage;
 
 /**
