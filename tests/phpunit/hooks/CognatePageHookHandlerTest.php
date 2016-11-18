@@ -16,6 +16,8 @@ use User;
 use WikiPage;
 
 /**
+ * @covers Cognate\CognatePageHookHandler
+ *
  * @license GNU GPL v2+
  * @author Addshore
  */
@@ -81,6 +83,7 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 	 * @param int[] $namespaces
 	 * @param string $language
 	 * @param LinkTarget $linkTarget
+	 * @param bool $latestRevisionIsRedirect
 	 */
 	private function call_onPageContentSaveComplete(
 		array $namespaces,
@@ -94,7 +97,7 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 			->getMock();
 		$mockWikiPage->expects( $this->any() )
 			->method( 'getTitle' )
-			->willReturn( Title::newFromLinkTarget( $linkTarget ) );
+			->will( $this->returnValue( Title::newFromLinkTarget( $linkTarget ) ) );
 
 		$content = $this->getMock( 'Content' );
 		$content->expects( $this->any() )
@@ -164,7 +167,7 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 			->getMock();
 		$mockWikiPage->expects( $this->any() )
 			->method( 'getTitle' )
-			->willReturn( Title::newFromLinkTarget( $linkTarget ) );
+			->will( $this->returnValue( Title::newFromLinkTarget( $linkTarget ) ) );
 
 		$handler = new CognatePageHookHandler( $namespaces, $language );
 		$handler->onWikiPageDeletionUpdates(
@@ -222,6 +225,7 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 	 * @param int[] $namespaces
 	 * @param string $language
 	 * @param LinkTarget $linkTarget
+	 * @param bool $latestRevIsRedirect
 	 */
 	private function call_onArticleUndelete(
 		array $namespaces,
@@ -311,6 +315,7 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 	 * @param int[] $namespaces
 	 * @param string $language
 	 * @param LinkTarget $linkTarget
+	 * @param LinkTarget $newLinkTarget
 	 */
 	private function call_onTitleMoveComplete(
 		array $namespaces,

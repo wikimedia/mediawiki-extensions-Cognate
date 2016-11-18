@@ -5,6 +5,10 @@ namespace Cognate;
 use JobQueueGroup;
 use Title;
 
+/**
+ * @license GNU GPL v2+
+ * @author Addshore
+ */
 class CacheInvalidator {
 
 	/**

@@ -6,6 +6,11 @@ use DatabaseUpdater;
 use MediaWiki\MediaWikiServices;
 use Title;
 
+/**
+ * @license GNU GPL v2+
+ * @author Gabriel Birke < gabriel.birke@wikimedia.de >
+ * @author Addshore
+ */
 class CognateHooks {
 
 	public static function onPageContentSaveComplete() {

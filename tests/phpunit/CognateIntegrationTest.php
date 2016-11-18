@@ -15,8 +15,8 @@ use User;
 use WikiPage;
 
 /**
- * @author Addshore
  * @license GNU GPL v2+
+ * @author Addshore
  *
  * @group Database
  */

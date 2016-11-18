@@ -9,8 +9,10 @@ use MediaWikiTestCase;
 use TitleValue;
 
 /**
- * @author Addshore
+ * @covers Cognate\CognateRepo
+ *
  * @license GNU GPL v2+
+ * @author Addshore
  *
  * @group Database
  */

@@ -10,6 +10,12 @@ use MediaWikiTestCase;
 use PHPUnit_Framework_MockObject_MockObject;
 use Title;
 
+/**
+ * @covers Cognate\CacheInvalidator
+ *
+ * @license GNU GPL v2+
+ * @author Addshore
+ */
 class CacheInvalidatorTest extends MediaWikiTestCase {
 
 	public function testJobIsQueued() {
@@ -22,12 +28,13 @@ class CacheInvalidatorTest extends MediaWikiTestCase {
 		$mockJobQueueGroup->expects( $this->once() )
 			->method( 'push' )
 			->with( $this->isInstanceOf( LocalJobSubmitJob::class ) )
-			->willReturnCallback( function( $job ) use ( $title ) {
+			->will( $this->returnCallback( function( $job ) use ( $title ) {
 				/** @var Job $job */
 				$this->assertSame( $title, $job->getTitle() );
-			} );
+			} ) );
 
 		$cacheInvalidator = new CacheInvalidator( $mockJobQueueGroup );
 		$cacheInvalidator->invalidate( 'fr', $title );
 	}
+
 }

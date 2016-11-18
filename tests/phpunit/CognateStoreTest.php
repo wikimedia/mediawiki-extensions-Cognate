@@ -7,8 +7,11 @@ use MediaWiki\MediaWikiServices;
 use TitleValue;
 
 /**
+ * @covers Cognate\CognateStore
+ *
  * @license GNU GPL v2+
  * @author Gabriel Birke < gabriel.birke@wikimedia.de >
+ *
  * @group Database
  */
 class CognateStoreTest extends \MediaWikiTestCase {

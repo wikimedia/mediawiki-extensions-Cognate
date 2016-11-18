@@ -9,6 +9,9 @@ use Title;
 /**
  * A job that runs on local wikis to purge CDN and possibly
  * queue local HTMLCacheUpdate jobs
+ *
+ * @license GPL-2.0+
+ * @author Addshore
  */
 class CacheUpdateJob extends Job {
 

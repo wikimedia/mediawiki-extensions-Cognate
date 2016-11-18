@@ -7,6 +7,10 @@ use JobQueueGroup;
 use MediaWiki\MediaWikiServices;
 use Title;
 
+/**
+ * @license GNU GPL v2+
+ * @author Addshore
+ */
 class LocalJobSubmitJob extends Job {
 
 	/**

@@ -11,8 +11,10 @@ use Title;
 use TitleValue;
 
 /**
- * @author Addshore
+ * @covers Cognate\CognateRepo
+ *
  * @license GNU GPL v2+
+ * @author Addshore
  */
 class CognateRepoUnitTest extends \MediaWikiTestCase {
 
@@ -41,13 +43,13 @@ class CognateRepoUnitTest extends \MediaWikiTestCase {
 			list( $languageCode, $linkTarget ) = $details;
 			$mock->expects( $this->at( $key ) )
 				->method( 'invalidate' )
-				->willReturnCallback( function( $param1, Title $param2 ) use ( $languageCode, $linkTarget ) {
+				->will( $this->returnCallback( function( $param1, Title $param2 ) use ( $languageCode, $linkTarget ) {
 					$this->assertEquals( $languageCode, $param1 );
 					/** @var LinkTarget $linkTarget */
 					$this->assertInstanceOf( Title::class, $param2 );
 					$this->assertEquals( $linkTarget->getDBkey(), $param2->getDBkey() );
 					$this->assertEquals( $linkTarget->getNamespace(), $param2->getNamespace() );
-				} );
+				} ) );
 		}
 		return $mock;
 	}

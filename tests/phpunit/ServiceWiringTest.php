@@ -8,6 +8,8 @@ use Cognate\CognateStore;
 use MediaWiki\MediaWikiServices;
 
 /**
+ * @covers ServiceWiring.php
+ *
  * @license GNU GPL v2+
  * @author Addshore
  */
