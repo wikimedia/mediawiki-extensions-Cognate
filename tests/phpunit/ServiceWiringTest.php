@@ -2,10 +2,12 @@
 
 namespace Cognate\Tests;
 
+use Cognate\CacheInvalidator;
 use Cognate\CognatePageHookHandler;
 use Cognate\CognateRepo;
 use Cognate\CognateStore;
 use MediaWiki\MediaWikiServices;
+use Wikimedia\Rdbms\ConnectionManager;
 
 /**
  * @covers ServiceWiring.php
@@ -18,8 +20,10 @@ class ServiceWiringTest extends \MediaWikiTestCase {
 	public function provideServices() {
 		return [
 			[ 'CognateRepo', CognateRepo::class ],
+			[ 'CognateConnectionManager', ConnectionManager::class ],
 			[ 'CognateStore', CognateStore::class ],
 			[ 'CognatePageHookHandler', CognatePageHookHandler::class ],
+			[ 'CognateCacheInvalidator', CacheInvalidator::class ],
 		];
 	}
 

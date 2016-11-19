@@ -4,6 +4,7 @@ namespace Cognate;
 
 use JobQueueGroup;
 use MediaWiki\MediaWikiServices;
+use Wikimedia\Rdbms\ConnectionManager;
 
 /**
  * Cognate wiring for MediaWiki services.
@@ -23,19 +24,29 @@ return [
 		);
 	},
 
-	'CognateStore' => function( MediaWikiServices $services ) {
+	'CognateConnectionManager' => function( MediaWikiServices $services ) {
 		$lbFactory = $services->getDBLoadBalancerFactory();
 		$cognateDb = $services->getMainConfig()->get( 'CognateDb' );
 		$cognateCluster = $services->getMainConfig()->get( 'CognateCluster' );
+
 		if ( $cognateCluster ) {
 			$lb = $lbFactory->getExternalLB( $cognateCluster );
 		} else {
 			$lb = $lbFactory->getMainLB( $cognateDb );
 		}
 
-		return new CognateStore(
+		return new ConnectionManager(
 			$lb,
-			$cognateDb,
+			$cognateDb
+		);
+	},
+
+	'CognateStore' => function( MediaWikiServices $services ) {
+		/** @var ConnectionManager $connectionManager */
+		$connectionManager = $services->getService( 'CognateConnectionManager' );
+
+		return new CognateStore(
+			$connectionManager,
 			new StringNormalizer(),
 			new StringHasher()
 		);

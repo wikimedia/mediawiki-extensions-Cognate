@@ -2,9 +2,8 @@
 
 namespace Cognate;
 
-use DBConnRef;
-use ILoadBalancer;
 use MediaWiki\Linker\LinkTarget;
+use Wikimedia\Rdbms\ConnectionManager;
 
 /**
  * @license GNU GPL v2+
@@ -14,9 +13,9 @@ use MediaWiki\Linker\LinkTarget;
 class CognateStore {
 
 	/**
-	 * @var ILoadBalancer
+	 * @var ConnectionManager
 	 */
-	private $loadBalancer;
+	private $connectionManager;
 
 	/**
 	 * @var StringNormalizer
@@ -33,32 +32,18 @@ class CognateStore {
 	const TITLES_TABLE_NAME = 'cognate_titles';
 
 	/**
-	 * @param ILoadBalancer $loadBalancer
-	 * @param string $databaseName
+	 * @param ConnectionManager $connectionManager
 	 * @param StringNormalizer $stringNormalizer
+	 * @param StringHasher $stringHasher
 	 */
 	public function __construct(
-		ILoadBalancer $loadBalancer,
-		$databaseName,
+		ConnectionManager $connectionManager,
 		StringNormalizer $stringNormalizer,
 		StringHasher $stringHasher
 	) {
-		$this->loadBalancer = $loadBalancer;
-		$this->databaseName = $databaseName;
+		$this->connectionManager = $connectionManager;
 		$this->stringNormalizer = $stringNormalizer;
 		$this->stringHasher = $stringHasher;
-	}
-
-	/**
-	 * @param int $db
-	 * @return DBConnRef
-	 */
-	private function getDB( $db ) {
-		return $this->loadBalancer->getConnectionRef(
-			$db,
-			[],
-			$this->databaseName
-		);
 	}
 
 	/**
@@ -92,7 +77,7 @@ class CognateStore {
 			'cgpa_title' => $this->getStringHash( $linkTarget->getDBkey() ),
 			'cgpa_namespace' => $linkTarget->getNamespace(),
 		];
-		$dbw = $this->getDB( DB_MASTER );
+		$dbw = $this->connectionManager->getWriteConnectionRef();
 		$result = $dbw->delete( self::PAGES_TABLE_NAME, $pageData, __METHOD__ );
 
 		return (bool)$result;
@@ -106,7 +91,7 @@ class CognateStore {
 	 *                 [ 'interwiki' => 'en', 'namespaceID' => 0, 'title' => 'Berlin' ]
 	 */
 	public function selectLinkDetailsForPage( $dbName, LinkTarget $linkTarget ) {
-		$dbr = $this->getDB( DB_REPLICA );
+		$dbr = $this->connectionManager->getReadConnectionRef();
 		$result = $dbr->select(
 			[
 				self::TITLES_TABLE_NAME,
@@ -146,7 +131,7 @@ class CognateStore {
 	 * @return string[] array of dbnames
 	 */
 	public function selectSitesForPage( LinkTarget $linkTarget ) {
-		$dbr = $this->getDB( DB_REPLICA );
+		$dbr = $this->connectionManager->getWriteConnectionRef();
 		$result = $dbr->select(
 			[
 				self::TITLES_TABLE_NAME,
@@ -181,7 +166,7 @@ class CognateStore {
 	 * @return bool
 	 */
 	public function insertPages( array $pageDetailsArray ) {
-		$dbw = $this->getDB( DB_MASTER );
+		$dbw = $this->connectionManager->getWriteConnectionRef();
 
 		$pagesToInsert = [];
 		$titlesToInsert = [];
@@ -222,7 +207,7 @@ class CognateStore {
 	 *        e.g. 'enwiktionary' => 'en'
 	 */
 	public function insertSites( array $sites ) {
-		$dbw = $this->getDB( DB_MASTER );
+		$dbw = $this->connectionManager->getWriteConnectionRef();
 
 		$toInsert = [];
 		foreach ( $sites as $dbname => $interwikiPrefix ) {
