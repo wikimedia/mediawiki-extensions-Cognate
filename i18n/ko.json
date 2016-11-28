@@ -1,8 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"Jerrykim306"
+			"Jerrykim306",
+			"Ykhwong"
 		]
 	},
-	"cognate-desc": "문서 제목을 이용하여 다른 언어 버전 문서로 이동하기."
+	"cognate-desc": "문서 제목을 이용하여 다른 언어 버전의 문서를 연결합니다."
 }
