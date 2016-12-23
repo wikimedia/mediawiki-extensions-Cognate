@@ -1,4 +1,5 @@
 .idea/
+/tests/phan/issues
 node_modules/
 vendor/
 
