@@ -47,6 +47,7 @@ class RecalculateCognateNormalizedHashes extends Maintenance {
 		$this->addDescription( 'Recalculate the normalized Cognate hashes' );
 		$this->addOption( 'dry-run', 'Perform a dry run' );
 		$this->setBatchSize( 100 );
+		$this->requireExtension( 'Cognate' );
 	}
 
 	private function setupServices() {

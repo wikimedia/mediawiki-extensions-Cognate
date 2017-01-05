@@ -27,6 +27,7 @@ class PopulateCognateSites extends Maintenance {
 		$this->addDescription( 'Populate the Cognate sites table' );
 		$this->addOption( 'site-group', 'Site group that this wiki is a member of. '
 			. 'For example, "wiktionary".', true, true );
+		$this->requireExtension( 'Cognate' );
 	}
 
 	public function execute() {

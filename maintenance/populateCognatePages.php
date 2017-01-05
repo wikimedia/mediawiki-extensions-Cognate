@@ -25,6 +25,7 @@ class PopulateCognatePages extends Maintenance {
 		$this->addDescription( 'Populate the Cognate page and title tables' );
 		$this->addOption( 'start', 'The page ID to start from.', false, true );
 		$this->setBatchSize( 100 );
+		$this->requireExtension( 'Cognate' );
 	}
 
 	public function execute() {
