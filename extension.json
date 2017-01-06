@@ -9,6 +9,9 @@
   "descriptionmsg": "cognate-desc",
   "license-name": "MIT",
   "type": "other",
+  "requires": {
+    "MediaWiki": ">= 1.29.0"
+  },
   "AutoloadClasses": {
     "Cognate\\CognateHooks": "src/CognateHooks.php",
     "Cognate\\CognateRepo": "src/CognateRepo.php",
