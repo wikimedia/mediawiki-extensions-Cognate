@@ -27,4 +27,5 @@ class CacheUpdateJob extends Job {
 		$title->purgeSquid();
 		HTMLFileCache::clearFileCache( $title );
 	}
+
 }
