@@ -13,7 +13,9 @@
 	<rule ref="Generic.Metrics.NestingLevel" />
 	<rule ref="Generic.PHP.CharacterBeforePHPOpeningTag" />
 
-	<rule ref="PSR1" />
+	<rule ref="PSR1">
+		<exclude name="PSR1.Files.SideEffects" />
+	</rule>
 	<rule ref="PSR1.Methods.CamelCapsMethodName.NotCamelCaps">
 		<!-- Exclude test methods like "testGivenInvalidInput_methodThrowsException". -->
 		<exclude-pattern>/tests/phpunit/*Test\.php</exclude-pattern>
