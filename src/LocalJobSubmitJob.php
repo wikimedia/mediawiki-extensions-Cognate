@@ -37,4 +37,5 @@ class LocalJobSubmitJob extends Job {
 			JobQueueGroup::singleton( $dbName )->push( $job );
 		}
 	}
+
 }

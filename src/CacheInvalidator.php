@@ -29,4 +29,5 @@ class CacheInvalidator {
 			new LocalJobSubmitJob( $title, [ 'dbName' => $dbName ] )
 		);
 	}
+
 }

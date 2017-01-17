@@ -3,7 +3,6 @@
 namespace Cognate\Tests;
 
 use Cognate\StringHasher;
-use Normalizer;
 use UtfNormal\Validator;
 
 /**

@@ -187,13 +187,13 @@ class CognateStore {
 		}
 
 		$titlesSuccess = $dbw->insert(
-			CognateStore::TITLES_TABLE_NAME,
+			self::TITLES_TABLE_NAME,
 			$titlesToInsert,
 			__METHOD__,
 			[ 'IGNORE' ]
 		);
 		$pagesSuccess = $dbw->insert(
-			CognateStore::PAGES_TABLE_NAME,
+			self::PAGES_TABLE_NAME,
 			$pagesToInsert,
 			__METHOD__,
 			[ 'IGNORE' ]

@@ -38,7 +38,7 @@ class PopulateCognateSites extends Maintenance {
 		$siteList = $services->getSiteLookup()->getSites();
 		$siteList = $siteList->getGroup( $siteGroup );
 
-		$this->output( "Got {$siteList->count()} sites.\n" );
+		$this->output( 'Got ' . $siteList->count() . " sites.\n" );
 		$sites = $this->getSiteDetailsFromSiteList( $siteList );
 
 		$this->output( "Inserting sites.\n" );

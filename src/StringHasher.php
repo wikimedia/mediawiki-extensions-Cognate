@@ -16,6 +16,8 @@ use UtfNormal\Validator;
 class StringHasher {
 
 	/**
+	 * @param string $string
+	 *
 	 * @return int a 64 bit SIGNED decimal hash
 	 */
 	public function hash( $string ) {
