@@ -167,7 +167,9 @@ class CognatePageHookHandler {
 	}
 
 	/**
-	 * Occurs whenever a request to move an article is completed, after the database transaction commits.
+	 * Occurs whenever a request to move an article is completed, after the database transaction
+	 * commits.
+	 *
 	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/TitleMoveComplete
 	 *
 	 * @param Title $title
