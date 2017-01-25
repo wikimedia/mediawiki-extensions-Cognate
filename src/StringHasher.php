@@ -35,7 +35,7 @@ class StringHasher {
 
 		return $this->hex2int(
 			substr(
-				md5( $string ),
+				hash( 'sha256', $string ),
 				0,
 				16
 			)
