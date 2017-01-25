@@ -17,7 +17,12 @@ actual concept is different.
 
 This extension can be used along side the [InterwikiSorting extension](https://www.mediawiki.org/wiki/Extension:InterwikiSorting) to sort the interwiki links that are displayed.
 
+### Assumptions
+
+ - Sites should have the same interwiki structure for language links.
+
 ## Installation
+
 ### Requirements
 PHP 5.5 64bit
 
