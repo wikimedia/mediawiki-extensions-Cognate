@@ -81,13 +81,9 @@ class PopulateCognatePages extends Maintenance {
 			}
 
 			$numberOfRows = count( $titleDetails );
-			$success = $store->insertPages( $titleDetails );
+			$store->insertPages( $titleDetails );
 
-			if ( $success ) {
-				$this->output( "Inserted $numberOfRows rows.\n" );
-			} else {
-				$this->output( "Failed to insert $numberOfRows rows.\n" );
-			}
+			$this->output( "$numberOfRows rows processed.\n" );
 
 			$blockStart += $this->mBatchSize;
 			$blockEnd += $this->mBatchSize;

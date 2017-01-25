@@ -200,10 +200,11 @@ class CognateStore {
 	 * Adds pages to the database. As well as adding the data to the pages table this also
 	 * includes adding the data to the titles table where needed.
 	 *
+	 * @note Errors during insertion are totally ignored by this method. If there were duplicate
+	 * keys in the DB then you will not find out about them here.
+	 *
 	 * @param array $pageDetailsArray where each element contains the keys 'site', 'namespace', 'title'
 	 *        e.g. [ [ 'site' => 'enwiktionary', 'namespace' => 0, 'title' => 'Berlin' ] ]
-	 *
-	 * @return bool
 	 */
 	public function insertPages( array $pageDetailsArray ) {
 		$dbw = $this->connectionManager->getWriteConnectionRef();
@@ -226,20 +227,19 @@ class CognateStore {
 			];
 		}
 
-		$titlesSuccess = $dbw->insert(
+		$dbw->insert(
 			self::TITLES_TABLE_NAME,
 			$titlesToInsert,
 			__METHOD__,
 			[ 'IGNORE' ]
 		);
-		$pagesSuccess = $dbw->insert(
+
+		$dbw->insert(
 			self::PAGES_TABLE_NAME,
 			$pagesToInsert,
 			__METHOD__,
 			[ 'IGNORE' ]
 		);
-
-		return $titlesSuccess && $pagesSuccess;
 	}
 
 	/**
