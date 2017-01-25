@@ -65,7 +65,7 @@ class PopulateCognatePages extends Maintenance {
 				[ 'page_namespace', 'page_title' ],
 				[
 					"page_id BETWEEN $blockStart AND $blockEnd",
-					'page_namespace IN (' . $dbr->makeList( $namespaces ) . ')',
+					'page_namespace' => $namespaces,
 					'page_is_redirect = 0'
 				],
 				__METHOD__
