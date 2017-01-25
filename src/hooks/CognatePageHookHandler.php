@@ -95,9 +95,26 @@ class CognatePageHookHandler {
 		Status $status,
 		$baseRevId
 	) {
+		// A null revision means a null edit / no-op edit was made, no need to process that.
+		if ( $revision === null ) {
+			return;
+		}
+
+		if ( !$this->isActionableTarget( $page->getTitle() ) ) {
+			return;
+		}
+
+		$previousRevision = $revision->getPrevious();
+		$previousContent =
+			$previousRevision ?
+				$previousRevision->getContent( Revision::RAW ) :
+				null;
+
 		$this->onContentChange(
 			$page->getTitle()->getTitleValue(),
-			$content
+			(bool) ( $flags & EDIT_NEW ),
+			$content->isRedirect(),
+			$previousContent ? $previousContent->isRedirect() : null
 		);
 	}
 
@@ -150,10 +167,16 @@ class CognatePageHookHandler {
 		$comment,
 		$oldPageId
 	) {
+		if ( !$this->isActionableTarget( $title ) ) {
+			return;
+		}
+
 		$revision = $this->newRevisionFromId( $title->getLatestRevID() );
 		$this->onContentChange(
 			$title->getTitleValue(),
-			$revision->getContent( Revision::RAW )
+			true,
+			$revision->getContent( Revision::RAW )->isRedirect(),
+			false
 		);
 	}
 
@@ -220,13 +243,25 @@ class CognatePageHookHandler {
 		return MediaWikiServices::getInstance()->getService( 'CognateRepo' );
 	}
 
-	private function onContentChange( TitleValue $titleValue, Content $content ) {
-		if ( $this->isActionableTarget( $titleValue ) ) {
-			if ( $content->isRedirect() ) {
-				$this->getRepo()->deletePage( $this->dbName, $titleValue );
-			} else {
-				$this->getRepo()->savePage( $this->dbName, $titleValue );
-			}
+	/**
+	 * @param TitleValue $titleValue
+	 * @param bool $isNewPage
+	 * @param bool $isRedirect
+	 * @param bool|null $wasRedirect
+	 */
+	private function onContentChange(
+		TitleValue $titleValue,
+		$isNewPage,
+		$isRedirect,
+		$wasRedirect = null
+	) {
+		if (
+			( $isNewPage && !$isRedirect ) ||
+			( $wasRedirect && !$isRedirect )
+		) {
+			$this->getRepo()->savePage( $this->dbName, $titleValue );
+		} elseif ( !$isNewPage && !$wasRedirect && $isRedirect ) {
+			$this->getRepo()->deletePage( $this->dbName, $titleValue );
 		}
 	}
 

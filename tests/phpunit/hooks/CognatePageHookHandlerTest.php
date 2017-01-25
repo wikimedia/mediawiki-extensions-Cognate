@@ -44,38 +44,88 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 		);
 	}
 
-	public function test_onPageContentSaveComplete_namespaceMatch_noRedirect() {
-		$this->repo->expects( $this->never() )
-			->method( 'deletePage' );
+	public function test_onPageContentSaveComplete_noNamespaceMatch() {
+		$this->repo->expects( $this->never() )->method( 'deletePage' );
+		$this->repo->expects( $this->never() )->method( 'savePage' );
+
+		$this->call_onPageContentSaveComplete(
+			[ NS_PROJECT ], 'abc2', new TitleValue( 0, 'ArticleDbKey' )
+		);
+	}
+
+	public function test_onPageContentSaveComplete_namespaceMatch_nullEdit() {
+		$this->repo->expects( $this->never() )->method( 'deletePage' );
+		$this->repo->expects( $this->never() )->method( 'savePage' );
+
+		$this->call_onPageContentSaveComplete(
+			[ 0 ], 'abc2', new TitleValue( 0, 'ArticleDbKey' ),
+			[ 'hasNoRevision', 'hasPreviousRevision' ]
+		);
+	}
+
+	public function test_onPageContentSaveComplete_namespaceMatch_createNewNonRedirect() {
+		$this->repo->expects( $this->never() )->method( 'deletePage' );
 		$this->repo->expects( $this->once() )
 			->method( 'savePage' )
 			->with( 'abc2', new TitleValue( 0, 'ArticleDbKey' ) );
 
 		$this->call_onPageContentSaveComplete(
-			[ 0 ], 'abc2', new TitleValue( 0, 'ArticleDbKey' )
+			[ 0 ], 'abc2', new TitleValue( 0, 'ArticleDbKey' ),
+			[ 'isNew' ]
 		);
 	}
 
-	public function test_onPageContentSaveComplete_namespaceMatch_redirect() {
+	public function test_onPageContentSaveComplete_namespaceMatch_createNewRedirect() {
+		$this->repo->expects( $this->never() )->method( 'deletePage' );
+		$this->repo->expects( $this->never() )->method( 'savePage' );
+
+		$this->call_onPageContentSaveComplete(
+			[ 0 ], 'abc2', new TitleValue( 0, 'ArticleDbKey' ),
+			[ 'isNew', 'isRedirect' ]
+		);
+	}
+
+	public function test_onPageContentSaveComplete_namespaceMatch_editExistingNonRedirect() {
+		$this->repo->expects( $this->never() )->method( 'deletePage' );
+		$this->repo->expects( $this->never() )->method( 'savePage' );
+
+		$this->call_onPageContentSaveComplete(
+			[ 0 ], 'abc2', new TitleValue( 0, 'ArticleDbKey' ),
+			[ 'hasPreviousRevision' ]
+		);
+	}
+
+	public function test_onPageContentSaveComplete_namespaceMatch_editExistingRedirect() {
+		$this->repo->expects( $this->never() )->method( 'deletePage' );
+		$this->repo->expects( $this->never() )->method( 'savePage' );
+
+		$this->call_onPageContentSaveComplete(
+			[ 0 ], 'abc2', new TitleValue( 0, 'ArticleDbKey' ),
+			[ 'isRedirect', 'wasRedirect', 'hasPreviousRevision' ]
+		);
+	}
+
+	public function test_onPageContentSaveComplete_namespaceMatch_editNonRedirectToRedirect() {
 		$this->repo->expects( $this->once() )
 			->method( 'deletePage' )
 			->with( 'abc2', new TitleValue( 0, 'ArticleDbKey' ) );
-		$this->repo->expects( $this->never() )
-			->method( 'savePage' );
+		$this->repo->expects( $this->never() )->method( 'savePage' );
 
 		$this->call_onPageContentSaveComplete(
-			[ 0 ], 'abc2', new TitleValue( 0, 'ArticleDbKey' ), true
+			[ 0 ], 'abc2', new TitleValue( 0, 'ArticleDbKey' ),
+			[ 'isRedirect', 'hasPreviousRevision' ]
 		);
 	}
 
-	public function test_onPageContentSaveComplete_noNamespaceMatch_noRedirect() {
-		$this->repo->expects( $this->never() )
-			->method( 'deletePage' );
-		$this->repo->expects( $this->never() )
-			->method( 'savePage' );
+	public function test_onPageContentSaveComplete_namespaceMatch_editRedirectToNonRedirect() {
+		$this->repo->expects( $this->never() )->method( 'deletePage' );
+		$this->repo->expects( $this->once() )
+			->method( 'savePage' )
+			->with( 'abc2', new TitleValue( 0, 'ArticleDbKey' ) );
 
 		$this->call_onPageContentSaveComplete(
-			[ NS_PROJECT ], 'abc2', new TitleValue( 0, 'ArticleDbKey' )
+			[ 0 ], 'abc2', new TitleValue( 0, 'ArticleDbKey' ),
+			[ 'wasRedirect', 'hasPreviousRevision' ]
 		);
 	}
 
@@ -83,13 +133,15 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 	 * @param int[] $namespaces
 	 * @param string $dbName
 	 * @param LinkTarget $linkTarget
-	 * @param bool $latestRevisionIsRedirect
+	 * @param string[] $options
+	 *        Value in array: isNew, isRedirect, wasRedirect, hasNoRevision, hasPreviousRevision
+	 *        Will be false if not included in array
 	 */
 	private function call_onPageContentSaveComplete(
 		array $namespaces,
 		$dbName,
 		LinkTarget $linkTarget,
-		$latestRevisionIsRedirect = false
+		$options = []
 	) {
 		/** @var WikiPage|PHPUnit_Framework_MockObject_MockObject $mockWikiPage */
 		$mockWikiPage = $this->getMockBuilder( 'WikiPage' )
@@ -99,17 +151,46 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 			->method( 'getTitle' )
 			->will( $this->returnValue( Title::newFromLinkTarget( $linkTarget ) ) );
 
-		$content = $this->getMock( 'Content' );
+		$content = $this->getMock( Content::class );
 		$content->expects( $this->any() )
 			->method( 'isRedirect' )
-			->will( $this->returnValue( $latestRevisionIsRedirect ) );
+			->will( $this->returnValue( in_array( 'isRedirect', $options ) ) );
+
+		$revision = null;
+		if ( !in_array( 'hasNoRevision', $options ) ) {
+			$revision = $this->getMockRevision();
+
+			$previousRevision = null;
+			if ( in_array( 'hasPreviousRevision', $options ) ) {
+				$previousContent = $this->getMock( Content::class );
+				$previousContent->expects( $this->any() )
+					->method( 'isRedirect' )
+					->will( $this->returnValue( in_array( 'wasRedirect', $options ) ) );
+
+				$previousRevision = $this->getMockRevision();
+				$previousRevision->expects( $this->any() )
+					->method( 'getContent' )
+					->will( $this->returnValue( $previousContent ) );
+			}
+
+			$revision->expects( $this->any() )
+				->method( 'getPrevious' )
+				->will( $this->returnValue( $previousRevision ) );
+		}
+
+		$flags = 0;
+		if ( in_array( 'isNew', $options ) ) {
+			$flags = EDIT_NEW;
+		}
 
 		$handler = new CognatePageHookHandler( $namespaces, $dbName );
 		$handler->onPageContentSaveComplete(
 			$mockWikiPage,
 			User::newFromId( 0 ),
 			$content,
-			null, null, null, null, null, null,
+			null, null, null, null,
+			$flags,
+			$revision,
 			$this->getMock( 'Status' ),
 			null
 		);
@@ -180,8 +261,7 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 	}
 
 	public function test_onArticleUndelete_namespaceMatch_noRedirect() {
-		$this->repo->expects( $this->never() )
-			->method( 'deletePage' );
+		$this->repo->expects( $this->never() )->method( 'deletePage' );
 		$this->repo->expects( $this->once() )
 			->method( 'savePage' )
 			->with( 'abc2', new TitleValue( 0, 'ArticleDbKey' ) );
@@ -194,11 +274,8 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 	}
 
 	public function test_onArticleUndelete_namespaceMatch_redirect() {
-		$this->repo->expects( $this->once() )
-			->method( 'deletePage' )
-			->with( 'abc2', new TitleValue( 0, 'ArticleDbKey' ) );
-		$this->repo->expects( $this->never() )
-			->method( 'savePage' );
+		$this->repo->expects( $this->never() )->method( 'deletePage' );
+		$this->repo->expects( $this->never() )->method( 'savePage' );
 
 		$this->call_onArticleUndelete(
 			[ 0 ],
@@ -209,10 +286,8 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 	}
 
 	public function test_onArticleUndelete_noNamespaceMatch_noRedirect() {
-		$this->repo->expects( $this->never() )
-			->method( 'deletePage' );
-		$this->repo->expects( $this->never() )
-			->method( 'savePage' );
+		$this->repo->expects( $this->never() )->method( 'deletePage' );
+		$this->repo->expects( $this->never() )->method( 'savePage' );
 
 		$this->call_onArticleUndelete(
 			[ NS_PROJECT ],
