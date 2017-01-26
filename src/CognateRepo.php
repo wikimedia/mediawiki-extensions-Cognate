@@ -3,6 +3,7 @@
 namespace Cognate;
 
 use MediaWiki\Linker\LinkTarget;
+use Psr\Log\LoggerInterface;
 use Title;
 use TitleFormatter;
 
@@ -27,14 +28,21 @@ class CognateRepo {
 	 */
 	private $titleFormatter;
 
+	/**
+	 * @var LoggerInterface
+	 */
+	private $logger;
+
 	public function __construct(
 		CognateStore $store,
 		CacheInvalidator $cacheInvalidator,
-		TitleFormatter $titleFormatter
+		TitleFormatter $titleFormatter,
+		LoggerInterface $logger
 	) {
 		$this->store = $store;
 		$this->cacheInvalidator = $cacheInvalidator;
 		$this->titleFormatter = $titleFormatter;
+		$this->logger = $logger;
 	}
 
 	/**
@@ -49,6 +57,17 @@ class CognateRepo {
 			$this->cacheInvalidator->invalidate(
 				$dbName,
 				Title::newFromLinkTarget( $linkTarget )
+			);
+		} else {
+			$dbKey = $linkTarget->getDBkey();
+			$namespace = $linkTarget->getNamespace();
+			$this->logger->error(
+				'Probable duplicate hash for dbKey: \'' . $dbKey . '\'',
+				[
+					'dbName' => $dbName,
+					'namespace' => $namespace,
+					'dbKey' => $dbKey,
+				]
 			);
 		}
 

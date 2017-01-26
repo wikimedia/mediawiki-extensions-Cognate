@@ -44,7 +44,9 @@ class CognateStoreIntegrationTest extends \MediaWikiTestCase {
 	}
 
 	public function testInsertPageCreatesNewEntry() {
-		$this->store->insertPage( 'enwiktionary', new TitleValue( 0, 'My_test_page' ) );
+		$success = $this->store->insertPage( 'enwiktionary', new TitleValue( 0, 'My_test_page' ) );
+
+		$this->assertTrue( $success );
 		$this->assertSelect(
 			'cognate_pages',
 			[ 'cgpa_site', 'cgpa_title', 'cgpa_namespace' ],
@@ -53,14 +55,46 @@ class CognateStoreIntegrationTest extends \MediaWikiTestCase {
 		);
 	}
 
-	public function testInsertPageWithExistingEntryIgnoresErrors() {
-		$this->store->insertPage( 'enwiktionary', new TitleValue( 0, 'My_second_test_page' ) );
-		$this->store->insertPage( 'enwiktionary', new TitleValue( 0, 'My_second_test_page' ) );
+	public function testInsertPageWithExistingEntry() {
+		$firstSuccess = $this->store->insertPage(
+			'enwiktionary',
+			new TitleValue( 0, 'My_second_test_page' )
+		);
+		$secondSuccess = $this->store->insertPage(
+			'enwiktionary',
+			new TitleValue( 0, 'My_second_test_page' )
+		);
+
+		$this->assertTrue( $firstSuccess );
+		$this->assertTrue( $secondSuccess );
 		$this->assertSelect(
 			'cognate_pages',
 			[ 'cgpa_site', 'cgpa_title', 'cgpa_namespace' ],
 			[ "cgpa_title != {$this->UTPageNameHash}" ],
 			[ [ $this->hash( 'enwiktionary' ), $this->hash( 'My_second_test_page' ), 0 ] ]
+		);
+	}
+
+	public function testInsertPageWithExistingEntryOnOtherWiki() {
+		$firstSuccess = $this->store->insertPage(
+			'enwiktionary',
+			new TitleValue( 0, 'My_second_test_page' )
+		);
+		$secondSuccess = $this->store->insertPage(
+			'dewiktionary',
+			new TitleValue( 0, 'My_second_test_page' )
+		);
+
+		$this->assertTrue( $firstSuccess );
+		$this->assertTrue( $secondSuccess );
+		$this->assertSelect(
+			'cognate_pages',
+			[ 'cgpa_site', 'cgpa_title', 'cgpa_namespace' ],
+			[ "cgpa_title != {$this->UTPageNameHash}" ],
+			[
+				[ $this->hash( 'dewiktionary' ), $this->hash( 'My_second_test_page' ), 0 ],
+				[ $this->hash( 'enwiktionary' ), $this->hash( 'My_second_test_page' ), 0 ],
+			]
 		);
 	}
 
@@ -71,6 +105,7 @@ class CognateStoreIntegrationTest extends \MediaWikiTestCase {
 			'dewiktionary' => 'de',
 			'eowiktionary' => 'eo',
 		] );
+
 		$this->store->insertPage( 'enwiktionary', new TitleValue( 0, 'My_test_page' ) );
 		$this->store->insertPage( 'enwiktionary', new TitleValue( 0, 'Another_unrelated_page' ) );
 		$this->store->insertPage( 'dewiktionary', new TitleValue( 0, 'My_test_page' ) );

@@ -7,6 +7,9 @@ use Cognate\CognateRepo;
 use Cognate\CognateStore;
 use MediaWiki\Linker\LinkTarget;
 use PHPUnit_Framework_MockObject_MockObject;
+use Psr\Log\AbstractLogger;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Title;
 use TitleFormatter;
 use TitleValue;
@@ -79,12 +82,13 @@ class CognateRepoUnitTest extends \MediaWikiTestCase {
 		$repo = new CognateRepo(
 			$store,
 			$this->getMockCacheInvalidator( [ [ 'siteName', $titleValue ] ] ),
-			$this->getMockTitleFormatter()
+			$this->getMockTitleFormatter(),
+			new NullLogger()
 		);
 		$repo->savePage( 'siteName', $titleValue );
 	}
 
-	public function testSavePage_failAndNoInvalidate() {
+	public function testSavePage_failLogAndNoInvalidate() {
 		$titleValue = new TitleValue( 0, 'My_test_page' );
 		$store = $this->getMockStore();
 		$store->expects( $this->once() )
@@ -92,10 +96,24 @@ class CognateRepoUnitTest extends \MediaWikiTestCase {
 			->with( 'siteName', $titleValue )
 			->will( $this->returnValue( false ) );
 
+		/** @var LoggerInterface|PHPUnit_Framework_MockObject_MockObject $mockLogger */
+		$mockLogger = $this->getMock( NullLogger::class );
+		$mockLogger->expects( $this->once() )
+			->method( 'error' )
+			->with(
+				'Probable duplicate hash for dbKey: \'My_test_page\'',
+				[
+					'dbName' => 'siteName',
+					'namespace' => 0,
+					'dbKey' => 'My_test_page',
+				]
+			);
+
 		$repo = new CognateRepo(
 			$store,
 			$this->getMockCacheInvalidator( [] ),
-			$this->getMockTitleFormatter()
+			$this->getMockTitleFormatter(),
+			$mockLogger
 		);
 		$repo->savePage( 'siteName', $titleValue );
 	}
@@ -111,7 +129,8 @@ class CognateRepoUnitTest extends \MediaWikiTestCase {
 		$repo = new CognateRepo(
 			$store,
 			$this->getMockCacheInvalidator( [ [ 'siteName', $titleValue ] ] ),
-			$this->getMockTitleFormatter()
+			$this->getMockTitleFormatter(),
+			new NullLogger()
 		);
 		$repo->deletePage( 'siteName', $titleValue );
 	}
@@ -127,7 +146,8 @@ class CognateRepoUnitTest extends \MediaWikiTestCase {
 		$repo = new CognateRepo(
 			$store,
 			$this->getMockCacheInvalidator( [] ),
-			$this->getMockTitleFormatter()
+			$this->getMockTitleFormatter(),
+			new NullLogger()
 		);
 		$repo->deletePage( 'siteName', $titleValue );
 	}
@@ -148,7 +168,8 @@ class CognateRepoUnitTest extends \MediaWikiTestCase {
 		$repo = new CognateRepo(
 			$store,
 			$this->getMockCacheInvalidator( [] ),
-			$this->getMockTitleFormatter()
+			$this->getMockTitleFormatter(),
+			new NullLogger()
 		);
 		$result = $repo->getLinksForPage( 'siteName', $titleValue );
 		$this->assertEquals( [ 'foo:0:bar' ], $result );

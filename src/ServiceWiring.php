@@ -3,7 +3,9 @@
 namespace Cognate;
 
 use JobQueueGroup;
+use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
+use Psr\Log\LoggerInterface;
 use Wikimedia\Rdbms\ConnectionManager;
 
 /**
@@ -11,16 +13,23 @@ use Wikimedia\Rdbms\ConnectionManager;
  */
 
 return [
+	'CognateLogger' => function( MediaWikiServices $services ) {
+		return LoggerFactory::getInstance( 'Cognate' );
+	},
+
 	'CognateRepo' => function( MediaWikiServices $services ) {
 		/** @var CognateStore $store */
 		$store = $services->getService( 'CognateStore' );
 		/** @var CacheInvalidator $cacheInvalidator */
 		$cacheInvalidator = $services->getService( 'CognateCacheInvalidator' );
+		/** @var LoggerInterface $logger */
+		$logger = $services->getService( 'CognateLogger' );
 
 		return new CognateRepo(
 			$store,
 			$cacheInvalidator,
-			$services->getTitleFormatter()
+			$services->getTitleFormatter(),
+			$logger
 		);
 	},
 

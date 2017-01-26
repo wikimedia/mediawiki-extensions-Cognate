@@ -53,14 +53,54 @@ class CognateStore {
 	 * @param string $dbName The dbName for the site
 	 * @param LinkTarget $linkTarget
 	 *
-	 * @return bool
+	 * @return bool true on success, false if there was a key conflict
 	 */
 	public function insertPage( $dbName, LinkTarget $linkTarget ) {
-		return $this->insertPages( [ [
-			'site' => $dbName,
-			'namespace' => $linkTarget->getNamespace(),
-			'title' => $linkTarget->getDBkey(),
-		] ] );
+		$dbw = $this->connectionManager->getWriteConnectionRef();
+
+		$dbKey = $linkTarget->getDBkey();
+		$namespace = $linkTarget->getNamespace();
+
+		$titleHash = $this->getStringHash( $dbKey );
+		$normalizedTitleHash = $this->getNormalizedStringHash( $dbKey );
+		$siteHash = $this->getStringHash( $dbName );
+
+		$row = $dbw->selectRow(
+			self::TITLES_TABLE_NAME,
+			[ 'cgti_raw' ],
+			[ 'cgti_raw_key' => $titleHash ],
+			__METHOD__
+		);
+
+		if ( $row && $row->cgti_raw !== $dbKey ) {
+			return false;
+		}
+
+		if ( !$row ) {
+			$dbw->insert(
+				self::TITLES_TABLE_NAME,
+				[
+					'cgti_raw' => $dbKey,
+					'cgti_raw_key' => $titleHash,
+					'cgti_normalized_key' => $normalizedTitleHash,
+				],
+				__METHOD__,
+				[ 'IGNORE' ]
+			);
+		}
+
+		$dbw->insert(
+			self::PAGES_TABLE_NAME,
+			[
+				'cgpa_site' => $siteHash,
+				'cgpa_namespace' => $namespace,
+				'cgpa_title' => $titleHash,
+			],
+			__METHOD__,
+			[ 'IGNORE' ]
+		);
+
+		return true;
 	}
 
 	/**
