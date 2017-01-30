@@ -17,9 +17,11 @@ actual concept is different.
 
 This extension can be used along side the [InterwikiSorting extension](https://www.mediawiki.org/wiki/Extension:InterwikiSorting) to sort the interwiki links that are displayed.
 
-### Assumptions
+### Notes
 
  - Sites should have the same interwiki structure for language links.
+ - In the case that two different titles result in the same hash during normal operation this will be logged in the 'Cognate' channel.
+ - If two different titles result in the same hash during database population using one of the maintenance scripts there will be no log.
 
 ## Installation
 
