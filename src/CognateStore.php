@@ -3,6 +3,7 @@
 namespace Cognate;
 
 use MediaWiki\Linker\LinkTarget;
+use TitleValue;
 use Wikimedia\Rdbms\ConnectionManager;
 
 /**
@@ -58,32 +59,26 @@ class CognateStore {
 	public function insertPage( $dbName, LinkTarget $linkTarget ) {
 		$dbw = $this->connectionManager->getWriteConnectionRef();
 
-		$dbKey = $linkTarget->getDBkey();
-		$namespace = $linkTarget->getNamespace();
-
-		$titleHash = $this->getStringHash( $dbKey );
-		$normalizedTitleHash = $this->getNormalizedStringHash( $dbKey );
-		$siteHash = $this->getStringHash( $dbName );
+		list( $pagesToInsert, $titlesToInsert ) = $this->buildRows(
+			$linkTarget,
+			$dbName
+		);
 
 		$row = $dbw->selectRow(
 			self::TITLES_TABLE_NAME,
 			[ 'cgti_raw' ],
-			[ 'cgti_raw_key' => $titleHash ],
+			[ 'cgti_raw_key' => $this->getStringHash( $linkTarget->getDBkey() ) ],
 			__METHOD__
 		);
 
-		if ( $row && $row->cgti_raw !== $dbKey ) {
+		if ( $row && $row->cgti_raw !== $linkTarget->getDBkey() ) {
 			return false;
 		}
 
 		if ( !$row ) {
 			$dbw->insert(
 				self::TITLES_TABLE_NAME,
-				[
-					'cgti_raw' => $dbKey,
-					'cgti_raw_key' => $titleHash,
-					'cgti_normalized_key' => $normalizedTitleHash,
-				],
+				$titlesToInsert,
 				__METHOD__,
 				[ 'IGNORE' ]
 			);
@@ -91,11 +86,7 @@ class CognateStore {
 
 		$dbw->insert(
 			self::PAGES_TABLE_NAME,
-			[
-				'cgpa_site' => $siteHash,
-				'cgpa_namespace' => $namespace,
-				'cgpa_title' => $titleHash,
-			],
+			$pagesToInsert,
 			__METHOD__,
 			[ 'IGNORE' ]
 		);
@@ -212,19 +203,12 @@ class CognateStore {
 		$pagesToInsert = [];
 		$titlesToInsert = [];
 		foreach ( $pageDetailsArray as $pageDetails ) {
-			$titleHash = $this->getStringHash( $pageDetails['title'] );
-			$normalizedTitleHash = $this->getNormalizedStringHash( $pageDetails['title'] );
-			$siteHash = $this->getStringHash( $pageDetails['site'] );
-			$pagesToInsert[] = [
-				'cgpa_site' => $siteHash,
-				'cgpa_namespace' => $pageDetails['namespace'],
-				'cgpa_title' => $titleHash,
-			];
-			$titlesToInsert[] = [
-				'cgti_raw' => $pageDetails['title'],
-				'cgti_raw_key' => $titleHash,
-				'cgti_normalized_key' => $normalizedTitleHash,
-			];
+			$this->buildRows(
+				new TitleValue( $pageDetails['namespace'], $pageDetails['title'] ),
+				$pageDetails['site'],
+				$pagesToInsert,
+				$titlesToInsert
+			);
 		}
 
 		$dbw->insert(
@@ -240,6 +224,34 @@ class CognateStore {
 			__METHOD__,
 			[ 'IGNORE' ]
 		);
+	}
+
+	/**
+	 * @param LinkTarget $linkTarget
+	 * @param string $site
+	 * @param array[] $pagesToInsert
+	 * @param array[] $titlesToInsert
+	 *
+	 * @return array 0 => $pagesToInsert, 1 => $titleToInsert
+	 */
+	private function buildRows(
+		LinkTarget $linkTarget,
+		$site,
+		array &$pagesToInsert = [],
+		array &$titlesToInsert = []
+	) {
+		$pagesToInsert[] = [
+			'cgpa_site' => $this->getStringHash( $site ),
+			'cgpa_namespace' => $linkTarget->getNamespace(),
+			'cgpa_title' => $this->getStringHash( $linkTarget->getDBkey() ),
+		];
+		$titlesToInsert[] = [
+			'cgti_raw' => $linkTarget->getDBkey(),
+			'cgti_raw_key' => $this->getStringHash( $linkTarget->getDBkey() ),
+			'cgti_normalized_key' => $this->getNormalizedStringHash( $linkTarget->getDBkey() ),
+		];
+
+		return [ $pagesToInsert, $titlesToInsert ];
 	}
 
 	/**
