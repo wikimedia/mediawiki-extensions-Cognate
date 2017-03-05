@@ -5,6 +5,7 @@ namespace Cognate;
 use DatabaseUpdater;
 use MediaWiki\MediaWikiServices;
 use Title;
+use Wikimedia\Rdbms\LoadBalancer;
 
 /**
  * @license GNU GPL v2+
@@ -89,29 +90,46 @@ class CognateHooks {
 	/**
 	 * Run database updates
 	 *
-	 * Only runs the update when both $wgCognateDb and $wgCognateCluster are false
-	 * i.e. for testing.
-	 *
 	 * @param DatabaseUpdater $updater DatabaseUpdater object
 	 * @return bool
 	 */
 	public static function onLoadExtensionSchemaUpdates( DatabaseUpdater $updater ) {
 		global $wgCognateDb, $wgCognateCluster;
 
-		// The Updater can only deal with the main wiki db, so skip if something else is configured
-		if ( $wgCognateDb !== false || $wgCognateCluster !== false ) {
+		// Avoid running this code again when calling CognateUpdater::newForDB
+		static $hasRunOnce = false;
+		if ( $hasRunOnce ) {
 			return true;
+		} else {
+			$hasRunOnce = true;
 		}
 
-		$updater->addExtensionUpdate(
+		// Setup and run our own updater
+		if ( $wgCognateDb === false && $wgCognateCluster === false ) {
+			$cognateUpdater = CognateUpdater::newForDB( $updater->getDB() );
+		} else {
+			$services = MediaWikiServices::getInstance();
+			if ( $wgCognateCluster !== false ) {
+				$loadBalancerFactory = $services->getDBLoadBalancerFactory();
+				$loadBalancer = $loadBalancerFactory->getExternalLB( $wgCognateCluster );
+			} else {
+				$loadBalancer = $services->getDBLoadBalancer();
+			}
+			$database = $loadBalancer->getConnection( LoadBalancer::DB_MASTER, [], $wgCognateDb );
+			$cognateUpdater = CognateUpdater::newForDB( $database );
+		}
+
+		$cognateUpdater->addExtensionUpdate(
 			[ 'addTable', 'cognate_pages', __DIR__ . '/../db/addCognatePages.sql', true ]
 		);
-		$updater->addExtensionUpdate(
+		$cognateUpdater->addExtensionUpdate(
 			[ 'addTable', 'cognate_titles', __DIR__ . '/../db/addCognateTitles.sql', true ]
 		);
-		$updater->addExtensionUpdate(
+		$cognateUpdater->addExtensionUpdate(
 			[ 'addTable', 'cognate_sites', __DIR__ . '/../db/addCognateSites.sql', true ]
 		);
+
+		$cognateUpdater->doUpdates( [ 'extensions' ] );
 
 		return true;
 	}

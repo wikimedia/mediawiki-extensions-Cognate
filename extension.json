@@ -16,6 +16,7 @@
     "Cognate\\CognateHooks": "src/CognateHooks.php",
     "Cognate\\CognateRepo": "src/CognateRepo.php",
     "Cognate\\CognateStore": "src/CognateStore.php",
+    "Cognate\\CognateUpdater": "src/CognateUpdater.php",
     "Cognate\\CacheInvalidator": "src/CacheInvalidator.php",
     "Cognate\\LocalJobSubmitJob": "src/LocalJobSubmitJob.php",
     "Cognate\\CacheUpdateJob": "src/CacheUpdateJob.php",
