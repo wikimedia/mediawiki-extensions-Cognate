@@ -90,6 +90,8 @@ class CognateHooks {
 	/**
 	 * Run database updates
 	 *
+	 * @see CognateUpdater regarding the complexities of this hook
+	 *
 	 * @param DatabaseUpdater $updater DatabaseUpdater object
 	 * @return bool
 	 */
@@ -115,8 +117,8 @@ class CognateHooks {
 			} else {
 				$loadBalancer = $services->getDBLoadBalancer();
 			}
-			$database = $loadBalancer->getConnection( LoadBalancer::DB_MASTER, [], $wgCognateDb );
-			$cognateUpdater = CognateUpdater::newForDB( $database );
+			$cognateDatabase = $loadBalancer->getConnection( LoadBalancer::DB_MASTER, [], $wgCognateDb );
+			$cognateUpdater = CognateUpdater::newForCognateDB( $updater->getDB(), $cognateDatabase );
 		}
 
 		$cognateUpdater->addExtensionUpdate(
