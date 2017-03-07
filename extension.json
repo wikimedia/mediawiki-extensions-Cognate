@@ -7,7 +7,7 @@
   ],
   "url": "https://www.mediawiki.org/wiki/Extension:Cognate",
   "descriptionmsg": "cognate-desc",
-  "license-name": "MIT",
+  "license-name": "GPL-2.0+",
   "type": "other",
   "requires": {
     "MediaWiki": ">= 1.29.0"
