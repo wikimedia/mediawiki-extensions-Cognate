@@ -1,6 +1,8 @@
 {
-  "@metadata": {
-    "authors": [ "Gabriel Birke <gabriel.birke@wikimedia.de>" ]
-  },
-  "cognate-desc": "Link different language versions of a page by using the page title."
+	"@metadata": {
+		"authors": [
+			"Gabriel Birke <gabriel.birke@wikimedia.de>"
+		]
+	},
+	"cognate-desc": "Link different language versions of a page by using the page title."
 }

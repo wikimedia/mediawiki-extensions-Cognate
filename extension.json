@@ -1,53 +1,67 @@
 {
-  "name": "Cognate",
-  "version": "0.0.1",
-  "author": [
-    "Gabriel Birke <gabriel.birke@wikimedia.de>",
-    "Addshore"
-  ],
-  "url": "https://www.mediawiki.org/wiki/Extension:Cognate",
-  "descriptionmsg": "cognate-desc",
-  "license-name": "GPL-2.0+",
-  "type": "other",
-  "requires": {
-    "MediaWiki": ">= 1.29.0"
-  },
-  "AutoloadClasses": {
-    "Cognate\\CognateHooks": "src/CognateHooks.php",
-    "Cognate\\CognateRepo": "src/CognateRepo.php",
-    "Cognate\\CognateStore": "src/CognateStore.php",
-    "Cognate\\CognateUpdater": "src/CognateUpdater.php",
-    "Cognate\\CacheInvalidator": "src/CacheInvalidator.php",
-    "Cognate\\LocalJobSubmitJob": "src/LocalJobSubmitJob.php",
-    "Cognate\\CacheUpdateJob": "src/CacheUpdateJob.php",
-    "Cognate\\StringNormalizer": "src/StringNormalizer.php",
-    "Cognate\\StringHasher": "src/StringHasher.php",
-    "Cognate\\CognatePageHookHandler": "src/hooks/CognatePageHookHandler.php"
-  },
-  "JobClasses": {
-    "CognateLocalJobSubmitJob": "Cognate\\LocalJobSubmitJob",
-    "CognateCacheUpdateJob": "Cognate\\CacheUpdateJob"
-  },
-  "config": {
-    "CognateDb": false,
-    "CognateCluster": false,
-    "CognateNamespaces": [ 0 ]
-  },
-  "ServiceWiringFiles": [
-    "src/ServiceWiring.php"
-  ],
-  "Hooks": {
-    "PageContentSaveComplete": [ "Cognate\\CognateHooks::onPageContentSaveComplete" ],
-    "LanguageLinks": [ "Cognate\\CognateHooks::onLanguageLinks" ],
-    "WikiPageDeletionUpdates": [ "Cognate\\CognateHooks::onWikiPageDeletionUpdates" ],
-    "ArticleUndelete": [ "Cognate\\CognateHooks::onArticleUndelete" ],
-    "TitleMoveComplete": [ "Cognate\\CognateHooks::onTitleMoveComplete" ],
-    "LoadExtensionSchemaUpdates": [ "Cognate\\CognateHooks::onLoadExtensionSchemaUpdates" ]
-  },
-  "MessagesDirs": {
-    "Cognate": [
-      "i18n"
-    ]
-  },
-  "manifest_version": 1
+	"name": "Cognate",
+	"version": "0.0.1",
+	"author": [
+		"Gabriel Birke <gabriel.birke@wikimedia.de>",
+		"Addshore"
+	],
+	"url": "https://www.mediawiki.org/wiki/Extension:Cognate",
+	"descriptionmsg": "cognate-desc",
+	"license-name": "GPL-2.0+",
+	"type": "other",
+	"requires": {
+		"MediaWiki": ">= 1.29.0"
+	},
+	"AutoloadClasses": {
+		"Cognate\\CognateHooks": "src/CognateHooks.php",
+		"Cognate\\CognateRepo": "src/CognateRepo.php",
+		"Cognate\\CognateStore": "src/CognateStore.php",
+		"Cognate\\CognateUpdater": "src/CognateUpdater.php",
+		"Cognate\\CacheInvalidator": "src/CacheInvalidator.php",
+		"Cognate\\LocalJobSubmitJob": "src/LocalJobSubmitJob.php",
+		"Cognate\\CacheUpdateJob": "src/CacheUpdateJob.php",
+		"Cognate\\StringNormalizer": "src/StringNormalizer.php",
+		"Cognate\\StringHasher": "src/StringHasher.php",
+		"Cognate\\CognatePageHookHandler": "src/hooks/CognatePageHookHandler.php"
+	},
+	"JobClasses": {
+		"CognateLocalJobSubmitJob": "Cognate\\LocalJobSubmitJob",
+		"CognateCacheUpdateJob": "Cognate\\CacheUpdateJob"
+	},
+	"config": {
+		"CognateDb": false,
+		"CognateCluster": false,
+		"CognateNamespaces": [
+			0
+		]
+	},
+	"ServiceWiringFiles": [
+		"src/ServiceWiring.php"
+	],
+	"Hooks": {
+		"PageContentSaveComplete": [
+			"Cognate\\CognateHooks::onPageContentSaveComplete"
+		],
+		"LanguageLinks": [
+			"Cognate\\CognateHooks::onLanguageLinks"
+		],
+		"WikiPageDeletionUpdates": [
+			"Cognate\\CognateHooks::onWikiPageDeletionUpdates"
+		],
+		"ArticleUndelete": [
+			"Cognate\\CognateHooks::onArticleUndelete"
+		],
+		"TitleMoveComplete": [
+			"Cognate\\CognateHooks::onTitleMoveComplete"
+		],
+		"LoadExtensionSchemaUpdates": [
+			"Cognate\\CognateHooks::onLoadExtensionSchemaUpdates"
+		]
+	},
+	"MessagesDirs": {
+		"Cognate": [
+			"i18n"
+		]
+	},
+	"manifest_version": 1
 }
