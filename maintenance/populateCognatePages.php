@@ -75,7 +75,7 @@ class PopulateCognatePages extends Maintenance {
 			foreach ( $rows as $key => $row ) {
 				$titleDetails[] = [
 					'site' => $dbName,
-					'namespace' => $row->page_namespace,
+					'namespace' => (int)$row->page_namespace,
 					'title' => $row->page_title,
 				];
 			}
