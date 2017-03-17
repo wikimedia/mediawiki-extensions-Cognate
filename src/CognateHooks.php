@@ -2,8 +2,10 @@
 
 namespace Cognate;
 
+use Content;
 use DatabaseUpdater;
 use MediaWiki\MediaWikiServices;
+use ParserOutput;
 use Title;
 use Wikimedia\Rdbms\LoadBalancer;
 
@@ -55,36 +57,23 @@ class CognateHooks {
 	}
 
 	/**
+	 * @param Content $content
 	 * @param Title $title
-	 * @param array $links
-	 * @param array $linkFlags
-	 * @return bool
+	 * @param ParserOutput $parserOutput
 	 */
-	public static function onLanguageLinks( $title, &$links, &$linkFlags ) {
-		global $wgCognateNamespaces, $wgDBname;
-
-		if ( !in_array( $title->getNamespace(), $wgCognateNamespaces ) ) {
-			return true;
+	public static function onContentAlterParserOutput(
+		Content $content,
+		Title $title,
+		ParserOutput $parserOutput
+	) {
+		// this hook tries to access repo SiteLinkTable
+		// it interferes with any test that parses something, like a page or a message
+		if ( defined( 'MW_PHPUNIT_TEST' ) ) {
+			return;
 		}
 
-		$presentLanguages = [];
-		foreach ( $links as $linkString ) {
-			$linkParts = explode( ':', $linkString, 2 );
-			$presentLanguages[$linkParts[0]] = true;
-		}
-
-		/** @var CognateRepo $repo */
-		$repo = MediaWikiServices::getInstance()->getService( 'CognateRepo' );
-		$cognateLinks = $repo->getLinksForPage( $wgDBname, $title );
-
-		foreach ( $cognateLinks as $cognateLink ) {
-			$cognateLinkParts = explode( ':', $cognateLink, 2 );
-			if ( !array_key_exists( $cognateLinkParts[0], $presentLanguages ) ) {
-				$links[] = $cognateLink;
-			}
-		}
-
-		return true;
+		$handler = CognateParseHookHandler::newFromGlobalState();
+		$handler->doContentAlterParserOutput( $title, $parserOutput );
 	}
 
 	/**

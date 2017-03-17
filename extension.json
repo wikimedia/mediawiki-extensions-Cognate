@@ -22,7 +22,8 @@
 		"Cognate\\CacheUpdateJob": "src/CacheUpdateJob.php",
 		"Cognate\\StringNormalizer": "src/StringNormalizer.php",
 		"Cognate\\StringHasher": "src/StringHasher.php",
-		"Cognate\\CognatePageHookHandler": "src/hooks/CognatePageHookHandler.php"
+		"Cognate\\CognatePageHookHandler": "src/hooks/CognatePageHookHandler.php",
+		"Cognate\\CognateParseHookHandler": "src/hooks/CognateParseHookHandler.php"
 	},
 	"JobClasses": {
 		"CognateLocalJobSubmitJob": "Cognate\\LocalJobSubmitJob",
@@ -42,8 +43,8 @@
 		"PageContentSaveComplete": [
 			"Cognate\\CognateHooks::onPageContentSaveComplete"
 		],
-		"LanguageLinks": [
-			"Cognate\\CognateHooks::onLanguageLinks"
+		"ContentAlterParserOutput": [
+			"Cognate\\CognateHooks::onContentAlterParserOutput"
 		],
 		"WikiPageDeletionUpdates": [
 			"Cognate\\CognateHooks::onWikiPageDeletionUpdates"
