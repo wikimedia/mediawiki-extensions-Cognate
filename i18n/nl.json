@@ -1,8 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"Mainframe98"
+			"Mainframe98",
+			"McDutchie"
 		]
 	},
-	"cognate-desc": "Koppel verschillende versies van een pagina in meerdere talen door middel van de pagina titel."
+	"cognate-desc": "Koppel verschillende taalversies van een pagina aan elkaar met behulp van de paginatitel."
 }
