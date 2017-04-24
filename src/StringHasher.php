@@ -18,6 +18,8 @@ class StringHasher {
 	/**
 	 * @param string $string
 	 *
+	 * @throws InvalidArgumentException
+	 * @throws RuntimeException if not run on a 64 bit system
 	 * @return int a 64 bit SIGNED decimal hash
 	 */
 	public function hash( $string ) {
