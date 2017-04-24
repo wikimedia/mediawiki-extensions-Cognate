@@ -7,7 +7,6 @@ use Cognate\CognateRepo;
 use Cognate\CognateStore;
 use MediaWiki\Linker\LinkTarget;
 use PHPUnit_Framework_MockObject_MockObject;
-use Psr\Log\AbstractLogger;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Title;

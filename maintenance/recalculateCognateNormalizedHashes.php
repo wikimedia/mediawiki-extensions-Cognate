@@ -2,10 +2,10 @@
 
 namespace Cognate;
 
-use Database;
 use Maintenance;
 use MediaWiki\MediaWikiServices;
 use Wikimedia\Rdbms\ConnectionManager;
+use Wikimedia\Rdbms\Database;
 
 if ( getenv( 'MW_INSTALL_PATH' ) !== false ) {
 	require_once getenv( 'MW_INSTALL_PATH' ) . '/maintenance/Maintenance.php';

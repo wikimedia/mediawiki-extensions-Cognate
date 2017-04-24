@@ -2,11 +2,10 @@
 
 namespace Cognate;
 
-use Database;
 use DatabaseUpdater;
 use Maintenance;
 use MWException;
-use RuntimeException;
+use Wikimedia\Rdbms\Database;
 
 /**
  * @author Addshore
