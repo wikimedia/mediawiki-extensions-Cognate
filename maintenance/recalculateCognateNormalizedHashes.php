@@ -75,7 +75,7 @@ class RecalculateCognateNormalizedHashes extends Maintenance {
 
 		while ( $batchStart ) {
 			$this->output( "Getting batch starting from $batchStart\n" );
-			$rows = $this->dbw->select(
+			$rows = $this->dbr->select(
 				CognateStore::TITLES_TABLE_NAME,
 				[ 'cgti_raw', 'cgti_raw_key', 'cgti_normalized_key' ],
 				[ 'cgti_raw_key > ' . $batchStart ],

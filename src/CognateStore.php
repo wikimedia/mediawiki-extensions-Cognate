@@ -58,13 +58,14 @@ class CognateStore {
 	 */
 	public function insertPage( $dbName, LinkTarget $linkTarget ) {
 		$dbw = $this->connectionManager->getWriteConnectionRef();
+		$dbr = $this->connectionManager->getReadConnectionRef();
 
 		list( $pagesToInsert, $titlesToInsert ) = $this->buildRows(
 			$linkTarget,
 			$dbName
 		);
 
-		$row = $dbw->selectRow(
+		$row = $dbr->selectRow(
 			self::TITLES_TABLE_NAME,
 			[ 'cgti_raw' ],
 			[ 'cgti_raw_key' => $this->getStringHash( $linkTarget->getDBkey() ) ],
