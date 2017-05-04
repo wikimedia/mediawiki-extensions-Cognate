@@ -6,6 +6,7 @@ use Maintenance;
 use MediaWiki\MediaWikiServices;
 use Wikimedia\Rdbms\ConnectionManager;
 use Wikimedia\Rdbms\Database;
+use Wikimedia\Rdbms\DBUnexpectedError;
 
 if ( getenv( 'MW_INSTALL_PATH' ) !== false ) {
 	require_once getenv( 'MW_INSTALL_PATH' ) . '/maintenance/Maintenance.php';
@@ -124,7 +125,7 @@ class RecalculateCognateNormalizedHashes extends Maintenance {
 	 * Select 1 less than the minimum so that > can be used in selects in this script.
 	 *
 	 * @return int|false
-	 * @throws \DBUnexpectedError
+	 * @throws DBUnexpectedError
 	 */
 	private function getLowestRawKey() {
 		return $this->dbr->selectField(
