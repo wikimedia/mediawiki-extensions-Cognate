@@ -44,9 +44,9 @@ class CognateStoreIntegrationTest extends \MediaWikiTestCase {
 	}
 
 	public function testInsertPageCreatesNewEntry() {
-		$success = $this->store->insertPage( 'enwiktionary', new TitleValue( 0, 'My_test_page' ) );
+		$inserts = $this->store->insertPage( 'enwiktionary', new TitleValue( 0, 'My_test_page' ) );
 
-		$this->assertTrue( $success );
+		$this->assertSame( 2, $inserts );
 		$this->assertSelect(
 			'cognate_pages',
 			[ 'cgpa_site', 'cgpa_title', 'cgpa_namespace' ],
@@ -56,17 +56,17 @@ class CognateStoreIntegrationTest extends \MediaWikiTestCase {
 	}
 
 	public function testInsertPageWithExistingEntry() {
-		$firstSuccess = $this->store->insertPage(
+		$firstInserts = $this->store->insertPage(
 			'enwiktionary',
 			new TitleValue( 0, 'My_second_test_page' )
 		);
-		$secondSuccess = $this->store->insertPage(
+		$secondInserts = $this->store->insertPage(
 			'enwiktionary',
 			new TitleValue( 0, 'My_second_test_page' )
 		);
 
-		$this->assertTrue( $firstSuccess );
-		$this->assertTrue( $secondSuccess );
+		$this->assertSame( 2, $firstInserts );
+		$this->assertSame( 1, $secondInserts );
 		$this->assertSelect(
 			'cognate_pages',
 			[ 'cgpa_site', 'cgpa_title', 'cgpa_namespace' ],
@@ -76,17 +76,17 @@ class CognateStoreIntegrationTest extends \MediaWikiTestCase {
 	}
 
 	public function testInsertPageWithExistingEntryOnOtherWiki() {
-		$firstSuccess = $this->store->insertPage(
+		$firstInserts = $this->store->insertPage(
 			'enwiktionary',
 			new TitleValue( 0, 'My_second_test_page' )
 		);
-		$secondSuccess = $this->store->insertPage(
+		$secondInserts = $this->store->insertPage(
 			'dewiktionary',
 			new TitleValue( 0, 'My_second_test_page' )
 		);
 
-		$this->assertTrue( $firstSuccess );
-		$this->assertTrue( $secondSuccess );
+		$this->assertSame( 2, $firstInserts );
+		$this->assertSame( 1, $secondInserts );
 		$this->assertSelect(
 			'cognate_pages',
 			[ 'cgpa_site', 'cgpa_title', 'cgpa_namespace' ],

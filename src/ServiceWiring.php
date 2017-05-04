@@ -25,12 +25,16 @@ return [
 		/** @var LoggerInterface $logger */
 		$logger = $services->getService( 'CognateLogger' );
 
-		return new CognateRepo(
+		$repo = new CognateRepo(
 			$store,
 			$cacheInvalidator,
 			$services->getTitleFormatter(),
 			$logger
 		);
+
+		$repo->setStatsdDataFactory( $services->getStatsdDataFactory() );
+
+		return $repo;
 	},
 
 	'CognateConnectionManager' => function( MediaWikiServices $services ) {

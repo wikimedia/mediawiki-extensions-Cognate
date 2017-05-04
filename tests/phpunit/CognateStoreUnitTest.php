@@ -17,6 +17,7 @@ use Wikimedia\Rdbms\DBReadOnlyError;
 class CognateStoreUnitTest extends \PHPUnit_Framework_TestCase {
 
 	private function newReadOnlyCognateStore() {
+		/** @var ConnectionManager $connectionManager */
 		$connectionManager = $this->getMockBuilder( ConnectionManager::class )
 			->disableOriginalConstructor()
 			->getMock();
@@ -43,22 +44,6 @@ class CognateStoreUnitTest extends \PHPUnit_Framework_TestCase {
 		$this->setExpectedException( DBReadOnlyError::class );
 
 		$store->deletePage( 'foo', new TitleValue( 0, 'Some_Page' ) );
-	}
-
-	public function testWhenInReadOnlyMode_insertPagesThrowsException() {
-		$store = $this->newReadOnlyCognateStore();
-
-		$this->setExpectedException( DBReadOnlyError::class );
-
-		$store->insertPages( [ [ 'site' => 'foo', 'namespace' => 0, 'title' => 'Some_Page' ] ] );
-	}
-
-	public function testWhenInReadOnlyMode_insertSitesThrowsException() {
-		$store = $this->newReadOnlyCognateStore();
-
-		$this->setExpectedException( DBReadOnlyError::class );
-
-		$store->insertSites( [ 'foo' => 'f' ] );
 	}
 
 }

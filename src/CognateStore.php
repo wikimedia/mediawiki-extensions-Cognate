@@ -3,11 +3,17 @@
 namespace Cognate;
 
 use MediaWiki\Linker\LinkTarget;
+use RuntimeException;
 use TitleValue;
 use Wikimedia\Rdbms\ConnectionManager;
 use Wikimedia\Rdbms\DBReadOnlyError;
 
 /**
+ * Database access for the Cognate tables.
+ *
+ * This class should generally not be accessed directly but instead via CognateRepo which contains
+ * extra business logic such as logging, stats and cache purges.
+ *
  * @license GNU GPL v2+
  * @author Gabriel Birke < gabriel.birke@wikimedia.de >
  * @author Addshore
@@ -63,7 +69,7 @@ class CognateStore {
 	 * @param string $dbName The dbName for the site
 	 * @param LinkTarget $linkTarget
 	 *
-	 * @return bool true on success, false if there was a key conflict
+	 * @return bool|int number of inserts run on success, false if there was a key conflict
 	 * @throws DBReadOnlyError
 	 */
 	public function insertPage( $dbName, LinkTarget $linkTarget ) {
@@ -90,6 +96,8 @@ class CognateStore {
 			return false;
 		}
 
+		$insertQueryCounter = 0;
+
 		$dbw = $this->connectionManager->getWriteConnectionRef();
 		if ( !$row ) {
 			$dbw->insert(
@@ -98,6 +106,7 @@ class CognateStore {
 				__METHOD__,
 				[ 'IGNORE' ]
 			);
+			$insertQueryCounter++;
 		}
 
 		$dbw->insert(
@@ -106,8 +115,9 @@ class CognateStore {
 			__METHOD__,
 			[ 'IGNORE' ]
 		);
+		$insertQueryCounter++;
 
-		return true;
+		return $insertQueryCounter;
 	}
 
 	/**
@@ -220,11 +230,11 @@ class CognateStore {
 	 * @param array $pageDetailsArray where each element contains the keys 'site', 'namespace', 'title'
 	 *        e.g. [ [ 'site' => 'enwiktionary', 'namespace' => 0, 'title' => 'Berlin' ] ]
 	 *
-	 * @throws DBReadOnlyError
+	 * @throws RuntimeException
 	 */
 	public function insertPages( array $pageDetailsArray ) {
-		if ( $this->readOnly ) {
-			$this->throwReadOnlyException();
+		if ( !defined( 'RUN_MAINTENANCE_IF_MAIN' ) && !defined( 'MW_PHPUNIT_TEST' ) ) {
+			throw new RuntimeException( __METHOD__ . ' can only be used for maintenance or tests.' );
 		}
 
 		$pagesToInsert = [];
@@ -286,11 +296,11 @@ class CognateStore {
 	 * @param string[] $sites keys of site dbname => values of interwiki prefix
 	 *        e.g. 'enwiktionary' => 'en'
 	 *
-	 * @throws DBReadOnlyError
+	 * @throws RuntimeException
 	 */
 	public function insertSites( array $sites ) {
-		if ( $this->readOnly ) {
-			$this->throwReadOnlyException();
+		if ( !defined( 'RUN_MAINTENANCE_IF_MAIN' ) && !defined( 'MW_PHPUNIT_TEST' ) ) {
+			throw new RuntimeException( __METHOD__ . ' can only be used for maintenance or tests.' );
 		}
 
 		$toInsert = [];

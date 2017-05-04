@@ -2,8 +2,11 @@
 
 namespace Cognate;
 
+use Liuggio\StatsdClient\Factory\StatsdDataFactoryInterface;
 use MediaWiki\Linker\LinkTarget;
+use NullStatsdDataFactory;
 use Psr\Log\LoggerInterface;
+use StatsdAwareInterface;
 use Title;
 use TitleFormatter;
 use Wikimedia\Rdbms\DBReadOnlyError;
@@ -12,7 +15,7 @@ use Wikimedia\Rdbms\DBReadOnlyError;
  * @license GNU GPL v2+
  * @author Addshore
  */
-class CognateRepo {
+class CognateRepo implements StatsdAwareInterface {
 
 	/**
 	 * @var CognateStore
@@ -34,6 +37,11 @@ class CognateRepo {
 	 */
 	private $logger;
 
+	/**
+	 * @var StatsdDataFactoryInterface
+	 */
+	private $stats;
+
 	public function __construct(
 		CognateStore $store,
 		CacheInvalidator $cacheInvalidator,
@@ -44,6 +52,11 @@ class CognateRepo {
 		$this->cacheInvalidator = $cacheInvalidator;
 		$this->titleFormatter = $titleFormatter;
 		$this->logger = $logger;
+		$this->stats = new NullStatsdDataFactory();
+	}
+
+	public function setStatsdDataFactory( StatsdDataFactoryInterface $statsFactory ) {
+		$this->stats = $statsFactory;
 	}
 
 	/**
@@ -53,8 +66,13 @@ class CognateRepo {
 	 * @return bool
 	 */
 	public function savePage( $dbName, LinkTarget $linkTarget ) {
+		$this->stats->increment( 'Cognate.Repo.savePage' );
+
 		try {
+			$start = microtime( true );
 			$success = $this->store->insertPage( $dbName, $linkTarget );
+			$this->stats->timing( 'Cognate.Repo.savePage.time', 1000 * ( microtime( true ) - $start ) );
+			$this->stats->gauge( 'Cognate.Repo.savePage.inserts', $success );
 		} catch ( DBReadOnlyError $e ) {
 			return false;
 		}
@@ -77,7 +95,7 @@ class CognateRepo {
 			);
 		}
 
-		return $success;
+		return (bool)$success;
 	}
 
 	/**
@@ -87,8 +105,12 @@ class CognateRepo {
 	 * @return bool
 	 */
 	public function deletePage( $dbName, LinkTarget $linkTarget ) {
+		$this->stats->increment( 'Cognate.Repo.deletePage' );
+
 		try {
+			$start = microtime( true );
 			$success = $this->store->deletePage( $dbName, $linkTarget );
+			$this->stats->timing( 'Cognate.Repo.deletePage.time', 1000 * ( microtime( true ) - $start ) );
 		} catch ( DBReadOnlyError $e ) {
 			return false;
 		}
@@ -110,7 +132,13 @@ class CognateRepo {
 	 * @return string[] interwiki links
 	 */
 	public function getLinksForPage( $dbName, LinkTarget $linkTarget ) {
+		$this->stats->increment( 'Cognate.Repo.getLinksForPage' );
+
+		$start = microtime( true );
 		$linkDetails = $this->store->selectLinkDetailsForPage( $dbName, $linkTarget );
+		$time = 1000 * ( microtime( true ) - $start );
+		$this->stats->timing( 'Cognate.Repo.getLinksForPage.time', $time );
+
 		$links = [];
 		foreach ( $linkDetails as $data ) {
 			$links[] = $this->titleFormatter->formatTitle(
@@ -121,6 +149,22 @@ class CognateRepo {
 			);
 		}
 		return $links;
+	}
+
+	/**
+	 * @param LinkTarget $linkTarget
+	 *
+	 * @return string[] array of dbnames
+	 */
+	public function selectSitesForPage( LinkTarget $linkTarget ) {
+		$this->stats->increment( 'Cognate.Repo.selectSitesForPage' );
+
+		$start = microtime( true );
+		$sites = $this->store->selectSitesForPage( $linkTarget );
+		$time = 1000 * ( microtime( true ) - $start );
+		$this->stats->timing( 'Cognate.Repo.selectSitesForPage.time', $time );
+
+		return $sites;
 	}
 
 }
