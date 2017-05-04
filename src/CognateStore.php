@@ -57,7 +57,6 @@ class CognateStore {
 	 * @return bool true on success, false if there was a key conflict
 	 */
 	public function insertPage( $dbName, LinkTarget $linkTarget ) {
-		$dbw = $this->connectionManager->getWriteConnectionRef();
 		$dbr = $this->connectionManager->getReadConnectionRef();
 
 		list( $pagesToInsert, $titlesToInsert ) = $this->buildRows(
@@ -71,11 +70,13 @@ class CognateStore {
 			[ 'cgti_raw_key' => $this->getStringHash( $linkTarget->getDBkey() ) ],
 			__METHOD__
 		);
+		$this->connectionManager->releaseConnection( $dbr );
 
 		if ( $row && $row->cgti_raw !== $linkTarget->getDBkey() ) {
 			return false;
 		}
 
+		$dbw = $this->connectionManager->getWriteConnectionRef();
 		if ( !$row ) {
 			$dbw->insert(
 				self::TITLES_TABLE_NAME,
@@ -144,6 +145,7 @@ class CognateStore {
 			],
 			__METHOD__
 		);
+		$this->connectionManager->releaseConnection( $dbr );
 
 		$linkDetails = [];
 		while ( $row = $result->fetchRow() ) {
@@ -179,6 +181,7 @@ class CognateStore {
 			],
 			__METHOD__
 		);
+		$this->connectionManager->releaseConnection( $dbr );
 
 		$sites = [];
 		while ( $row = $result->fetchRow() ) {
@@ -199,8 +202,6 @@ class CognateStore {
 	 *        e.g. [ [ 'site' => 'enwiktionary', 'namespace' => 0, 'title' => 'Berlin' ] ]
 	 */
 	public function insertPages( array $pageDetailsArray ) {
-		$dbw = $this->connectionManager->getWriteConnectionRef();
-
 		$pagesToInsert = [];
 		$titlesToInsert = [];
 		foreach ( $pageDetailsArray as $pageDetails ) {
@@ -212,6 +213,7 @@ class CognateStore {
 			);
 		}
 
+		$dbw = $this->connectionManager->getWriteConnectionRef();
 		$dbw->insert(
 			self::TITLES_TABLE_NAME,
 			$titlesToInsert,
@@ -260,8 +262,6 @@ class CognateStore {
 	 *        e.g. 'enwiktionary' => 'en'
 	 */
 	public function insertSites( array $sites ) {
-		$dbw = $this->connectionManager->getWriteConnectionRef();
-
 		$toInsert = [];
 		foreach ( $sites as $dbname => $interwikiPrefix ) {
 			$toInsert[] = [
@@ -271,6 +271,7 @@ class CognateStore {
 			];
 		}
 
+		$dbw = $this->connectionManager->getWriteConnectionRef();
 		$dbw->insert(
 			'cognate_sites',
 			$toInsert,
