@@ -32,6 +32,8 @@
 	"config": {
 		"CognateDb": false,
 		"CognateCluster": false,
+		"@CognateReadOnly": "Sets the CognateStore to be read only. This will mean the cognate_pages and cognate_titles tables will become out of sync with reality and populateCognatePages.php will have to be run after read only mode is disabled as well as deleted pages purged from the table.",
+		"CognateReadOnly": false,
 		"CognateNamespaces": [
 			0
 		]

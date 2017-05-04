@@ -53,11 +53,13 @@ return [
 	'CognateStore' => function( MediaWikiServices $services ) {
 		/** @var ConnectionManager $connectionManager */
 		$connectionManager = $services->getService( 'CognateConnectionManager' );
+		$cognateReadOnly = $services->getMainConfig()->get( 'CognateReadOnly' );
 
 		return new CognateStore(
 			$connectionManager,
 			new StringNormalizer(),
-			new StringHasher()
+			new StringHasher(),
+			$cognateReadOnly
 		);
 	},
 

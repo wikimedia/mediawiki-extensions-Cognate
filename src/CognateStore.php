@@ -5,6 +5,7 @@ namespace Cognate;
 use MediaWiki\Linker\LinkTarget;
 use TitleValue;
 use Wikimedia\Rdbms\ConnectionManager;
+use Wikimedia\Rdbms\DBReadOnlyError;
 
 /**
  * @license GNU GPL v2+
@@ -28,6 +29,11 @@ class CognateStore {
 	 */
 	private $stringHasher;
 
+	/**
+	 * @var bool
+	 */
+	private $readOnly;
+
 	const PAGES_TABLE_NAME = 'cognate_pages';
 	const SITES_TABLE_NAME = 'cognate_sites';
 	const TITLES_TABLE_NAME = 'cognate_titles';
@@ -36,15 +42,18 @@ class CognateStore {
 	 * @param ConnectionManager $connectionManager
 	 * @param StringNormalizer $stringNormalizer
 	 * @param StringHasher $stringHasher
+	 * @param bool $readOnly Is Cognate in readonly mode?
 	 */
 	public function __construct(
 		ConnectionManager $connectionManager,
 		StringNormalizer $stringNormalizer,
-		StringHasher $stringHasher
+		StringHasher $stringHasher,
+		$readOnly
 	) {
 		$this->connectionManager = $connectionManager;
 		$this->stringNormalizer = $stringNormalizer;
 		$this->stringHasher = $stringHasher;
+		$this->readOnly = $readOnly;
 	}
 
 	/**
@@ -55,8 +64,13 @@ class CognateStore {
 	 * @param LinkTarget $linkTarget
 	 *
 	 * @return bool true on success, false if there was a key conflict
+	 * @throws DBReadOnlyError
 	 */
 	public function insertPage( $dbName, LinkTarget $linkTarget ) {
+		if ( $this->readOnly ) {
+			$this->throwReadOnlyException();
+		}
+
 		$dbr = $this->connectionManager->getReadConnectionRef();
 
 		list( $pagesToInsert, $titlesToInsert ) = $this->buildRows(
@@ -103,8 +117,13 @@ class CognateStore {
 	 * @param LinkTarget $linkTarget
 	 *
 	 * @return bool
+	 * @throws DBReadOnlyError
 	 */
 	public function deletePage( $dbName, LinkTarget $linkTarget ) {
+		if ( $this->readOnly ) {
+			$this->throwReadOnlyException();
+		}
+
 		$pageData = [
 			'cgpa_site' => $this->getStringHash( $dbName ),
 			'cgpa_title' => $this->getStringHash( $linkTarget->getDBkey() ),
@@ -200,8 +219,14 @@ class CognateStore {
 	 *
 	 * @param array $pageDetailsArray where each element contains the keys 'site', 'namespace', 'title'
 	 *        e.g. [ [ 'site' => 'enwiktionary', 'namespace' => 0, 'title' => 'Berlin' ] ]
+	 *
+	 * @throws DBReadOnlyError
 	 */
 	public function insertPages( array $pageDetailsArray ) {
+		if ( $this->readOnly ) {
+			$this->throwReadOnlyException();
+		}
+
 		$pagesToInsert = [];
 		$titlesToInsert = [];
 		foreach ( $pageDetailsArray as $pageDetails ) {
@@ -260,8 +285,14 @@ class CognateStore {
 	/**
 	 * @param string[] $sites keys of site dbname => values of interwiki prefix
 	 *        e.g. 'enwiktionary' => 'en'
+	 *
+	 * @throws DBReadOnlyError
 	 */
 	public function insertSites( array $sites ) {
+		if ( $this->readOnly ) {
+			$this->throwReadOnlyException();
+		}
+
 		$toInsert = [];
 		foreach ( $sites as $dbname => $interwikiPrefix ) {
 			$toInsert[] = [
@@ -298,6 +329,13 @@ class CognateStore {
 		return $this->stringHasher->hash(
 			$this->stringNormalizer->normalize( $string )
 		);
+	}
+
+	/**
+	 * @throws DBReadOnlyError
+	 */
+	private function throwReadOnlyException() {
+		throw new DBReadOnlyError( 'Cognate is in Read Only mode' );
 	}
 
 }

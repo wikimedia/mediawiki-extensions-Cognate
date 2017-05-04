@@ -6,6 +6,7 @@ use MediaWiki\Linker\LinkTarget;
 use Psr\Log\LoggerInterface;
 use Title;
 use TitleFormatter;
+use Wikimedia\Rdbms\DBReadOnlyError;
 
 /**
  * @license GNU GPL v2+
@@ -52,7 +53,12 @@ class CognateRepo {
 	 * @return bool
 	 */
 	public function savePage( $dbName, LinkTarget $linkTarget ) {
-		$success = $this->store->insertPage( $dbName, $linkTarget );
+		try {
+			$success = $this->store->insertPage( $dbName, $linkTarget );
+		} catch ( DBReadOnlyError $e ) {
+			return false;
+		}
+
 		if ( $success ) {
 			$this->cacheInvalidator->invalidate(
 				$dbName,
@@ -81,7 +87,12 @@ class CognateRepo {
 	 * @return bool
 	 */
 	public function deletePage( $dbName, LinkTarget $linkTarget ) {
-		$success = $this->store->deletePage( $dbName, $linkTarget );
+		try {
+			$success = $this->store->deletePage( $dbName, $linkTarget );
+		} catch ( DBReadOnlyError $e ) {
+			return false;
+		}
+
 		if ( $success ) {
 			$this->cacheInvalidator->invalidate(
 				$dbName,

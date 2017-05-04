@@ -14,6 +14,10 @@ if ( getenv( 'MW_INSTALL_PATH' ) !== false ) {
 /**
  * Maintenance script for populating the cognate page and title tables.
  *
+ * The script will add an entry in the cognate_pages table for every page that
+ * exists in the mediawiki page table as well as adding the needed entries to
+ * the cognate_titles table.
+ *
  * @license GPL-2.0+
  * @author Addshore
  */
