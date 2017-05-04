@@ -163,7 +163,7 @@ class CognateStore {
 	 * @return string[] array of dbnames
 	 */
 	public function selectSitesForPage( LinkTarget $linkTarget ) {
-		$dbr = $this->connectionManager->getWriteConnectionRef();
+		$dbr = $this->connectionManager->getReadConnectionRef();
 		$result = $dbr->select(
 			[
 				self::TITLES_TABLE_NAME,
