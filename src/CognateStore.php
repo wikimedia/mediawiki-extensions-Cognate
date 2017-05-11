@@ -77,7 +77,7 @@ class CognateStore {
 			$this->throwReadOnlyException();
 		}
 
-		$dbr = $this->connectionManager->getReadConnectionRef();
+		$dbr = $this->connectionManager->getReadConnection();
 
 		list( $pagesToInsert, $titlesToInsert ) = $this->buildRows(
 			$linkTarget,
@@ -153,7 +153,7 @@ class CognateStore {
 	 *                 [ 'interwiki' => 'en', 'namespaceID' => 0, 'title' => 'Berlin' ]
 	 */
 	public function selectLinkDetailsForPage( $dbName, LinkTarget $linkTarget ) {
-		$dbr = $this->connectionManager->getReadConnectionRef();
+		$dbr = $this->connectionManager->getReadConnection();
 		$result = $dbr->select(
 			[
 				self::TITLES_TABLE_NAME,
@@ -194,7 +194,7 @@ class CognateStore {
 	 * @return string[] array of dbnames
 	 */
 	public function selectSitesForPage( LinkTarget $linkTarget ) {
-		$dbr = $this->connectionManager->getReadConnectionRef();
+		$dbr = $this->connectionManager->getReadConnection();
 		$result = $dbr->select(
 			[
 				self::TITLES_TABLE_NAME,
