@@ -28,6 +28,10 @@ class PopulateCognatePages extends Maintenance {
 
 		$this->addDescription( 'Populate the Cognate page and title tables' );
 		$this->addOption( 'start', 'The page ID to start from.', false, true );
+		$this->addOption(
+			'clear-first',
+			'Clear entries in the table for the current wiki before population starts.'
+		);
 		$this->setBatchSize( 100 );
 		$this->requireExtension( 'Cognate' );
 	}
@@ -45,6 +49,12 @@ class PopulateCognatePages extends Maintenance {
 
 		/** @var CognateStore $store */
 		$store = $services->getService( 'CognateStore' );
+
+		if ( $this->hasOption( 'clear-first' ) ) {
+			$this->output( "Clearing cognate_pages table of entries for $dbName.\n" );
+			$store->deletePagesForSite( $dbName );
+		}
+
 		$this->output( "Started processing.\n" );
 		$dbr = $this->getDB( DB_REPLICA );
 

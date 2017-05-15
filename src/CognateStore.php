@@ -322,6 +322,25 @@ class CognateStore {
 	}
 
 	/**
+	 * Delete all entries from the cognate_pages table for the given site.
+	 * @param string $dbName The dbname of the site to delete pages for.
+	 */
+	public function deletePagesForSite( $dbName ) {
+		if ( !defined( 'RUN_MAINTENANCE_IF_MAIN' ) && !defined( 'MW_PHPUNIT_TEST' ) ) {
+			throw new RuntimeException( __METHOD__ . ' can only be used for maintenance or tests.' );
+		}
+
+		$dbw = $this->connectionManager->getWriteConnectionRef();
+		$dbw->delete(
+			'cognate_pages',
+			[
+				'cgpa_site' => $this->getStringHash( $dbName ),
+			],
+			__METHOD__
+		);
+	}
+
+	/**
 	 * @param string $string
 	 *
 	 * @return int
