@@ -4,6 +4,7 @@ namespace Cognate;
 
 use Maintenance;
 use MediaWiki\MediaWikiServices;
+use RuntimeException;
 use Wikimedia\Rdbms\ConnectionManager;
 use Wikimedia\Rdbms\IDatabase;
 
@@ -14,8 +15,8 @@ if ( getenv( 'MW_INSTALL_PATH' ) !== false ) {
 }
 
 /**
- * Maintenance script for removing entries from the cognate_pages table that do not currently
- * exist on the wiki. For example, due to pages being deleted while Cognate is in read-only mode.
+ * Maintenance script for removing entries from the cognate_pages table that do not currently exist
+ * on the wiki. For example, due to pages being deleted while Cognate has been in read-only mode.
  *
  * @license GPL-2.0+
  * @author Addshore
@@ -25,13 +26,17 @@ class PurgeDeletedCognatePages extends Maintenance {
 	public function __construct() {
 		parent::__construct();
 
-		$this->addDescription( 'Purge deleted pages from the Cognate page table' );
+		$this->addDescription( 'Purge deleted pages from the cognate_pages table' );
 		$this->addOption( 'dry-run', 'Do not perform writes' );
 		$this->setBatchSize( 100 );
 		$this->requireExtension( 'Cognate' );
 	}
 
 	public function execute() {
+		if ( $this->mBatchSize <= 1 ) {
+			throw new RuntimeException( 'batch-size must be set to a value of 2 or more.' );
+		}
+
 		$services = MediaWikiServices::getInstance();
 
 		/** @var ConnectionManager $connectionManager */
