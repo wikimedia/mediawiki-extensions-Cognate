@@ -177,11 +177,11 @@ class CognateStore {
 		$this->connectionManager->releaseConnection( $dbr );
 
 		$linkDetails = [];
-		while ( $row = $result->fetchRow() ) {
+		foreach ( $result as $row ) {
 			$linkDetails[] = [
-				'interwiki' => $row['cgsi_interwiki'],
-				'namespaceID' => intval( $row['cgpa_namespace'] ),
-				'title' => $row['cgti_raw'],
+				'interwiki' => $row->cgsi_interwiki,
+				'namespaceID' => intval( $row->cgpa_namespace ),
+				'title' => $row->cgti_raw,
 			];
 		}
 
@@ -213,8 +213,8 @@ class CognateStore {
 		$this->connectionManager->releaseConnection( $dbr );
 
 		$sites = [];
-		while ( $row = $result->fetchRow() ) {
-			$sites[] = $row[ 'cgsi_dbname' ];
+		foreach ( $result as $row ) {
+			$sites[] = $row->cgsi_dbname;
 		}
 
 		return $sites;
