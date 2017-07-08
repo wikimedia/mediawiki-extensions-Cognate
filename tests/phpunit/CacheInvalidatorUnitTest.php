@@ -28,7 +28,7 @@ class CacheInvalidatorTest extends MediaWikiTestCase {
 		$mockJobQueueGroup->expects( $this->once() )
 			->method( 'push' )
 			->with( $this->isInstanceOf( LocalJobSubmitJob::class ) )
-			->will( $this->returnCallback( function( $job ) use ( $title ) {
+			->will( $this->returnCallback( function ( $job ) use ( $title ) {
 				/** @var Job $job */
 				$this->assertSame( $title, $job->getTitle() );
 			} ) );

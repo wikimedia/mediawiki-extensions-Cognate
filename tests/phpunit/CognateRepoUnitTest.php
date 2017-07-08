@@ -46,13 +46,15 @@ class CognateRepoUnitTest extends \MediaWikiTestCase {
 			list( $dbName, $linkTarget ) = $details;
 			$mock->expects( $this->at( $key ) )
 				->method( 'invalidate' )
-				->will( $this->returnCallback( function( $param1, Title $param2 ) use ( $dbName, $linkTarget ) {
-					$this->assertEquals( $dbName, $param1 );
-					/** @var LinkTarget $linkTarget */
-					$this->assertInstanceOf( Title::class, $param2 );
-					$this->assertEquals( $linkTarget->getDBkey(), $param2->getDBkey() );
-					$this->assertEquals( $linkTarget->getNamespace(), $param2->getNamespace() );
-				} ) );
+				->will( $this->returnCallback(
+					function ( $param1, Title $param2 ) use ( $dbName, $linkTarget ) {
+						$this->assertEquals( $dbName, $param1 );
+						/** @var LinkTarget $linkTarget */
+						$this->assertInstanceOf( Title::class, $param2 );
+						$this->assertEquals( $linkTarget->getDBkey(), $param2->getDBkey() );
+						$this->assertEquals( $linkTarget->getNamespace(), $param2->getNamespace() );
+					}
+				) );
 		}
 		return $mock;
 	}
@@ -64,7 +66,7 @@ class CognateRepoUnitTest extends \MediaWikiTestCase {
 		$mock = $this->getMock( 'TitleFormatter' );
 		$mock->expects( $this->any() )
 			->method( 'formatTitle' )
-			->will( $this->returnCallback( function( $ns, $title, $fragment, $interwiki ) {
+			->will( $this->returnCallback( function ( $ns, $title, $fragment, $interwiki ) {
 				return "$interwiki:$ns:$title";
 			} ) );
 		return $mock;

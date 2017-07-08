@@ -309,7 +309,7 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 		$latestRevIsRedirect = false
 	) {
 		$handler = new CognatePageHookHandler( $namespaces, $dbName );
-		$handler->overrideRevisionNewFromId( function() use ( $latestRevIsRedirect ) {
+		$handler->overrideRevisionNewFromId( function () use ( $latestRevIsRedirect ) {
 			$content = $this->getMockContent();
 			$content->expects( $this->any() )
 				->method( 'isRedirect' )
@@ -443,7 +443,7 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 			}
 			$mock->expects( $this->any() )
 				->method( $methodName )
-				->will( $this->returnCallback( function() use ( $value, $methodName ) {
+				->will( $this->returnCallback( function () use ( $value, $methodName ) {
 					return call_user_func_array( [ $value, $methodName ], func_get_args() );
 				} ) );
 		}

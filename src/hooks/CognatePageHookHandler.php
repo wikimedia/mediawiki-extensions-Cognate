@@ -112,7 +112,7 @@ class CognatePageHookHandler {
 
 		$this->onContentChange(
 			$page->getTitle()->getTitleValue(),
-			(bool) ( $flags & EDIT_NEW ),
+			(bool)( $flags & EDIT_NEW ),
 			$content->isRedirect(),
 			$previousContent ? $previousContent->isRedirect() : null
 		);
