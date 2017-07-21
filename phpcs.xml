@@ -3,12 +3,10 @@
 	<rule ref="./vendor/wikibase/wikibase-codesniffer/Wikibase" />
 
 	<rule ref="Generic.Formatting.NoSpaceAfterCast" />
-	<rule ref="PSR1" />
-	<rule ref="Squiz.Classes.ValidClassName.NotCamelCaps" />
+	<rule ref="Generic.Metrics.CyclomaticComplexity" />
+	<rule ref="Generic.Metrics.NestingLevel" />
 	<rule ref="Squiz.Operators.ValidLogicalOperators" />
-	<rule ref="PSR1.Files.SideEffects.FoundWithSymbols">
-		<severity>0</severity>
-	</rule>
+
 	<file>.</file>
 	<exclude-pattern>node_modules</exclude-pattern>
 </ruleset>
