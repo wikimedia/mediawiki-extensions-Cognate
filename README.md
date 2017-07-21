@@ -3,7 +3,7 @@
 This MediaWiki extension creates a central store where the page titles for a group of sites are stored.
 The extension can then generate interwiki links across wiki projects in cases where the titles are the same.
 
-It works on the assumption that (most) page titles are the same across languages, as it is the case for the Wiktionary 
+It works on the assumption that (most) page titles are the same across languages, as it is the case for the Wiktionary
 projects.
 Some normalization is already applied to titles.
 Only titles in default MediaWiki namespaces can currently be used with the extension.
@@ -11,8 +11,8 @@ Only titles in default MediaWiki namespaces can currently be used with the exten
 This extension is an attempt to solve the task
 "[Centralize interwiki language links for Wiktionary](https://phabricator.wikimedia.org/T987)"
 
-"Cognate" is a linguistic concept, meaning same words in different languages developed from the same origin. 
-Since this extension has a similar translation mechanism, it makes for a nice short extension name, even when the 
+"Cognate" is a linguistic concept, meaning same words in different languages developed from the same origin.
+Since this extension has a similar translation mechanism, it makes for a nice short extension name, even when the
 actual concept is different.
 
 This extension can be used along side the [InterwikiSorting extension](https://www.mediawiki.org/wiki/Extension:InterwikiSorting) to sort the interwiki links that are displayed.
@@ -29,7 +29,7 @@ This extension can be used along side the [InterwikiSorting extension](https://w
 PHP 5.5 64bit
 
 ### Single-Wiki setup
-To just test the extension, check out this extension into the `extensions` folder of your MediaWiki installation and add 
+To just test the extension, check out this extension into the `extensions` folder of your MediaWiki installation and add
 the following line to  your `LocalSettings.php`:
 
     wfLoadExtension( 'Cognate' );
