@@ -37,8 +37,6 @@ class CognatePageHookHandler {
 	private $newRevisionFromIdCallable;
 
 	/**
-	 * CognatePageHookHandler constructor.
-	 *
 	 * @param int[] $namespaces array of namespace ids the hooks should operate on
 	 * @param string $dbName The dbName of the current site
 	 */
