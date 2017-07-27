@@ -18,10 +18,11 @@ class StringNormalizer {
 	private $replacements = [
 		// Normalized to U+0027
 		'’' => '\'', // U+2019
+		'ʼ' => '\'', // U+02BC
 		// Normalized to U+002EU+002EU+002E
 		'…' => '...', // U+2026
 		// Normalized to U+005F
-		' ' => '_',
+		' ' => '_', // U+0020
 	];
 
 	/**

@@ -18,6 +18,7 @@ class StringNormalizerTest extends \MediaWikiTestCase {
 			[ 'Foo bar', 'Foo_bar' ],
 			[ 'Apostrophe’', 'Apostrophe\'' ],
 			[ 'ellipsis…', 'ellipsis...' ],
+			[ 'cʼh', 'c\'h' ],
 		];
 	}
 
