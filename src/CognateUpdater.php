@@ -61,6 +61,10 @@ class CognateUpdater extends DatabaseUpdater {
 		return $updater;
 	}
 
+	/**
+	 * @suppress PhanTypeMissingReturn
+	 * @return array
+	 */
 	protected function getCoreUpdateList() {
 		// not used but is abstract and must be implemented
 	}

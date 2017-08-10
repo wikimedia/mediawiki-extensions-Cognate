@@ -36,6 +36,8 @@ class LocalJobSubmitJob extends Job {
 		foreach ( array_unique( $sites ) as $dbName ) {
 			JobQueueGroup::singleton( $dbName )->push( $job );
 		}
+
+		return true;
 	}
 
 }
