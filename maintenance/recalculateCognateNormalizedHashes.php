@@ -115,6 +115,12 @@ class RecalculateCognateNormalizedHashes extends Maintenance {
 					__METHOD__
 				);
 			}
+
+			$this->output(
+				count( $rows ) . " rows processed, " .
+				$numberOfUpdates . " rows upserted\n"
+			);
+
 		}
 
 		$this->output( "$totalUpdates hashes recalculated\n" );
