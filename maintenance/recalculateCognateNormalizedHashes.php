@@ -63,7 +63,9 @@ class RecalculateCognateNormalizedHashes extends Maintenance {
 
 	public function execute() {
 		$this->output( "Started processing...\n" );
-		$dryrun = $this->hasOption( 'dry-run' );
+		if ( $this->hasOption( 'dry-run' ) ) {
+			$this->output( "In DRY RUN mode.\n" );
+		}
 		$this->setupServices();
 		$batchStart = $this->getLowestRawKey();
 
@@ -101,7 +103,7 @@ class RecalculateCognateNormalizedHashes extends Maintenance {
 			$numberOfUpdates = count( $rowsToUpdate );
 			$totalUpdates += $numberOfUpdates;
 
-			if ( !$dryrun ) {
+			if ( !$this->hasOption( 'dry-run' ) ) {
 				$this->output( "Performing $numberOfUpdates updates\n" );
 				$this->dbw->upsert(
 					CognateStore::TITLES_TABLE_NAME,
