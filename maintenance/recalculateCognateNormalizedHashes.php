@@ -117,7 +117,7 @@ class RecalculateCognateNormalizedHashes extends Maintenance {
 			}
 
 			$this->output(
-				count( $rows ) . " rows processed, " .
+				$rows->numRows() . " rows processed, " .
 				$numberOfUpdates . " rows upserted\n"
 			);
 
