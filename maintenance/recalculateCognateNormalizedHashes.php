@@ -83,7 +83,10 @@ class RecalculateCognateNormalizedHashes extends Maintenance {
 				[ 'cgti_raw', 'cgti_raw_key', 'cgti_normalized_key' ],
 				[ 'cgti_raw_key > ' . $batchStart ],
 				__METHOD__,
-				[ 'LIMIT ' . $this->mBatchSize, 'ORDER BY cgti_raw_key ASC' ]
+				[
+					'LIMIT' => $this->mBatchSize,
+					'ORDER BY' => 'cgti_raw_key ASC',
+				]
 			);
 
 			$this->output( "Calculating new hashes..\n" );
