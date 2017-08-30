@@ -69,4 +69,17 @@ class CognateUpdater extends DatabaseUpdater {
 		// not used but is abstract and must be implemented
 	}
 
+	/**
+	 * Really do the updates we care about
+	 *
+	 * @param DatabaseUpdater $updater
+	 * @param DatabaseUpdater $cognateUpdater
+	 */
+	public static function realDoUpdates(
+		DatabaseUpdater $updater,
+		DatabaseUpdater $cognateUpdater
+	) {
+		$cognateUpdater->doUpdates( [ 'extensions' ] );
+	}
+
 }

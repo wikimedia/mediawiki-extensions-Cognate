@@ -120,7 +120,9 @@ class CognateHooks {
 			[ 'addTable', 'cognate_sites', __DIR__ . '/../db/addCognateSites.sql', true ]
 		);
 
-		$cognateUpdater->doUpdates( [ 'extensions' ] );
+		$updater->addExtensionUpdate(
+			[ [ CognateUpdater::class, 'realDoUpdates' ], $cognateUpdater ]
+		);
 
 		return true;
 	}
