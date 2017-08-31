@@ -70,10 +70,13 @@ class CognateUpdater extends DatabaseUpdater {
 	}
 
 	/**
-	 * Really do the updates we care about
+	 * Really do the updates we care about.
+	 * Passed as a callable into DatabaseUpdater::addExtensionUpdate in the
+	 * LoadExtensionSchemaUpdates hook
 	 *
 	 * @param DatabaseUpdater $updater
-	 * @param DatabaseUpdater $cognateUpdater
+	 *        Automatically added when called through DatabaseUpdater::addExtensionUpdate
+	 * @param DatabaseUpdater $cognateUpdater Our actual updater object
 	 */
 	public static function realDoUpdates(
 		DatabaseUpdater $updater,
