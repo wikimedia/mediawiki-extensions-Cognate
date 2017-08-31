@@ -74,6 +74,8 @@ class RecalculateCognateNormalizedHashes extends Maintenance {
 			return true;
 		}
 
+		$services = MediaWikiServices::getInstance();
+		$loadBalancerFactory = $services->getDBLoadBalancerFactory();
 		$totalUpdates = 0;
 
 		while ( $batchStart ) {
@@ -124,6 +126,7 @@ class RecalculateCognateNormalizedHashes extends Maintenance {
 				$numberOfUpdates . " rows upserted\n"
 			);
 
+			$loadBalancerFactory->waitForReplication();
 		}
 
 		$this->output( "$totalUpdates hashes recalculated\n" );
