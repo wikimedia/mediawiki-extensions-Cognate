@@ -2,8 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Rubentl134",
-			"Macofe"
+			"Macofe",
+			"Fitoschido"
 		]
 	},
-	"cognate-desc": "Vincula versiones en diferentes idiomas de una página usando el título de la página."
+	"cognate-desc": "Enlaza versiones en diferentes idiomas de una página que comparten el mismo título"
 }
