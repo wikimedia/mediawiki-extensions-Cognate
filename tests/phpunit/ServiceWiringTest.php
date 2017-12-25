@@ -10,8 +10,6 @@ use MediaWiki\MediaWikiServices;
 use Wikimedia\Rdbms\ConnectionManager;
 
 /**
- * @covers ServiceWiring.php
- *
  * @license GNU GPL v2+
  * @author Addshore
  */
