@@ -18,6 +18,8 @@ use TitleValue;
  */
 class CognateStoreIntegrationTest extends \MediaWikiTestCase {
 
+	use CheckSystemReqsTrait;
+
 	/** @var CognateStore */
 	private $store;
 
@@ -29,6 +31,9 @@ class CognateStoreIntegrationTest extends \MediaWikiTestCase {
 
 	protected function setUp() {
 		parent::setUp();
+
+		$this->markTestSkippedIfNo64bit();
+
 		$this->tablesUsed = [
 			CognateStore::PAGES_TABLE_NAME,
 			CognateStore::TITLES_TABLE_NAME,

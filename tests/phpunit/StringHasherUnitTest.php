@@ -13,6 +13,8 @@ use UtfNormal\Validator;
  */
 class StringHasherTest extends \MediaWikiTestCase {
 
+	use CheckSystemReqsTrait;
+
 	public function provideHashes() {
 		return [
 			[ '', -2039914840885289964 ],
@@ -36,6 +38,8 @@ class StringHasherTest extends \MediaWikiTestCase {
 	 * @dataProvider provideHashes
 	 */
 	public function testGoodHashes( $input, $expectedHash ) {
+		$this->markTestSkippedIfNo64bit();
+
 		$normalizer = new StringHasher();
 
 		$output = $normalizer->hash( $input );

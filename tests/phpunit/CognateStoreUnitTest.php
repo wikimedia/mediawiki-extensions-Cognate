@@ -16,6 +16,8 @@ use Wikimedia\Rdbms\DBReadOnlyError;
  */
 class CognateStoreUnitTest extends \PHPUnit_Framework_TestCase {
 
+	use CheckSystemReqsTrait;
+
 	private function newReadOnlyCognateStore() {
 		/** @var ConnectionManager $connectionManager */
 		$connectionManager = $this->getMockBuilder( ConnectionManager::class )
@@ -31,6 +33,8 @@ class CognateStoreUnitTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function testWhenInReadOnlyMode_insertPageThrowsException() {
+		$this->markTestSkippedIfNo64bit();
+
 		$store = $this->newReadOnlyCognateStore();
 
 		$this->setExpectedException( DBReadOnlyError::class );
@@ -39,6 +43,8 @@ class CognateStoreUnitTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function testWhenInReadOnlyMode_deletePageThrowsException() {
+		$this->markTestSkippedIfNo64bit();
+
 		$store = $this->newReadOnlyCognateStore();
 
 		$this->setExpectedException( DBReadOnlyError::class );

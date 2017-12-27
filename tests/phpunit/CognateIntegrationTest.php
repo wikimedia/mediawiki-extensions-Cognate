@@ -23,11 +23,15 @@ use WikiPage;
  */
 class CognateIntegrationTest extends MediaWikiTestCase {
 
+	use CheckSystemReqsTrait;
+
 	private $pageName;
 	private $dbName;
 
 	public function setUp() {
 		parent::setUp();
+
+		$this->markTestSkippedIfNo64bit();
 
 		$services = MediaWikiServices::getInstance();
 		$config = $services->getMainConfig();
