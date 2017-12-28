@@ -81,7 +81,7 @@ class CognateHooks {
 	 *
 	 * @see CognateUpdater regarding the complexities of this hook
 	 *
-	 * @param DatabaseUpdater $updater DatabaseUpdater object
+	 * @param DatabaseUpdater $updater
 	 * @return bool
 	 */
 	public static function onLoadExtensionSchemaUpdates( DatabaseUpdater $updater ) {
