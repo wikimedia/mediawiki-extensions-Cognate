@@ -323,7 +323,10 @@ class CognateStore {
 
 	/**
 	 * Delete all entries from the cognate_pages table for the given site.
+	 *
 	 * @param string $dbName The dbname of the site to delete pages for.
+	 *
+	 * @throws RuntimeException if not run in a maintenance or test scope
 	 */
 	public function deletePagesForSite( $dbName ) {
 		if ( !defined( 'RUN_MAINTENANCE_IF_MAIN' ) && !defined( 'MW_PHPUNIT_TEST' ) ) {
