@@ -43,7 +43,7 @@ class CognateUpdater extends DatabaseUpdater {
 		Database $mainDb,
 		Database $cognateDb,
 		$shared = false,
-		$maintenance = null
+		Maintenance $maintenance = null
 	) {
 		$updater = parent::newForDB(
 			$mainDb,
