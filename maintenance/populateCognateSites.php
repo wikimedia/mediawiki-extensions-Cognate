@@ -16,7 +16,7 @@ if ( getenv( 'MW_INSTALL_PATH' ) !== false ) {
 /**
  * Maintenance script for populating the Cognate sites table.
  *
- * @license GPL-2.0+
+ * @license GPL-2.0-or-later
  * @author Addshore
  */
 class PopulateCognateSites extends Maintenance {

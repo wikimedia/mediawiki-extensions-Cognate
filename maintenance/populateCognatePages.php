@@ -18,7 +18,7 @@ if ( getenv( 'MW_INSTALL_PATH' ) !== false ) {
  * exists in the mediawiki page table as well as adding the needed entries to
  * the cognate_titles table.
  *
- * @license GPL-2.0+
+ * @license GPL-2.0-or-later
  * @author Addshore
  */
 class PopulateCognatePages extends Maintenance {

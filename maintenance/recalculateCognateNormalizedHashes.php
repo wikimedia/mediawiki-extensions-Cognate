@@ -17,7 +17,7 @@ if ( getenv( 'MW_INSTALL_PATH' ) !== false ) {
 /**
  * Maintenance script for recalculating the normalized Cognate hashes
  *
- * @license GPL-2.0+
+ * @license GPL-2.0-or-later
  * @author Addshore
  */
 class RecalculateCognateNormalizedHashes extends Maintenance {

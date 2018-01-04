@@ -14,7 +14,7 @@ use Title;
  * the pageId for the local wiki and not the wiki that this job was originally
  * queued from.
  *
- * @license GPL-2.0+
+ * @license GPL-2.0-or-later
  * @author Addshore
  */
 class CacheUpdateJob extends Job {

@@ -18,7 +18,7 @@ if ( getenv( 'MW_INSTALL_PATH' ) !== false ) {
  * Maintenance script for removing entries from the cognate_pages table that do not currently exist
  * on the wiki. For example, due to pages being deleted while Cognate has been in read-only mode.
  *
- * @license GPL-2.0+
+ * @license GPL-2.0-or-later
  * @author Addshore
  */
 class PurgeDeletedCognatePages extends Maintenance {
