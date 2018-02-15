@@ -31,10 +31,13 @@
 		"CognateCacheUpdateJob": "Cognate\\CacheUpdateJob"
 	},
 	"config": {
+		"@CognateDb": "The database to use for storing Cognate data. The default is to use the db of the current site.",
 		"CognateDb": false,
+		"@CognateCluster": "The cluster to use for storing Cognate data. The default is to use the cluster / server of the current site. See $wgLBFactoryConf.",
 		"CognateCluster": false,
 		"@CognateReadOnly": "Sets the CognateStore to be read only. This will mean the cognate_pages and cognate_titles tables will become out of sync with reality and populateCognatePages.php will have to be run after read only mode is disabled as well as deleted pages purged from the table.",
 		"CognateReadOnly": false,
+		"@CognateNamespaces": "The namespace IDs to run Cognate for. For links to work between sites these IDs must be the same across sites.",
 		"CognateNamespaces": [
 			0
 		]
