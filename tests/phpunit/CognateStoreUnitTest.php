@@ -5,6 +5,7 @@ namespace Cognate\Tests;
 use Cognate\CognateStore;
 use Cognate\StringHasher;
 use Cognate\StringNormalizer;
+use PHPUnit\Framework\TestCase;
 use TitleValue;
 use Wikimedia\Rdbms\ConnectionManager;
 use Wikimedia\Rdbms\DBReadOnlyError;
@@ -14,7 +15,7 @@ use Wikimedia\Rdbms\DBReadOnlyError;
  *
  * @license GNU GPL v2+
  */
-class CognateStoreUnitTest extends \PHPUnit_Framework_TestCase {
+class CognateStoreUnitTest extends TestCase {
 
 	use CheckSystemReqsTrait;
 
