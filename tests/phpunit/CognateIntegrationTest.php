@@ -16,7 +16,12 @@ use User;
 use WikiPage;
 
 /**
- * @license GNU GPL v2+
+ * @covers \Cognate\CognateHooks
+ * @covers \Cognate\CognatePageHookHandler
+ * @covers \Cognate\CognateRepo
+ * @covers \Cognate\CognateStore
+ *
+ * @license GPL-2.0-or-later
  * @author Addshore
  *
  * @group Database
