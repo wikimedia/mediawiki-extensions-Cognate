@@ -7,7 +7,7 @@ use Cognate\StringNormalizer;
 /**
  * @covers Cognate\StringNormalizer
  *
- * @license GNU GPL v2+
+ * @license GPL-2.0-or-later
  * @author Addshore
  */
 class StringNormalizerTest extends \MediaWikiTestCase {

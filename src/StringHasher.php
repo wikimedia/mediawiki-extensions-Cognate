@@ -10,7 +10,7 @@ use UtfNormal\Validator;
  * BIG WARNING!!!!!   L(・o・)」
  * Any changes in this class that result in different hashes will require all tables to be rebuilt.
  *
- * @license GNU GPL v2+
+ * @license GPL-2.0-or-later
  * @author Addshore
  */
 class StringHasher {

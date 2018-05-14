@@ -14,7 +14,7 @@ use Wikimedia\Rdbms\DBReadOnlyError;
  * This class should generally not be accessed directly but instead via CognateRepo which contains
  * extra business logic such as logging, stats and cache purges.
  *
- * @license GNU GPL v2+
+ * @license GPL-2.0-or-later
  * @author Gabriel Birke < gabriel.birke@wikimedia.de >
  * @author Addshore
  */

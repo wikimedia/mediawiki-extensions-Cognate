@@ -18,7 +18,7 @@ use WikiPage;
 /**
  * @covers Cognate\CognatePageHookHandler
  *
- * @license GNU GPL v2+
+ * @license GPL-2.0-or-later
  * @author Addshore
  */
 class CognatePageHookHandlerTest extends \MediaWikiTestCase {

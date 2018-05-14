@@ -14,7 +14,7 @@ use Wikimedia\Rdbms\DBReadOnlyError;
 /**
  * @covers Cognate\CognateStore
  *
- * @license GNU GPL v2+
+ * @license GPL-2.0-or-later
  */
 class CognateStoreUnitTest extends TestCase {
 

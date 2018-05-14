@@ -7,7 +7,7 @@ namespace Cognate;
  * Any changes in this class that result in different normalizations will require the
  * cognate_titles table to be rebuilt.
  *
- * @license GNU GPL v2+
+ * @license GPL-2.0-or-later
  * @author Addshore
  */
 class StringNormalizer {
