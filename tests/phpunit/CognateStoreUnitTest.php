@@ -6,6 +6,7 @@ use Cognate\CognateStore;
 use Cognate\StringHasher;
 use Cognate\StringNormalizer;
 use PHPUnit\Framework\TestCase;
+use PHPUnit4And6Compat;
 use TitleValue;
 use Wikimedia\Rdbms\ConnectionManager;
 use Wikimedia\Rdbms\DBReadOnlyError;
@@ -18,6 +19,7 @@ use Wikimedia\Rdbms\DBReadOnlyError;
 class CognateStoreUnitTest extends TestCase {
 
 	use CheckSystemReqsTrait;
+	use PHPUnit4And6Compat;
 
 	private function newReadOnlyCognateStore() {
 		/** @var ConnectionManager $connectionManager */
