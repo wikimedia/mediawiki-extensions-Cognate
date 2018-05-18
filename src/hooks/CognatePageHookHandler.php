@@ -6,6 +6,7 @@ use Content;
 use DeferrableUpdate;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Storage\RevisionRecord;
 use MWCallableUpdate;
 use MWException;
 use Revision;
@@ -78,7 +79,8 @@ class CognatePageHookHandler {
 	 * @param int &$flags
 	 * @param Revision|null $revision
 	 * @param Status $status
-	 * @param integer $baseRevId
+	 * @param int|bool $baseRevId
+	 * @param int $undidRevId
 	 */
 	public function onPageContentSaveComplete(
 		WikiPage $page,
@@ -89,9 +91,10 @@ class CognatePageHookHandler {
 		$isWatch,
 		$section,
 		$flags,
-		$revision,
+		Revision $revision = null,
 		Status $status,
-		$baseRevId
+		$baseRevId,
+		$undidRevId = 0
 	) {
 		// A null revision means a null edit / no-op edit was made, no need to process that.
 		if ( $revision === null ) {
@@ -105,7 +108,7 @@ class CognatePageHookHandler {
 		$previousRevision = $revision->getPrevious();
 		$previousContent =
 			$previousRevision ?
-				$previousRevision->getContent( Revision::RAW ) :
+				$previousRevision->getContent( RevisionRecord::RAW ) :
 				null;
 
 		$this->onContentChange(
@@ -173,7 +176,7 @@ class CognatePageHookHandler {
 		$this->onContentChange(
 			$title->getTitleValue(),
 			true,
-			$revision->getContent( Revision::RAW )->isRedirect(),
+			$revision->getContent( RevisionRecord::RAW )->isRedirect(),
 			false
 		);
 	}
@@ -199,7 +202,7 @@ class CognatePageHookHandler {
 	 * @param int $oldid
 	 * @param int $newid
 	 * @param string $reason
-	 * @param Revision $revision
+	 * @param Revision $nullRevision
 	 */
 	public function onTitleMoveComplete(
 		Title $title,
@@ -208,7 +211,7 @@ class CognatePageHookHandler {
 		$oldid,
 		$newid,
 		$reason,
-		Revision $revision
+		Revision $nullRevision
 	) {
 		$oldTitleValue = $title->getTitleValue();
 		$newTitleValue = $newTitle->getTitleValue();

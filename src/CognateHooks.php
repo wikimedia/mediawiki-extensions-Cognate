@@ -4,10 +4,13 @@ namespace Cognate;
 
 use Content;
 use DatabaseUpdater;
+use DeferrableUpdate;
 use MediaWiki\MediaWikiServices;
+use Page;
 use ParserOutput;
 use Title;
 use Wikimedia\Rdbms\LoadBalancer;
+use WikiPage;
 
 /**
  * @license GPL-2.0-or-later
@@ -27,7 +30,18 @@ class CognateHooks {
 		return true;
 	}
 
-	public static function onWikiPageDeletionUpdates( $page, $content, &$updates ) {
+	/**
+	 * @param WikiPage $page
+	 * @param Content|null $content
+	 * @param DeferrableUpdate[] $updates
+	 *
+	 * @return bool
+	 */
+	public static function onWikiPageDeletionUpdates(
+		WikiPage $page,
+		Content $content = null,
+		array &$updates
+	) {
 		MediaWikiServices::getInstance()
 			->getService( 'CognatePageHookHandler' )
 			->onWikiPageDeletionUpdates( $page, $content, $updates );

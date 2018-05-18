@@ -141,7 +141,7 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 		array $namespaces,
 		$dbName,
 		LinkTarget $linkTarget,
-		$options = []
+		array $options = []
 	) {
 		/** @var WikiPage|PHPUnit_Framework_MockObject_MockObject $mockWikiPage */
 		$mockWikiPage = $this->getMockBuilder( 'WikiPage' )
