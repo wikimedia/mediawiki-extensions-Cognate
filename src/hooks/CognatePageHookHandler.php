@@ -5,7 +5,6 @@ namespace Cognate;
 use Content;
 use DeferrableUpdate;
 use MediaWiki\Linker\LinkTarget;
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Storage\RevisionRecord;
 use MWCallableUpdate;
 use MWException;
@@ -241,7 +240,7 @@ class CognatePageHookHandler {
 	 * @return CognateRepo
 	 */
 	private function getRepo() {
-		return MediaWikiServices::getInstance()->getService( 'CognateRepo' );
+		return CognateServices::getRepo();
 	}
 
 	/**

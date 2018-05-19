@@ -22,7 +22,7 @@ class CognateHooks {
 	public static function onPageContentSaveComplete() {
 		call_user_func_array(
 			[
-				MediaWikiServices::getInstance()->getService( 'CognatePageHookHandler' ),
+				CognateServices::getPageHookHandler(),
 				'onPageContentSaveComplete'
 			],
 			func_get_args()
@@ -42,8 +42,7 @@ class CognateHooks {
 		Content $content = null,
 		array &$updates
 	) {
-		MediaWikiServices::getInstance()
-			->getService( 'CognatePageHookHandler' )
+		CognateServices::getPageHookHandler()
 			->onWikiPageDeletionUpdates( $page, $content, $updates );
 		return true;
 	}
@@ -51,7 +50,7 @@ class CognateHooks {
 	public static function onArticleUndelete() {
 		call_user_func_array(
 			[
-				MediaWikiServices::getInstance()->getService( 'CognatePageHookHandler' ),
+				CognateServices::getPageHookHandler(),
 				'onArticleUndelete'
 			],
 			func_get_args()
@@ -62,7 +61,7 @@ class CognateHooks {
 	public static function onTitleMoveComplete() {
 		call_user_func_array(
 			[
-				MediaWikiServices::getInstance()->getService( 'CognatePageHookHandler' ),
+				CognateServices::getPageHookHandler(),
 				'onTitleMoveComplete'
 			],
 			func_get_args()

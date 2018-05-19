@@ -28,14 +28,10 @@ class CognateParseHookHandler {
 	private $dbName;
 
 	public static function newFromGlobalState() {
-		$services = MediaWikiServices::getInstance();
-		$config = $services->getMainConfig();
-
-		/** @var CognateRepo $cognateRepo */
-		$cognateRepo = $services->getService( 'CognateRepo' );
+		$config = MediaWikiServices::getInstance()->getMainConfig();
 
 		return new CognateParseHookHandler(
-			$cognateRepo,
+			CognateServices::getRepo(),
 			$config->get( 'CognateNamespaces' ),
 			$config->get( 'DBname' )
 		);

@@ -4,7 +4,6 @@ namespace Cognate;
 
 use Job;
 use JobQueueGroup;
-use MediaWiki\MediaWikiServices;
 use Title;
 
 /**
@@ -26,8 +25,7 @@ class LocalJobSubmitJob extends Job {
 	public function run() {
 		$job = new CacheUpdateJob( $this->getTitle() );
 
-		/** @var CognateRepo $repo */
-		$repo = MediaWikiServices::getInstance()->getService( 'CognateRepo' );
+		$repo = CognateServices::getRepo();
 		$sites = $repo->selectSitesForPage( $this->getTitle() );
 		// In the case of a delete causing cache invalidations we need to add the local site back to
 		// the list as it has already been removed from the database.
