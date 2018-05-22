@@ -68,7 +68,7 @@ class PopulateCognatePages extends Maintenance {
 		}
 
 		$end = $dbr->selectField( 'page', 'MAX(page_id)', '', __METHOD__ );
-		$blockStart = $start;
+		$blockStart = (int)$start;
 		$blockEnd = $blockStart + $this->mBatchSize - 1;
 		$loadBalancerFactory = $services->getDBLoadBalancerFactory();
 

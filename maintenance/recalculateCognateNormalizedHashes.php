@@ -67,9 +67,9 @@ class RecalculateCognateNormalizedHashes extends Maintenance {
 			$this->output( "In DRY RUN mode.\n" );
 		}
 		$this->setupServices();
-		$batchStart = $this->getLowestRawKey();
+		$start = $this->getLowestRawKey();
 
-		if ( !$batchStart ) {
+		if ( !$start ) {
 			$this->output( "Nothing to do.\n" );
 			return true;
 		}
@@ -77,6 +77,7 @@ class RecalculateCognateNormalizedHashes extends Maintenance {
 		$services = MediaWikiServices::getInstance();
 		$loadBalancerFactory = $services->getDBLoadBalancerFactory();
 		$totalUpdates = 0;
+		$batchStart = (int)$start;
 
 		while ( $batchStart ) {
 			$this->output( "Getting batch starting from $batchStart\n" );
