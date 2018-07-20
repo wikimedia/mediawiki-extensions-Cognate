@@ -87,6 +87,14 @@ class CognateHooks {
 	public static function onLoadExtensionSchemaUpdates( DatabaseUpdater $updater ) {
 		global $wgCognateDb, $wgCognateCluster;
 
+		// At install time, extension configuration is not loaded T198331
+		if ( ! isset( $wgCognateDb ) ) {
+			$wgCognateDb = false;
+		};
+		if ( ! isset( $wgCognateCluster ) ) {
+			$wgCognateCluster = false;
+		};
+
 		// Avoid running this code again when calling CognateUpdater::newForDB
 		static $hasRunOnce = false;
 		if ( $hasRunOnce ) {
