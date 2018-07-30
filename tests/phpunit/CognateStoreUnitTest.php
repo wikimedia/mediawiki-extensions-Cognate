@@ -12,7 +12,7 @@ use Wikimedia\Rdbms\ConnectionManager;
 use Wikimedia\Rdbms\DBReadOnlyError;
 
 /**
- * @covers Cognate\CognateStore
+ * @covers \Cognate\CognateStore
  *
  * @license GPL-2.0-or-later
  */

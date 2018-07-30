@@ -14,7 +14,7 @@ use TitleFormatter;
 use TitleValue;
 
 /**
- * @covers Cognate\CognateRepo
+ * @covers \Cognate\CognateRepo
  *
  * @license GPL-2.0-or-later
  * @author Addshore

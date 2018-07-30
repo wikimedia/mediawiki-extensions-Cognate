@@ -8,7 +8,7 @@ use MediaWiki\MediaWikiServices;
 use TitleValue;
 
 /**
- * @covers Cognate\CognateStore
+ * @covers \Cognate\CognateStore
  *
  * @license GPL-2.0-or-later
  * @author Gabriel Birke < gabriel.birke@wikimedia.de >

@@ -11,7 +11,8 @@ use PHPUnit_Framework_MockObject_MockObject;
 use Title;
 
 /**
- * @covers Cognate\CacheInvalidator
+ * @covers \Cognate\CacheInvalidator
+ * @covers \Cognate\LocalJobSubmitJob
  *
  * @license GPL-2.0-or-later
  * @author Addshore

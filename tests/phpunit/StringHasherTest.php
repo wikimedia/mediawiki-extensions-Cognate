@@ -6,7 +6,7 @@ use Cognate\StringHasher;
 use UtfNormal\Validator;
 
 /**
- * @covers Cognate\StringHasher
+ * @covers \Cognate\StringHasher
  *
  * @license GPL-2.0-or-later
  * @author Addshore

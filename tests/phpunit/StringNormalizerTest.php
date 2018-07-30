@@ -5,7 +5,7 @@ namespace Cognate\Tests;
 use Cognate\StringNormalizer;
 
 /**
- * @covers Cognate\StringNormalizer
+ * @covers \Cognate\StringNormalizer
  *
  * @license GPL-2.0-or-later
  * @author Addshore

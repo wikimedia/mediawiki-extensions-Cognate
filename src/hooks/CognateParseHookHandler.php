@@ -18,7 +18,7 @@ class CognateParseHookHandler {
 	private $repo;
 
 	/**
-	 * @var array
+	 * @var int[]
 	 */
 	private $namespaces;
 
@@ -39,7 +39,7 @@ class CognateParseHookHandler {
 
 	/**
 	 * @param CognateRepo $repo
-	 * @param array $namespaces
+	 * @param int[] $namespaces
 	 * @param string $dbName
 	 */
 	public function __construct(

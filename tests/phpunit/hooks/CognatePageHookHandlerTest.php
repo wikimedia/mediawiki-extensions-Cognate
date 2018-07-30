@@ -16,7 +16,7 @@ use User;
 use WikiPage;
 
 /**
- * @covers Cognate\CognatePageHookHandler
+ * @covers \Cognate\CognatePageHookHandler
  *
  * @license GPL-2.0-or-later
  * @author Addshore

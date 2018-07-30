@@ -9,6 +9,7 @@ use Wikimedia\Rdbms\ConnectionManager;
 /**
  * @license GPL-2.0-or-later
  * @author Addshore
+ * @codeCoverageIgnore
  */
 class CognateServices {
 
