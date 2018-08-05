@@ -34,7 +34,7 @@ class CognateUpdater extends DatabaseUpdater {
 	 * @param Database $mainDb
 	 * @param Database $cognateDb
 	 * @param bool $shared
-	 * @param Maintenance $maintenance
+	 * @param Maintenance|null $maintenance
 	 *
 	 * @throws MWException
 	 * @return DatabaseUpdater

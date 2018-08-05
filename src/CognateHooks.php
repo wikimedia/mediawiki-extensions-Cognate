@@ -6,7 +6,6 @@ use Content;
 use DatabaseUpdater;
 use DeferrableUpdate;
 use MediaWiki\MediaWikiServices;
-use Page;
 use ParserOutput;
 use Title;
 use Wikimedia\Rdbms\LoadBalancer;
@@ -33,7 +32,7 @@ class CognateHooks {
 	/**
 	 * @param WikiPage $page
 	 * @param Content|null $content
-	 * @param DeferrableUpdate[] $updates
+	 * @param DeferrableUpdate[] &$updates
 	 *
 	 * @return bool
 	 */

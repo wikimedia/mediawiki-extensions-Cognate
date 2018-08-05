@@ -68,14 +68,14 @@ class CognatePageHookHandler {
 	 * Occurs after the save page request has been processed.
 	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/PageContentSaveComplete
 	 *
-	 * @param WikiPage &$page
-	 * @param User &$user
+	 * @param WikiPage $page
+	 * @param User $user
 	 * @param Content $content
 	 * @param string $summary
 	 * @param bool $isMinor
 	 * @param null $isWatch No longer used
 	 * @param null $section No longer used
-	 * @param int &$flags
+	 * @param int $flags
 	 * @param Revision|null $revision
 	 * @param Status $status
 	 * @param int|bool $baseRevId
@@ -124,7 +124,7 @@ class CognatePageHookHandler {
 	 *
 	 * @param WikiPage $page
 	 * @param Content|null $content
-	 * @param DeferrableUpdate[] $updates
+	 * @param DeferrableUpdate[] &$updates
 	 */
 	public function onWikiPageDeletionUpdates(
 		WikiPage $page,
