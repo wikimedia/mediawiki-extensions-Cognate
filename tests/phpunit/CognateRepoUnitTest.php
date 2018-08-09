@@ -31,7 +31,7 @@ class CognateRepoUnitTest extends \MediaWikiTestCase {
 	}
 
 	/**
-	 * @param array $expectedInvalidateCalls
+	 * @param array[] $expectedInvalidateCalls
 	 *
 	 * @return PHPUnit_Framework_MockObject_MockObject|CacheInvalidator
 	 */

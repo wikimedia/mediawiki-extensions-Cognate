@@ -227,8 +227,8 @@ class CognateStore {
 	 * @note Errors during insertion are totally ignored by this method. If there were duplicate
 	 * keys in the DB then you will not find out about them here.
 	 *
-	 * @param array $pageDetailsArray where each element contains the keys 'site', 'namespace', 'title'
-	 *        e.g. [ [ 'site' => 'enwiktionary', 'namespace' => 0, 'title' => 'Berlin' ] ]
+	 * @param array[] $pageDetailsArray where each element contains the keys 'site', 'namespace',
+	 * and 'title', e.g. [ [ 'site' => 'enwiktionary', 'namespace' => 0, 'title' => 'Berlin' ] ].
 	 *
 	 * @throws RuntimeException
 	 */
@@ -267,10 +267,10 @@ class CognateStore {
 	/**
 	 * @param LinkTarget $linkTarget
 	 * @param string $site
-	 * @param array[] $pagesToInsert
-	 * @param array[] $titlesToInsert
+	 * @param array[] &$pagesToInsert
+	 * @param array[] &$titlesToInsert
 	 *
-	 * @return array 0 => $pagesToInsert, 1 => $titleToInsert
+	 * @return array[] 0 => $pagesToInsert, 1 => $titleToInsert
 	 */
 	private function buildRows(
 		LinkTarget $linkTarget,
