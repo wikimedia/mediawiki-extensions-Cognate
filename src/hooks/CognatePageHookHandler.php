@@ -11,7 +11,6 @@ use MWException;
 use Revision;
 use Status;
 use Title;
-use TitleValue;
 use User;
 use WikiPage;
 
@@ -111,7 +110,7 @@ class CognatePageHookHandler {
 				null;
 
 		$this->onContentChange(
-			$page->getTitle()->getTitleValue(),
+			$page->getTitle(),
 			(bool)( $flags & EDIT_NEW ),
 			$content->isRedirect(),
 			$previousContent ? $previousContent->isRedirect() : null
@@ -131,22 +130,22 @@ class CognatePageHookHandler {
 		Content $content = null,
 		array &$updates
 	) {
-		$titleValue = $page->getTitle()->getTitleValue();
-		if ( $this->isActionableTarget( $titleValue ) ) {
-			$updates[] = $this->newDeferrableDelete( $titleValue, $this->dbName );
+		$title = $page->getTitle();
+		if ( $this->isActionableTarget( $title ) ) {
+			$updates[] = $this->newDeferrableDelete( $title, $this->dbName );
 		}
 	}
 
 	/**
-	 * @param TitleValue $titleValue
+	 * @param LinkTarget $linkTarget
 	 * @param string $dbName
 	 *
 	 * @return MWCallableUpdate
 	 */
-	private function newDeferrableDelete( TitleValue $titleValue, $dbName ) {
+	private function newDeferrableDelete( LinkTarget $linkTarget, $dbName ) {
 		return new MWCallableUpdate(
-			function () use ( $dbName, $titleValue ){
-				$this->getRepo()->deletePage( $dbName, $titleValue );
+			function () use ( $dbName, $linkTarget ) {
+				$this->getRepo()->deletePage( $dbName, $linkTarget );
 			},
 			__METHOD__
 		);
@@ -173,7 +172,7 @@ class CognatePageHookHandler {
 
 		$revision = $this->newRevisionFromId( $title->getLatestRevID() );
 		$this->onContentChange(
-			$title->getTitleValue(),
+			$title,
 			true,
 			$revision->getContent( RevisionRecord::RAW )->isRedirect(),
 			false
@@ -212,14 +211,12 @@ class CognatePageHookHandler {
 		$reason,
 		Revision $nullRevision
 	) {
-		$oldTitleValue = $title->getTitleValue();
-		$newTitleValue = $newTitle->getTitleValue();
 		$repo = $this->getRepo();
-		if ( $this->isActionableTarget( $oldTitleValue ) ) {
-			$repo->deletePage( $this->dbName, $oldTitleValue );
+		if ( $this->isActionableTarget( $title ) ) {
+			$repo->deletePage( $this->dbName, $title );
 		}
-		if ( $this->isActionableTarget( $newTitleValue ) ) {
-			$repo->savePage( $this->dbName, $newTitleValue );
+		if ( $this->isActionableTarget( $newTitle ) ) {
+			$repo->savePage( $this->dbName, $newTitle );
 		}
 	}
 
@@ -244,13 +241,13 @@ class CognatePageHookHandler {
 	}
 
 	/**
-	 * @param TitleValue $titleValue
+	 * @param LinkTarget $linkTarget
 	 * @param bool $isNewPage
 	 * @param bool $isRedirect
 	 * @param bool|null $wasRedirect
 	 */
 	private function onContentChange(
-		TitleValue $titleValue,
+		LinkTarget $linkTarget,
 		$isNewPage,
 		$isRedirect,
 		$wasRedirect = null
@@ -259,9 +256,9 @@ class CognatePageHookHandler {
 			( $isNewPage && !$isRedirect ) ||
 			( $wasRedirect && !$isRedirect )
 		) {
-			$this->getRepo()->savePage( $this->dbName, $titleValue );
+			$this->getRepo()->savePage( $this->dbName, $linkTarget );
 		} elseif ( !$isNewPage && !$wasRedirect && $isRedirect ) {
-			$this->getRepo()->deletePage( $this->dbName, $titleValue );
+			$this->getRepo()->deletePage( $this->dbName, $linkTarget );
 		}
 	}
 

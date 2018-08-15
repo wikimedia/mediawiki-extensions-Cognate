@@ -11,7 +11,6 @@ use MediaWiki\Linker\LinkTarget;
 use PHPUnit_Framework_MockObject_MockObject;
 use Revision;
 use Title;
-use TitleValue;
 use User;
 use WikiPage;
 
@@ -49,7 +48,7 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 		$this->repo->expects( $this->never() )->method( 'savePage' );
 
 		$this->call_onPageContentSaveComplete(
-			[ NS_PROJECT ], 'abc2', new TitleValue( 0, 'ArticleDbKey' )
+			[ NS_PROJECT ], 'abc2', Title::newFromText( 'ArticleDbKey' )
 		);
 	}
 
@@ -58,7 +57,7 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 		$this->repo->expects( $this->never() )->method( 'savePage' );
 
 		$this->call_onPageContentSaveComplete(
-			[ 0 ], 'abc2', new TitleValue( 0, 'ArticleDbKey' ),
+			[ 0 ], 'abc2', Title::newFromText( 'ArticleDbKey' ),
 			[ 'hasNoRevision', 'hasPreviousRevision' ]
 		);
 	}
@@ -67,10 +66,10 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 		$this->repo->expects( $this->never() )->method( 'deletePage' );
 		$this->repo->expects( $this->once() )
 			->method( 'savePage' )
-			->with( 'abc2', new TitleValue( 0, 'ArticleDbKey' ) );
+			->with( 'abc2', Title::newFromText( 'ArticleDbKey' ) );
 
 		$this->call_onPageContentSaveComplete(
-			[ 0 ], 'abc2', new TitleValue( 0, 'ArticleDbKey' ),
+			[ 0 ], 'abc2', Title::newFromText( 'ArticleDbKey' ),
 			[ 'isNew' ]
 		);
 	}
@@ -80,7 +79,7 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 		$this->repo->expects( $this->never() )->method( 'savePage' );
 
 		$this->call_onPageContentSaveComplete(
-			[ 0 ], 'abc2', new TitleValue( 0, 'ArticleDbKey' ),
+			[ 0 ], 'abc2', Title::newFromText( 'ArticleDbKey' ),
 			[ 'isNew', 'isRedirect' ]
 		);
 	}
@@ -90,7 +89,7 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 		$this->repo->expects( $this->never() )->method( 'savePage' );
 
 		$this->call_onPageContentSaveComplete(
-			[ 0 ], 'abc2', new TitleValue( 0, 'ArticleDbKey' ),
+			[ 0 ], 'abc2', Title::newFromText( 'ArticleDbKey' ),
 			[ 'hasPreviousRevision' ]
 		);
 	}
@@ -100,7 +99,7 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 		$this->repo->expects( $this->never() )->method( 'savePage' );
 
 		$this->call_onPageContentSaveComplete(
-			[ 0 ], 'abc2', new TitleValue( 0, 'ArticleDbKey' ),
+			[ 0 ], 'abc2', Title::newFromText( 'ArticleDbKey' ),
 			[ 'isRedirect', 'wasRedirect', 'hasPreviousRevision' ]
 		);
 	}
@@ -108,11 +107,11 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 	public function test_onPageContentSaveComplete_namespaceMatch_editNonRedirectToRedirect() {
 		$this->repo->expects( $this->once() )
 			->method( 'deletePage' )
-			->with( 'abc2', new TitleValue( 0, 'ArticleDbKey' ) );
+			->with( 'abc2', Title::newFromText( 'ArticleDbKey' ) );
 		$this->repo->expects( $this->never() )->method( 'savePage' );
 
 		$this->call_onPageContentSaveComplete(
-			[ 0 ], 'abc2', new TitleValue( 0, 'ArticleDbKey' ),
+			[ 0 ], 'abc2', Title::newFromText( 'ArticleDbKey' ),
 			[ 'isRedirect', 'hasPreviousRevision' ]
 		);
 	}
@@ -121,10 +120,10 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 		$this->repo->expects( $this->never() )->method( 'deletePage' );
 		$this->repo->expects( $this->once() )
 			->method( 'savePage' )
-			->with( 'abc2', new TitleValue( 0, 'ArticleDbKey' ) );
+			->with( 'abc2', Title::newFromText( 'ArticleDbKey' ) );
 
 		$this->call_onPageContentSaveComplete(
-			[ 0 ], 'abc2', new TitleValue( 0, 'ArticleDbKey' ),
+			[ 0 ], 'abc2', Title::newFromText( 'ArticleDbKey' ),
 			[ 'wasRedirect', 'hasPreviousRevision' ]
 		);
 	}
@@ -199,14 +198,14 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 	public function test_onWikiPageDeletionUpdates_namespaceMatch() {
 		$this->repo->expects( $this->once() )
 			->method( 'deletePage' )
-			->with( 'abc2', new TitleValue( 0, 'ArticleDbKey' ) );
+			->with( 'abc2', Title::newFromText( 'ArticleDbKey' ) );
 		$this->repo->expects( $this->never() )
 			->method( 'savePage' );
 
 		$updates = $this->call_onWikiPageDeletionUpdates(
 			[ 0 ],
 			'abc2',
-			new TitleValue( 0, 'ArticleDbKey' )
+			Title::newFromText( 'ArticleDbKey' )
 		);
 
 		$this->assertCount( 1, $updates );
@@ -222,7 +221,7 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 		$updates = $this->call_onWikiPageDeletionUpdates(
 			[ NS_PROJECT ],
 			'abc2',
-			new TitleValue( 0, 'ArticleDbKey' )
+			Title::newFromText( 'ArticleDbKey' )
 		);
 
 		$this->assertEmpty( $updates );
@@ -264,12 +263,12 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 		$this->repo->expects( $this->never() )->method( 'deletePage' );
 		$this->repo->expects( $this->once() )
 			->method( 'savePage' )
-			->with( 'abc2', new TitleValue( 0, 'ArticleDbKey' ) );
+			->with( 'abc2', Title::newFromText( 'ArticleDbKey' ) );
 
 		$this->call_onArticleUndelete(
 			[ 0 ],
 			'abc2',
-			new TitleValue( 0, 'ArticleDbKey' )
+			Title::newFromText( 'ArticleDbKey' )
 		);
 	}
 
@@ -280,7 +279,7 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 		$this->call_onArticleUndelete(
 			[ 0 ],
 			'abc2',
-			new TitleValue( 0, 'ArticleDbKey' ),
+			Title::newFromText( 'ArticleDbKey' ),
 			true
 		);
 	}
@@ -292,20 +291,20 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 		$this->call_onArticleUndelete(
 			[ NS_PROJECT ],
 			'abc2',
-			new TitleValue( 0, 'ArticleDbKey' )
+			Title::newFromText( 'ArticleDbKey' )
 		);
 	}
 
 	/**
 	 * @param int[] $namespaces
 	 * @param string $dbName
-	 * @param LinkTarget $linkTarget
+	 * @param Title $title
 	 * @param bool $latestRevIsRedirect
 	 */
 	private function call_onArticleUndelete(
 		array $namespaces,
 		$dbName,
-		LinkTarget $linkTarget,
+		Title $title,
 		$latestRevIsRedirect = false
 	) {
 		$handler = new CognatePageHookHandler( $namespaces, $dbName );
@@ -321,7 +320,7 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 			return $revision;
 		} );
 		$handler->onArticleUndelete(
-			$this->getMockTitle( $linkTarget ),
+			$title,
 			null, null, null
 		);
 	}
@@ -329,16 +328,16 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 	public function test_onTitleMoveComplete_namespaceMatch() {
 		$this->repo->expects( $this->once() )
 			->method( 'deletePage' )
-			->with( 'abc2', new TitleValue( 0, 'ArticleDbKeyOld' ) );
+			->with( 'abc2', Title::newFromText( 'ArticleDbKeyOld' ) );
 		$this->repo->expects( $this->once() )
 			->method( 'savePage' )
-			->with( 'abc2', new TitleValue( 0, 'ArticleDbKeyNew' ) );
+			->with( 'abc2', Title::newFromText( 'ArticleDbKeyNew' ) );
 
 		$this->call_onTitleMoveComplete(
 			[ 0 ],
 			'abc2',
-			new TitleValue( 0, 'ArticleDbKeyOld' ),
-			new TitleValue( 0, 'ArticleDbKeyNew' )
+			Title::newFromText( 'ArticleDbKeyOld' ),
+			Title::newFromText( 'ArticleDbKeyNew' )
 		);
 	}
 
@@ -351,23 +350,23 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 		$this->call_onTitleMoveComplete(
 			[ NS_PROJECT ],
 			'abc2',
-			new TitleValue( 0, 'ArticleDbKeyOld' ),
-			new TitleValue( 0, 'ArticleDbKeyNew' )
+			Title::newFromText( 'ArticleDbKeyOld' ),
+			Title::newFromText( 'ArticleDbKeyNew' )
 		);
 	}
 
 	public function test_onTitleMoveComplete_namespaceMatchOld() {
 		$this->repo->expects( $this->once() )
 			->method( 'deletePage' )
-			->with( 'abc2', new TitleValue( NS_PROJECT, 'ArticleDbKeyOld' ) );
+			->with( 'abc2', Title::newFromText( 'ArticleDbKeyOld', NS_PROJECT ) );
 		$this->repo->expects( $this->never() )
 			->method( 'savePage' );
 
 		$this->call_onTitleMoveComplete(
 			[ NS_PROJECT ],
 			'abc2',
-			new TitleValue( NS_PROJECT, 'ArticleDbKeyOld' ),
-			new TitleValue( 0, 'ArticleDbKeyNew' )
+			Title::newFromText( 'ArticleDbKeyOld', NS_PROJECT ),
+			Title::newFromText( 'ArticleDbKeyNew' )
 		);
 	}
 
@@ -376,13 +375,13 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 			->method( 'deletePage' );
 		$this->repo->expects( $this->once() )
 			->method( 'savePage' )
-			->with( 'abc2', new TitleValue( NS_PROJECT, 'ArticleDbKeyNew' ) );
+			->with( 'abc2', Title::newFromText( 'ArticleDbKeyNew', NS_PROJECT ) );
 
 		$this->call_onTitleMoveComplete(
 			[ NS_PROJECT ],
 			'abc2',
-			new TitleValue( 0, 'ArticleDbKeyOld' ),
-			new TitleValue( NS_PROJECT, 'ArticleDbKeyNew' )
+			Title::newFromText( 'ArticleDbKeyOld' ),
+			Title::newFromText( 'ArticleDbKeyNew', NS_PROJECT )
 		);
 	}
 
@@ -426,34 +425,6 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 		return $this->getMockBuilder( Content::class )
 			->disableOriginalConstructor()
 			->getMock();
-	}
-
-	/**
-	 * @param LinkTarget $value
-	 *
-	 * @return PHPUnit_Framework_MockObject_MockObject|Title
-	 */
-	private function getMockTitle( LinkTarget $value ) {
-		$mock = $this->getMockBuilder( Title::class )
-			->disableOriginalConstructor()
-			->getMock();
-		foreach ( get_class_methods( $value ) as $methodName ) {
-			if ( strstr( $methodName, '__' ) ) {
-				continue;
-			}
-			$mock->expects( $this->any() )
-				->method( $methodName )
-				->will( $this->returnCallback( function () use ( $value, $methodName ) {
-					return call_user_func_array( [ $value, $methodName ], func_get_args() );
-				} ) );
-		}
-		$mock->expects( $this->any() )
-			->method( 'getTitleValue' )
-			->will( $this->returnValue( $value ) );
-		$mock->expects( $this->any() )
-			->method( 'getLatestRevID' )
-			->will( $this->returnValue( 5566778899 ) );
-		return $mock;
 	}
 
 }
