@@ -18,10 +18,10 @@ return [
 
 	'CognateRepo' => function ( MediaWikiServices $services ) {
 		$repo = new CognateRepo(
-			CognateServices::getStore(),
-			CognateServices::getCacheInvalidator(),
+			CognateServices::getStore( $services ),
+			CognateServices::getCacheInvalidator( $services ),
 			$services->getTitleFormatter(),
-			CognateServices::getLogger()
+			CognateServices::getLogger( $services )
 		);
 
 		$repo->setStatsdDataFactory( $services->getStatsdDataFactory() );
@@ -48,7 +48,7 @@ return [
 
 	'CognateStore' => function ( MediaWikiServices $services ) {
 		return new CognateStore(
-			CognateServices::getConnectionManager(),
+			CognateServices::getConnectionManager( $services ),
 			new StringNormalizer(),
 			new StringHasher(),
 			$services->getMainConfig()->get( 'CognateReadOnly' )
