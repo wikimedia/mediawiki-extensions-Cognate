@@ -5,7 +5,7 @@ namespace Cognate;
 use Content;
 use DeferrableUpdate;
 use MediaWiki\Linker\LinkTarget;
-use MediaWiki\Storage\RevisionRecord;
+use MediaWiki\Revision\RevisionRecord;
 use MWCallableUpdate;
 use MWException;
 use Revision;
