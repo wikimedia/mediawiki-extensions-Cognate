@@ -18,13 +18,13 @@ use WikiPage;
  */
 class CognateHooks {
 
-	public static function onPageContentSaveComplete() {
+	public static function onPageContentSaveComplete( ...$args ) {
 		call_user_func_array(
 			[
 				CognateServices::getPageHookHandler(),
 				'onPageContentSaveComplete'
 			],
-			func_get_args()
+			$args
 		);
 		return true;
 	}
@@ -46,24 +46,24 @@ class CognateHooks {
 		return true;
 	}
 
-	public static function onArticleUndelete() {
+	public static function onArticleUndelete( ...$args ) {
 		call_user_func_array(
 			[
 				CognateServices::getPageHookHandler(),
 				'onArticleUndelete'
 			],
-			func_get_args()
+			$args
 		);
 		return true;
 	}
 
-	public static function onTitleMoveComplete() {
+	public static function onTitleMoveComplete( ...$args ) {
 		call_user_func_array(
 			[
 				CognateServices::getPageHookHandler(),
 				'onTitleMoveComplete'
 			],
-			func_get_args()
+			$args
 		);
 		return true;
 	}
