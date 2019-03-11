@@ -11,8 +11,6 @@ use MediaWiki\Linker\LinkTarget;
 use PHPUnit_Framework_MockObject_MockObject;
 use Revision;
 use Title;
-use User;
-use WikiPage;
 
 /**
  * @covers \Cognate\CognatePageHookHandler
@@ -142,19 +140,6 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 		LinkTarget $linkTarget,
 		array $options = []
 	) {
-		/** @var WikiPage|PHPUnit_Framework_MockObject_MockObject $mockWikiPage */
-		$mockWikiPage = $this->getMockBuilder( 'WikiPage' )
-			->disableOriginalConstructor()
-			->getMock();
-		$mockWikiPage->expects( $this->any() )
-			->method( 'getTitle' )
-			->will( $this->returnValue( Title::newFromLinkTarget( $linkTarget ) ) );
-
-		$content = $this->getMock( Content::class );
-		$content->expects( $this->any() )
-			->method( 'isRedirect' )
-			->will( $this->returnValue( in_array( 'isRedirect', $options ) ) );
-
 		$revision = null;
 		if ( !in_array( 'hasNoRevision', $options ) ) {
 			$revision = $this->getMockRevision();
@@ -177,21 +162,12 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 				->will( $this->returnValue( $previousRevision ) );
 		}
 
-		$flags = 0;
-		if ( in_array( 'isNew', $options ) ) {
-			$flags = EDIT_NEW;
-		}
-
 		$handler = new CognatePageHookHandler( $namespaces, $dbName );
 		$handler->onPageContentSaveComplete(
-			$mockWikiPage,
-			User::newFromId( 0 ),
-			$content,
-			null, null, null, null,
-			$flags,
-			$revision,
-			$this->getMock( 'Status' ),
-			null
+			$linkTarget,
+			in_array( 'isRedirect', $options ),
+			in_array( 'isNew', $options ),
+			$revision
 		);
 	}
 
@@ -241,18 +217,9 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 	) {
 		$updates = [];
 
-		/** @var WikiPage|PHPUnit_Framework_MockObject_MockObject $mockWikiPage */
-		$mockWikiPage = $this->getMockBuilder( 'WikiPage' )
-			->disableOriginalConstructor()
-			->getMock();
-		$mockWikiPage->expects( $this->any() )
-			->method( 'getTitle' )
-			->will( $this->returnValue( Title::newFromLinkTarget( $linkTarget ) ) );
-
 		$handler = new CognatePageHookHandler( $namespaces, $dbName );
 		$handler->onWikiPageDeletionUpdates(
-			$mockWikiPage,
-			null,
+			$linkTarget,
 			$updates
 		);
 
@@ -320,8 +287,7 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 			return $revision;
 		} );
 		$handler->onArticleUndelete(
-			$title,
-			null, null, null
+			$title
 		);
 	}
 
@@ -400,12 +366,7 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 		$handler = new CognatePageHookHandler( $namespaces, $dbName );
 		$handler->onTitleMoveComplete(
 			Title::newFromLinkTarget( $linkTarget ),
-			Title::newFromLinkTarget( $newLinkTarget ),
-			User::newFromId( 0 ),
-			null,
-			null,
-			null,
-			$this->getMockRevision()
+			Title::newFromLinkTarget( $newLinkTarget )
 		);
 	}
 

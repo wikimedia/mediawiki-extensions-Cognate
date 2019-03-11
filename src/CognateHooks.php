@@ -18,54 +18,61 @@ use WikiPage;
  */
 class CognateHooks {
 
-	public static function onPageContentSaveComplete( ...$args ) {
-		call_user_func_array(
-			[
-				CognateServices::getPageHookHandler(),
-				'onPageContentSaveComplete'
-			],
-			$args
+	public static function onPageContentSaveComplete(
+		WikiPage $page,
+		$user,
+		Content $content,
+		$summary,
+		$isMinor,
+		$isWatch,
+		$section,
+		$flags,
+		\Revision $revision = null,
+		$status,
+		$baseRevId,
+		$undidRevId = null
+	) {
+		CognateServices::getPageHookHandler()->onPageContentSaveComplete(
+			$page->getTitle(),
+			$content->isRedirect(),
+			(bool)( $flags & EDIT_NEW ),
+			$revision
 		);
-		return true;
 	}
 
 	/**
 	 * @param WikiPage $page
 	 * @param Content|null $content
 	 * @param DeferrableUpdate[] &$updates
-	 *
-	 * @return bool
 	 */
 	public static function onWikiPageDeletionUpdates(
 		WikiPage $page,
-		Content $content = null,
+		$content,
 		array &$updates
 	) {
 		CognateServices::getPageHookHandler()
-			->onWikiPageDeletionUpdates( $page, $content, $updates );
-		return true;
+			->onWikiPageDeletionUpdates( $page->getTitle(), $updates );
 	}
 
-	public static function onArticleUndelete( ...$args ) {
-		call_user_func_array(
-			[
-				CognateServices::getPageHookHandler(),
-				'onArticleUndelete'
-			],
-			$args
-		);
-		return true;
+	public static function onArticleUndelete(
+		Title $title,
+		$create,
+		$comment,
+		$oldPageId
+	) {
+		CognateServices::getPageHookHandler()->onArticleUndelete( $title );
 	}
 
-	public static function onTitleMoveComplete( ...$args ) {
-		call_user_func_array(
-			[
-				CognateServices::getPageHookHandler(),
-				'onTitleMoveComplete'
-			],
-			$args
-		);
-		return true;
+	public static function onTitleMoveComplete(
+		Title $title,
+		Title $newTitle,
+		$user,
+		$oldid,
+		$newid,
+		$reason,
+		$nullRevision
+	) {
+		CognateServices::getPageHookHandler()->onTitleMoveComplete( $title, $newTitle );
 	}
 
 	/**
@@ -74,7 +81,7 @@ class CognateHooks {
 	 * @param ParserOutput $parserOutput
 	 */
 	public static function onContentAlterParserOutput(
-		Content $content,
+		$content,
 		Title $title,
 		ParserOutput $parserOutput
 	) {
@@ -94,7 +101,6 @@ class CognateHooks {
 	 * @see CognateUpdater regarding the complexities of this hook
 	 *
 	 * @param DatabaseUpdater $updater
-	 * @return bool
 	 */
 	public static function onLoadExtensionSchemaUpdates( DatabaseUpdater $updater ) {
 		global $wgCognateDb, $wgCognateCluster;
@@ -110,7 +116,7 @@ class CognateHooks {
 		// Avoid running this code again when calling CognateUpdater::newForDB
 		static $hasRunOnce = false;
 		if ( $hasRunOnce ) {
-			return true;
+			return;
 		} else {
 			$hasRunOnce = true;
 		}
@@ -143,8 +149,6 @@ class CognateHooks {
 		$updater->addExtensionUpdate(
 			[ [ CognateUpdater::class, 'realDoUpdates' ], $cognateUpdater ]
 		);
-
-		return true;
 	}
 
 }

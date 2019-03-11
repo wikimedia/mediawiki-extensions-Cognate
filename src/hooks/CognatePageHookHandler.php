@@ -2,17 +2,13 @@
 
 namespace Cognate;
 
-use Content;
 use DeferrableUpdate;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Revision\RevisionRecord;
 use MWCallableUpdate;
 use MWException;
 use Revision;
-use Status;
 use Title;
-use User;
-use WikiPage;
 
 /**
  * @license GPL-2.0-or-later
@@ -67,39 +63,23 @@ class CognatePageHookHandler {
 	 * Occurs after the save page request has been processed.
 	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/PageContentSaveComplete
 	 *
-	 * @param WikiPage $page
-	 * @param User $user
-	 * @param Content $content
-	 * @param string $summary
-	 * @param bool $isMinor
-	 * @param null $isWatch No longer used
-	 * @param null $section No longer used
-	 * @param int $flags
+	 * @param LinkTarget $title
+	 * @param bool $isRedirect
+	 * @param bool $isNewPage
 	 * @param Revision|null $revision
-	 * @param Status $status
-	 * @param int|bool $baseRevId
-	 * @param int $undidRevId
 	 */
 	public function onPageContentSaveComplete(
-		WikiPage $page,
-		User $user,
-		Content $content,
-		$summary,
-		$isMinor,
-		$isWatch,
-		$section,
-		$flags,
-		Revision $revision = null,
-		Status $status,
-		$baseRevId,
-		$undidRevId = 0
+		LinkTarget $title,
+		$isRedirect,
+		$isNewPage,
+		Revision $revision = null
 	) {
 		// A null revision means a null edit / no-op edit was made, no need to process that.
 		if ( $revision === null ) {
 			return;
 		}
 
-		if ( !$this->isActionableTarget( $page->getTitle() ) ) {
+		if ( !$this->isActionableTarget( $title ) ) {
 			return;
 		}
 
@@ -110,9 +90,9 @@ class CognatePageHookHandler {
 				null;
 
 		$this->onContentChange(
-			$page->getTitle(),
-			(bool)( $flags & EDIT_NEW ),
-			$content->isRedirect(),
+			$title,
+			$isNewPage,
+			$isRedirect,
 			$previousContent ? $previousContent->isRedirect() : null
 		);
 	}
@@ -121,16 +101,13 @@ class CognatePageHookHandler {
 	 * Manipulate the list of DataUpdates to be applied when a page is deleted
 	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/WikiPageDeletionUpdates
 	 *
-	 * @param WikiPage $page
-	 * @param Content|null $content
+	 * @param LinkTarget $title
 	 * @param DeferrableUpdate[] &$updates
 	 */
 	public function onWikiPageDeletionUpdates(
-		WikiPage $page,
-		Content $content = null,
+		LinkTarget $title,
 		array &$updates
 	) {
-		$title = $page->getTitle();
 		if ( $this->isActionableTarget( $title ) ) {
 			$updates[] = $this->newDeferrableDelete( $title, $this->dbName );
 		}
@@ -156,15 +133,9 @@ class CognatePageHookHandler {
 	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/ArticleUndelete
 	 *
 	 * @param Title $title
-	 * @param bool $create
-	 * @param string $comment
-	 * @param int $oldPageId
 	 */
 	public function onArticleUndelete(
-		Title $title,
-		$create,
-		$comment,
-		$oldPageId
+		Title $title
 	) {
 		if ( !$this->isActionableTarget( $title ) ) {
 			return;
@@ -194,22 +165,12 @@ class CognatePageHookHandler {
 	 *
 	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/TitleMoveComplete
 	 *
-	 * @param Title $title
-	 * @param Title $newTitle
-	 * @param User $user
-	 * @param int $oldid
-	 * @param int $newid
-	 * @param string $reason
-	 * @param Revision $nullRevision
+	 * @param LinkTarget $title
+	 * @param LinkTarget $newTitle
 	 */
 	public function onTitleMoveComplete(
-		Title $title,
-		Title $newTitle,
-		User $user,
-		$oldid,
-		$newid,
-		$reason,
-		Revision $nullRevision
+		LinkTarget $title,
+		LinkTarget $newTitle
 	) {
 		$repo = $this->getRepo();
 		if ( $this->isActionableTarget( $title ) ) {
