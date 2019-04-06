@@ -18,6 +18,21 @@ use WikiPage;
  */
 class CognateHooks {
 
+	/**
+	 * @param WikiPage $page
+	 * @param \User $user
+	 * @param Content $content
+	 * @param string $summary
+	 * @param bool $isMinor
+	 * @param bool $isWatch
+	 * @param string $section
+	 * @param int $flags
+	 * @param \Revision|null $revision
+	 * @param \Status $status
+	 * @param int $baseRevId
+	 * @param int|null $undidRevId
+	 * @phan-suppress-next-next-line PhanParamReqAfterOpt
+	 */
 	public static function onPageContentSaveComplete(
 		WikiPage $page,
 		$user,

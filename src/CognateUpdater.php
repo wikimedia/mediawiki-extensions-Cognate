@@ -62,7 +62,6 @@ class CognateUpdater extends DatabaseUpdater {
 	}
 
 	/**
-	 * @suppress PhanTypeMissingReturn
 	 * @return null
 	 */
 	protected function getCoreUpdateList() {

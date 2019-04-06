@@ -13,6 +13,7 @@ use Wikimedia\Rdbms\ConnectionManager;
  */
 class CognateServices {
 
+	/** @phan-suppress-next-line PhanParamReqAfterOpt */
 	private static function getService( MediaWikiServices $services = null, $name ) {
 		if ( $services === null ) {
 			$services = MediaWikiServices::getInstance();
