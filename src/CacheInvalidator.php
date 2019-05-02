@@ -22,12 +22,12 @@ class CacheInvalidator {
 	}
 
 	/**
-	 * @param string $dbName
+	 * @param string[] $dbNames
 	 * @param LinkTarget $linkTarget
 	 */
-	public function invalidate( $dbName, LinkTarget $linkTarget ) {
+	public function invalidate( array $dbNames, LinkTarget $linkTarget ) {
 		$this->jobQueueGroup->push(
-			new LocalJobSubmitJob( Title::newFromLinkTarget( $linkTarget ), [ 'dbName' => $dbName ] )
+			new LocalJobSubmitJob( Title::newFromLinkTarget( $linkTarget ), [ 'dbNames' => $dbNames ] )
 		);
 	}
 

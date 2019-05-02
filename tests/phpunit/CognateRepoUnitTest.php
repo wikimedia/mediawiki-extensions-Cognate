@@ -72,7 +72,7 @@ class CognateRepoUnitTest extends \MediaWikiTestCase {
 
 		$repo = new CognateRepo(
 			$store,
-			$this->getMockCacheInvalidator( [ [ 'siteName', $titleValue ] ] ),
+			$this->getMockCacheInvalidator( [ [ [ 'siteName' ], $titleValue ] ] ),
 			$this->getMockTitleFormatter(),
 			new NullLogger()
 		);
@@ -119,7 +119,7 @@ class CognateRepoUnitTest extends \MediaWikiTestCase {
 
 		$repo = new CognateRepo(
 			$store,
-			$this->getMockCacheInvalidator( [ [ 'siteName', $titleValue ] ] ),
+			$this->getMockCacheInvalidator( [ [ [ 'siteName' ], $titleValue ] ] ),
 			$this->getMockTitleFormatter(),
 			new NullLogger()
 		);

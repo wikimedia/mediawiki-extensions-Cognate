@@ -34,7 +34,7 @@ class CacheInvalidatorTest extends MediaWikiTestCase {
 			} ) );
 
 		$cacheInvalidator = new CacheInvalidator( $mockJobQueueGroup );
-		$cacheInvalidator->invalidate( 'frwiktionary', $title );
+		$cacheInvalidator->invalidate( [ 'frwiktionary' ], $title );
 	}
 
 }

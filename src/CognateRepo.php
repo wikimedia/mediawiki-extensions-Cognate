@@ -77,7 +77,7 @@ class CognateRepo implements StatsdAwareInterface {
 		}
 
 		if ( $success ) {
-			$this->cacheInvalidator->invalidate( $dbName, $linkTarget );
+			$this->invalidateAllSitesForPage( $dbName, $linkTarget );
 		} else {
 			$dbKey = $linkTarget->getDBkey();
 			$namespace = $linkTarget->getNamespace();
@@ -112,7 +112,7 @@ class CognateRepo implements StatsdAwareInterface {
 		}
 
 		if ( $success ) {
-			$this->cacheInvalidator->invalidate( $dbName, $linkTarget );
+			$this->invalidateAllSitesForPage( $dbName, $linkTarget );
 		}
 
 		return $success;
@@ -145,11 +145,10 @@ class CognateRepo implements StatsdAwareInterface {
 	}
 
 	/**
+	 * @param string $dbName
 	 * @param LinkTarget $linkTarget
-	 *
-	 * @return string[] array of dbnames
 	 */
-	public function selectSitesForPage( LinkTarget $linkTarget ) {
+	private function invalidateAllSitesForPage( $dbName, LinkTarget $linkTarget ) {
 		$this->stats->increment( 'Cognate.Repo.selectSitesForPage' );
 
 		$start = microtime( true );
@@ -157,7 +156,11 @@ class CognateRepo implements StatsdAwareInterface {
 		$time = 1000 * ( microtime( true ) - $start );
 		$this->stats->timing( 'Cognate.Repo.selectSitesForPage.time', $time );
 
-		return $sites;
+		// In the case of a delete causing cache invalidations we need to add the local site
+		// back to the list as it has already been removed from the database.
+		$sites[] = $dbName;
+
+		$this->cacheInvalidator->invalidate( $sites, $linkTarget );
 	}
 
 }
