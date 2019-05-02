@@ -126,7 +126,8 @@ class CognateStoreIntegrationTest extends \MediaWikiTestCase {
 				[ 'interwiki' => 'de', 'namespaceID' => 0, 'title' => 'My_test_page' ],
 				[ 'interwiki' => 'eo', 'namespaceID' => 0, 'title' => 'My_test_page' ],
 			],
-			$interwikis );
+			$interwikis
+		);
 	}
 
 	public function testInsertAndDeletePageResultsInNoEntry() {

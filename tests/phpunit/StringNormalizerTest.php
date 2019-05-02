@@ -30,7 +30,7 @@ class StringNormalizerTest extends \MediaWikiTestCase {
 
 		$one = $normalizer->normalize( $inputOne );
 
-		$this->assertEquals( $one, $inputTwo );
+		$this->assertSame( $one, $inputTwo );
 	}
 
 }
