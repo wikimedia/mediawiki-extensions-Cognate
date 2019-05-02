@@ -5,11 +5,9 @@ namespace Cognate\Tests;
 use Cognate\CacheInvalidator;
 use Cognate\CognateRepo;
 use Cognate\CognateStore;
-use MediaWiki\Linker\LinkTarget;
 use PHPUnit_Framework_MockObject_MockObject;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
-use Title;
 use TitleFormatter;
 use TitleValue;
 
@@ -46,15 +44,7 @@ class CognateRepoUnitTest extends \MediaWikiTestCase {
 			list( $dbName, $linkTarget ) = $details;
 			$mock->expects( $this->at( $key ) )
 				->method( 'invalidate' )
-				->will( $this->returnCallback(
-					function ( $param1, Title $param2 ) use ( $dbName, $linkTarget ) {
-						$this->assertSame( $dbName, $param1 );
-						/** @var LinkTarget $linkTarget */
-						$this->assertInstanceOf( Title::class, $param2 );
-						$this->assertSame( $linkTarget->getDBkey(), $param2->getDBkey() );
-						$this->assertSame( $linkTarget->getNamespace(), $param2->getNamespace() );
-					}
-				) );
+				->with( $dbName, $linkTarget );
 		}
 		return $mock;
 	}

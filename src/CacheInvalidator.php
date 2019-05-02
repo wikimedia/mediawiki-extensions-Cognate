@@ -3,6 +3,7 @@
 namespace Cognate;
 
 use JobQueueGroup;
+use MediaWiki\Linker\LinkTarget;
 use Title;
 
 /**
@@ -22,11 +23,11 @@ class CacheInvalidator {
 
 	/**
 	 * @param string $dbName
-	 * @param Title $title
+	 * @param LinkTarget $linkTarget
 	 */
-	public function invalidate( $dbName, Title $title ) {
+	public function invalidate( $dbName, LinkTarget $linkTarget ) {
 		$this->jobQueueGroup->push(
-			new LocalJobSubmitJob( $title, [ 'dbName' => $dbName ] )
+			new LocalJobSubmitJob( Title::newFromLinkTarget( $linkTarget ), [ 'dbName' => $dbName ] )
 		);
 	}
 

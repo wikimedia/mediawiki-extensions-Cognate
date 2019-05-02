@@ -7,7 +7,6 @@ use MediaWiki\Linker\LinkTarget;
 use NullStatsdDataFactory;
 use Psr\Log\LoggerInterface;
 use StatsdAwareInterface;
-use Title;
 use TitleFormatter;
 use Wikimedia\Rdbms\DBReadOnlyError;
 
@@ -78,10 +77,7 @@ class CognateRepo implements StatsdAwareInterface {
 		}
 
 		if ( $success ) {
-			$this->cacheInvalidator->invalidate(
-				$dbName,
-				Title::newFromLinkTarget( $linkTarget )
-			);
+			$this->cacheInvalidator->invalidate( $dbName, $linkTarget );
 		} else {
 			$dbKey = $linkTarget->getDBkey();
 			$namespace = $linkTarget->getNamespace();
@@ -116,10 +112,7 @@ class CognateRepo implements StatsdAwareInterface {
 		}
 
 		if ( $success ) {
-			$this->cacheInvalidator->invalidate(
-				$dbName,
-				Title::newFromLinkTarget( $linkTarget )
-			);
+			$this->cacheInvalidator->invalidate( $dbName, $linkTarget );
 		}
 
 		return $success;
