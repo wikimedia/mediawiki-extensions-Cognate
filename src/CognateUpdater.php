@@ -61,11 +61,9 @@ class CognateUpdater extends DatabaseUpdater {
 		return $updater;
 	}
 
-	/**
-	 * @return null
-	 */
 	protected function getCoreUpdateList() {
 		// not used but is abstract and must be implemented
+		return [];
 	}
 
 	/**
