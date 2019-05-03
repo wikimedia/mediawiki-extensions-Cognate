@@ -72,6 +72,9 @@ class CognateIntegrationTest extends MediaWikiTestCase {
 		$this->assertNoTitle( $pageDetails['title'] );
 	}
 
+	/**
+	 * @depends testCreateDeleteAndRestorePageResultsInEntry
+	 */
 	public function testCreateAndMovePageResultsInCorrectEntry() {
 		$pageDetails = $this->insertPage( $this->pageName );
 		$page = WikiPage::newFromID( $pageDetails['id'] );
@@ -94,6 +97,7 @@ class CognateIntegrationTest extends MediaWikiTestCase {
 		$page->doDeleteArticle( __METHOD__ );
 		DeferredUpdates::doUpdates();
 		$archive = new PageArchive( $title );
+		// Warning! If the "move" test above is executed first, this undeletes a redirect!
 		$archive->undelete( [] );
 
 		$this->assertTitle( $title );

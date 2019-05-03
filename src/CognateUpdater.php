@@ -5,7 +5,7 @@ namespace Cognate;
 use DatabaseUpdater;
 use Maintenance;
 use MWException;
-use Wikimedia\Rdbms\Database;
+use Wikimedia\Rdbms\IMaintainableDatabase;
 
 /**
  * @author Addshore
@@ -31,8 +31,8 @@ use Wikimedia\Rdbms\Database;
 class CognateUpdater extends DatabaseUpdater {
 
 	/**
-	 * @param Database $mainDb
-	 * @param Database $cognateDb
+	 * @param IMaintainableDatabase $mainDb
+	 * @param IMaintainableDatabase $cognateDb
 	 * @param bool $shared
 	 * @param Maintenance|null $maintenance
 	 *
@@ -40,8 +40,8 @@ class CognateUpdater extends DatabaseUpdater {
 	 * @return DatabaseUpdater
 	 */
 	public static function newForCognateDB(
-		Database $mainDb,
-		Database $cognateDb,
+		IMaintainableDatabase $mainDb,
+		IMaintainableDatabase $cognateDb,
 		$shared = false,
 		Maintenance $maintenance = null
 	) {
