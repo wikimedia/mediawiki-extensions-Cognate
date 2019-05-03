@@ -23,7 +23,7 @@ class CacheUpdateJob extends Job {
 	 * @param Title $title
 	 */
 	public function __construct( Title $title ) {
-		parent::__construct( 'CognateCacheUpdateJob', $title );
+		parent::__construct( 'CognateCacheUpdateJob', $title, [] );
 	}
 
 	public function run() {
