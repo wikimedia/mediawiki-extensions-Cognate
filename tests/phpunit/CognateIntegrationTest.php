@@ -111,14 +111,14 @@ class CognateIntegrationTest extends MediaWikiTestCase {
 	}
 
 	private function assertTitle( LinkTarget $target ) {
-		$this->assertEquals(
+		$this->assertSame(
 			[ str_replace( '_', ' ', $this->dbName ) . '-prefix:' . $target->getDBkey() ],
 			$this->getRepo()->getLinksForPage( 'xxx', $target )
 		);
 	}
 
 	private function assertNoTitle( LinkTarget $target ) {
-		$this->assertEquals(
+		$this->assertSame(
 			[],
 			$this->getRepo()->getLinksForPage( 'xxx', $target )
 		);

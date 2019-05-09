@@ -48,11 +48,11 @@ class CognateRepoUnitTest extends \MediaWikiTestCase {
 				->method( 'invalidate' )
 				->will( $this->returnCallback(
 					function ( $param1, Title $param2 ) use ( $dbName, $linkTarget ) {
-						$this->assertEquals( $dbName, $param1 );
+						$this->assertSame( $dbName, $param1 );
 						/** @var LinkTarget $linkTarget */
 						$this->assertInstanceOf( Title::class, $param2 );
-						$this->assertEquals( $linkTarget->getDBkey(), $param2->getDBkey() );
-						$this->assertEquals( $linkTarget->getNamespace(), $param2->getNamespace() );
+						$this->assertSame( $linkTarget->getDBkey(), $param2->getDBkey() );
+						$this->assertSame( $linkTarget->getNamespace(), $param2->getNamespace() );
 					}
 				) );
 		}
@@ -173,7 +173,7 @@ class CognateRepoUnitTest extends \MediaWikiTestCase {
 			new NullLogger()
 		);
 		$result = $repo->getLinksForPage( 'siteName', $titleValue );
-		$this->assertEquals( [ 'foo:0:bar' ], $result );
+		$this->assertSame( [ 'foo:0:bar' ], $result );
 	}
 
 }
