@@ -95,7 +95,7 @@ class RecalculateCognateNormalizedHashes extends Maintenance {
 			$this->output( "Calculating new hashes..\n" );
 			$batchStart = false;
 			$rowsToUpdate = [];
-			foreach ( $rows as $key => $row ) {
+			foreach ( $rows as $row ) {
 				$batchStart = $row->cgti_raw_key;
 
 				$newNormalizedHash = $this->normalizeAndHash( $row->cgti_raw );
