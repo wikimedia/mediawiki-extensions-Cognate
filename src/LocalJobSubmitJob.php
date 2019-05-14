@@ -23,7 +23,7 @@ class LocalJobSubmitJob extends Job {
 	}
 
 	public function run() {
-		$job = new CacheUpdateJob( $this->getTitle() );
+		$job = new CacheUpdateJob( $this->getTitle(), [] );
 
 		foreach ( array_unique( $this->dbNames ) as $dbName ) {
 			JobQueueGroup::singleton( $dbName )->push( $job );
