@@ -159,6 +159,7 @@ class CognateRepo implements StatsdAwareInterface {
 		// In the case of a delete causing cache invalidations we need to add the local site
 		// back to the list as it has already been removed from the database.
 		$sites[] = $dbName;
+		$sites = array_values( array_unique( $sites ) );
 
 		$this->cacheInvalidator->invalidate( $sites, $linkTarget );
 	}
