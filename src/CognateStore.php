@@ -195,13 +195,13 @@ class CognateStore {
 	 */
 	public function selectSitesForPage( LinkTarget $linkTarget ) {
 		$dbr = $this->connectionManager->getReadConnection();
-		$result = $dbr->select(
+		$sites = $dbr->selectFieldValues(
 			[
 				self::TITLES_TABLE_NAME,
 				self::PAGES_TABLE_NAME,
 				self::SITES_TABLE_NAME,
 			],
-			[ 'cgsi_dbname' ],
+			'cgsi_dbname',
 			[
 				'cgti_normalized_key' => $this->getNormalizedStringHash( $linkTarget->getDBkey() ),
 				'cgpa_namespace' => $linkTarget->getNamespace(),
@@ -211,12 +211,6 @@ class CognateStore {
 			__METHOD__
 		);
 		$this->connectionManager->releaseConnection( $dbr );
-
-		$sites = [];
-		foreach ( $result as $row ) {
-			$sites[] = $row->cgsi_dbname;
-		}
-
 		return $sites;
 	}
 
