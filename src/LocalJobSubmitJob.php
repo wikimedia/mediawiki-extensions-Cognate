@@ -12,20 +12,14 @@ use Title;
  */
 class LocalJobSubmitJob extends Job {
 
-	/**
-	 * @var string[]
-	 */
-	private $dbNames;
-
-	public function __construct( Title $title, array $params = [] ) {
+	public function __construct( Title $title, array $params ) {
 		parent::__construct( 'CognateLocalJobSubmitJob', $title, $params );
-		$this->dbNames = $params['dbNames'];
 	}
 
 	public function run() {
 		$job = new CacheUpdateJob( $this->getTitle(), [] );
 
-		foreach ( array_unique( $this->dbNames ) as $dbName ) {
+		foreach ( $this->params['dbNames'] as $dbName ) {
 			JobQueueGroup::singleton( $dbName )->push( $job );
 		}
 
