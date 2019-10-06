@@ -8,7 +8,7 @@ use Cognate\CognateStore;
 use Content;
 use DeferrableUpdate;
 use MediaWiki\Linker\LinkTarget;
-use PHPUnit_Framework_MockObject_MockObject;
+use PHPUnit\Framework\MockObject\MockObject;
 use Revision;
 use Title;
 
@@ -21,7 +21,7 @@ use Title;
 class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 
 	/**
-	 * @var PHPUnit_Framework_MockObject_MockObject|CognateStore
+	 * @var MockObject|CognateStore
 	 */
 	private $repo;
 
@@ -146,7 +146,7 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 
 			$previousRevision = null;
 			if ( in_array( 'hasPreviousRevision', $options ) ) {
-				$previousContent = $this->getMock( Content::class );
+				$previousContent = $this->createMock( Content::class );
 				$previousContent->expects( $this->any() )
 					->method( 'isRedirect' )
 					->will( $this->returnValue( in_array( 'wasRedirect', $options ) ) );
@@ -371,7 +371,7 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 	}
 
 	/**
-	 * @return PHPUnit_Framework_MockObject_MockObject|Revision
+	 * @return MockObject|Revision
 	 */
 	private function getMockRevision() {
 		return $this->getMockBuilder( Revision::class )
@@ -380,7 +380,7 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 	}
 
 	/**
-	 * @return PHPUnit_Framework_MockObject_MockObject|Content
+	 * @return MockObject|Content
 	 */
 	private function getMockContent() {
 		return $this->getMockBuilder( Content::class )

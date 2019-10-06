@@ -5,7 +5,7 @@ namespace Cognate\Tests;
 use Cognate\CacheInvalidator;
 use Cognate\CognateRepo;
 use Cognate\CognateStore;
-use PHPUnit_Framework_MockObject_MockObject;
+use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use TitleFormatter;
@@ -20,7 +20,7 @@ use TitleValue;
 class CognateRepoUnitTest extends \MediaWikiTestCase {
 
 	/**
-	 * @return PHPUnit_Framework_MockObject_MockObject|CognateStore
+	 * @return MockObject|CognateStore
 	 */
 	private function getMockStore() {
 		return $this->getMockBuilder( CognateStore::class )
@@ -31,7 +31,7 @@ class CognateRepoUnitTest extends \MediaWikiTestCase {
 	/**
 	 * @param array[] $expectedInvalidateCalls
 	 *
-	 * @return PHPUnit_Framework_MockObject_MockObject|CacheInvalidator
+	 * @return MockObject|CacheInvalidator
 	 */
 	private function getMockCacheInvalidator( array $expectedInvalidateCalls = [] ) {
 		$mock = $this->getMockBuilder( CacheInvalidator::class )
@@ -50,10 +50,10 @@ class CognateRepoUnitTest extends \MediaWikiTestCase {
 	}
 
 	/**
-	 * @return PHPUnit_Framework_MockObject_MockObject|TitleFormatter
+	 * @return MockObject|TitleFormatter
 	 */
 	private function getMockTitleFormatter() {
-		$mock = $this->getMock( 'TitleFormatter' );
+		$mock = $this->createMock( TitleFormatter::class );
 		$mock->expects( $this->any() )
 			->method( 'formatTitle' )
 			->will( $this->returnCallback( function ( $ns, $title, $fragment, $interwiki ) {
@@ -87,8 +87,8 @@ class CognateRepoUnitTest extends \MediaWikiTestCase {
 			->with( 'siteName', $titleValue )
 			->will( $this->returnValue( false ) );
 
-		/** @var LoggerInterface|PHPUnit_Framework_MockObject_MockObject $mockLogger */
-		$mockLogger = $this->getMock( NullLogger::class );
+		/** @var LoggerInterface|MockObject $mockLogger */
+		$mockLogger = $this->createMock( NullLogger::class );
 		$mockLogger->expects( $this->once() )
 			->method( 'error' )
 			->with(

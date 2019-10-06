@@ -6,7 +6,6 @@ use Cognate\CognateStore;
 use Cognate\StringHasher;
 use Cognate\StringNormalizer;
 use PHPUnit\Framework\TestCase;
-use PHPUnit4And6Compat;
 use TitleValue;
 use Wikimedia\Rdbms\ConnectionManager;
 use Wikimedia\Rdbms\DBReadOnlyError;
@@ -19,7 +18,6 @@ use Wikimedia\Rdbms\DBReadOnlyError;
 class CognateStoreUnitTest extends TestCase {
 
 	use CheckSystemReqsTrait;
-	use PHPUnit4And6Compat;
 
 	private function newReadOnlyCognateStore() {
 		/** @var ConnectionManager $connectionManager */
@@ -40,7 +38,7 @@ class CognateStoreUnitTest extends TestCase {
 
 		$store = $this->newReadOnlyCognateStore();
 
-		$this->setExpectedException( DBReadOnlyError::class );
+		$this->expectException( DBReadOnlyError::class );
 
 		$store->insertPage( 'foo', new TitleValue( 0, 'Some_Page' ) );
 	}
@@ -50,7 +48,7 @@ class CognateStoreUnitTest extends TestCase {
 
 		$store = $this->newReadOnlyCognateStore();
 
-		$this->setExpectedException( DBReadOnlyError::class );
+		$this->expectException( DBReadOnlyError::class );
 
 		$store->deletePage( 'foo', new TitleValue( 0, 'Some_Page' ) );
 	}

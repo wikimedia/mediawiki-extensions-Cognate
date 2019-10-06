@@ -7,7 +7,7 @@ use Cognate\LocalJobSubmitJob;
 use Job;
 use JobQueueGroup;
 use MediaWikiTestCase;
-use PHPUnit_Framework_MockObject_MockObject;
+use PHPUnit\Framework\MockObject\MockObject;
 use Title;
 
 /**
@@ -22,7 +22,7 @@ class CacheInvalidatorTest extends MediaWikiTestCase {
 	public function testJobIsQueued() {
 		$title = Title::newFromText( 'Foo' );
 
-		/** @var JobQueueGroup|PHPUnit_Framework_MockObject_MockObject $mockJobQueueGroup */
+		/** @var JobQueueGroup|MockObject $mockJobQueueGroup */
 		$mockJobQueueGroup = $this->getMockBuilder( JobQueueGroup::class )
 			->disableOriginalConstructor()
 			->getMock();
