@@ -27,11 +27,10 @@ class CognateHooks {
 	 * @param bool $isWatch
 	 * @param string $section
 	 * @param int $flags
-	 * @param \Revision|null $revision
+	 * @param ?\Revision $revision
 	 * @param \Status $status
 	 * @param int $baseRevId
 	 * @param int|null $undidRevId
-	 * @phan-suppress-next-next-line PhanParamReqAfterOpt
 	 */
 	public static function onPageContentSaveComplete(
 		WikiPage $page,
@@ -42,7 +41,7 @@ class CognateHooks {
 		$isWatch,
 		$section,
 		$flags,
-		\Revision $revision = null,
+		?\Revision $revision,
 		$status,
 		$baseRevId,
 		$undidRevId = null
@@ -121,10 +120,10 @@ class CognateHooks {
 		global $wgCognateDb, $wgCognateCluster;
 
 		// At install time, extension configuration is not loaded T198331
-		if ( ! isset( $wgCognateDb ) ) {
+		if ( !isset( $wgCognateDb ) ) {
 			$wgCognateDb = false;
 		};
-		if ( ! isset( $wgCognateCluster ) ) {
+		if ( !isset( $wgCognateCluster ) ) {
 			$wgCognateCluster = false;
 		};
 

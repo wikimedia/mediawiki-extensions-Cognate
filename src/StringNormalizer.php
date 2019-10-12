@@ -16,13 +16,13 @@ class StringNormalizer {
 	 * @var string[]
 	 */
 	private $replacements = [
-		// Normalized to U+0027
-		'’' => '\'', // U+2019
-		'ʼ' => '\'', // U+02BC
-		// Normalized to U+002EU+002EU+002E
-		'…' => '...', // U+2026
-		// Normalized to U+005F
-		' ' => '_', // U+0020
+		// U+02BC and U+2019 normalized to U+0027
+		'ʼ' => '\'',
+		'’' => '\'',
+		// U+2026 normalized to U+002EU+002EU+002E
+		'…' => '...',
+		// U+0020 normalized to U+005F
+		' ' => '_',
 	];
 
 	/**

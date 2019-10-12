@@ -40,9 +40,9 @@ class CognateStore {
 	 */
 	private $readOnly;
 
-	const PAGES_TABLE_NAME = 'cognate_pages';
-	const SITES_TABLE_NAME = 'cognate_sites';
-	const TITLES_TABLE_NAME = 'cognate_titles';
+	public const PAGES_TABLE_NAME = 'cognate_pages';
+	public const SITES_TABLE_NAME = 'cognate_sites';
+	public const TITLES_TABLE_NAME = 'cognate_titles';
 
 	/**
 	 * @param ConnectionManager $connectionManager

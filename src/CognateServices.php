@@ -13,40 +13,57 @@ use Wikimedia\Rdbms\ConnectionManager;
  */
 class CognateServices {
 
-	/** @phan-suppress-next-line PhanParamReqAfterOpt */
-	private static function getService( MediaWikiServices $services = null, $name ) {
+	private static function getService( ?MediaWikiServices $services, $name ) {
 		if ( $services === null ) {
 			$services = MediaWikiServices::getInstance();
 		}
 		return $services->getService( $name );
 	}
 
-	/** @return LoggerInterface */
+	/**
+	 * @param MediaWikiServices|null $services
+	 * @return LoggerInterface
+	 */
 	public static function getLogger( MediaWikiServices $services = null ) {
 		return self::getService( $services, 'CognateLogger' );
 	}
 
-	/** @return CognateRepo */
+	/**
+	 * @param MediaWikiServices|null $services
+	 * @return CognateRepo
+	 */
 	public static function getRepo( MediaWikiServices $services = null ) {
 		return self::getService( $services, 'CognateRepo' );
 	}
 
-	/** @return ConnectionManager */
+	/**
+	 * @param MediaWikiServices|null $services
+	 * @return ConnectionManager
+	 */
 	public static function getConnectionManager( MediaWikiServices $services = null ) {
 		return self::getService( $services, 'CognateConnectionManager' );
 	}
 
-	/** @return CognateStore */
+	/**
+	 * @param MediaWikiServices|null $services
+	 * @return CognateStore
+	 */
 	public static function getStore( MediaWikiServices $services = null ) {
 		return self::getService( $services, 'CognateStore' );
 	}
 
-	/** @return CognatePageHookHandler */
+	/**
+	 * @param MediaWikiServices|null $services
+	 * @return CognatePageHookHandler
+	 */
 	public static function getPageHookHandler( MediaWikiServices $services = null ) {
 		return self::getService( $services, 'CognatePageHookHandler' );
 	}
 
-	/** @return CacheInvalidator */
+	/**
+	 * @param MediaWikiServices|null $services
+	 * @return CacheInvalidator
+	 */
 	public static function getCacheInvalidator( MediaWikiServices $services = null ) {
 		return self::getService( $services, 'CognateCacheInvalidator' );
 	}
