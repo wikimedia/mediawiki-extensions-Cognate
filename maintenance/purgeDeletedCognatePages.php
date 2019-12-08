@@ -82,7 +82,7 @@ class PurgeDeletedCognatePages extends Maintenance {
 	 * @param IDatabase $dbr
 	 * @param IDatabase $dbrCognate
 	 * @param IDatabase $dbwCognate
-	 * @param string $siteKey
+	 * @param int $siteKey
 	 * @param string $start
 	 *
 	 * @return bool|string cgpa_title to continue from or false if no more rows to process

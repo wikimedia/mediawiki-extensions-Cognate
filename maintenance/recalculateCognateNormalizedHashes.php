@@ -154,7 +154,7 @@ class RecalculateCognateNormalizedHashes extends Maintenance {
 	/**
 	 * @param string $string
 	 *
-	 * @return string
+	 * @return int
 	 */
 	private function normalizeAndHash( $string ) {
 		return $this->stringHasher->hash(
