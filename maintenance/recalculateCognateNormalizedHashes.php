@@ -146,7 +146,7 @@ class RecalculateCognateNormalizedHashes extends Maintenance {
 		return $this->dbr->selectField(
 			CognateStore::TITLES_TABLE_NAME,
 			'MIN(cgti_raw_key)-1',
-			false,
+			[],
 			__METHOD__
 		);
 	}
