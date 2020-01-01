@@ -24,7 +24,9 @@
 		"Cognate\\StringNormalizer": "src/StringNormalizer.php",
 		"Cognate\\StringHasher": "src/StringHasher.php",
 		"Cognate\\CognatePageHookHandler": "src/hooks/CognatePageHookHandler.php",
-		"Cognate\\CognateParseHookHandler": "src/hooks/CognateParseHookHandler.php",
+		"Cognate\\CognateParseHookHandler": "src/hooks/CognateParseHookHandler.php"
+	},
+	"TestAutoloadClasses": {
 		"Cognate\\Tests\\CheckSystemReqsTrait": "tests/phpunit/CheckSystemReqsTrait.php"
 	},
 	"JobClasses": {
