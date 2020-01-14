@@ -44,7 +44,7 @@ class StringHasherTest extends \MediaWikiTestCase {
 
 		$output = $normalizer->hash( $input );
 
-		$this->assertType( 'int', $output );
+		$this->assertIsInt( $output );
 		$this->assertSame( $expectedHash, $output );
 	}
 

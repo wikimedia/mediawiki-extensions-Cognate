@@ -21,7 +21,7 @@ use Wikimedia\Rdbms\IDatabase;
  * instance to be the Cognate database.
  * This allows CognateUpdater::newForCognateDB to be called and return an Updater without any pre
  * loaded extensionUpdates which also points to the correct database.
-
+ *
  * The Cognate database instance can not be passed directly into DatabaseUpdater::newForDB as some
  * hooks that are fired may call methods on the updater which make db calls expecting tables to
  * exist that do not.
