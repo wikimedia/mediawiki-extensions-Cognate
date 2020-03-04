@@ -262,30 +262,53 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 		);
 	}
 
+	public function test_onArticleUndelete_noRevisionForRevisionId() {
+		$this->repo->expects( $this->never() )->method( 'deletePage' );
+		$this->repo->expects( $this->never() )->method( 'savePage' );
+
+		$this->call_onArticleUndelete(
+			[ 0 ],
+			'abc2',
+			Title::newFromText( 'ArticleDbKey' ),
+			false,
+			true
+		);
+	}
+
 	/**
 	 * @param int[] $namespaces
 	 * @param string $dbName
 	 * @param Title $title
 	 * @param bool $latestRevIsRedirect
+	 * @param bool $latestRevIsNull
+	 *
 	 */
 	private function call_onArticleUndelete(
 		array $namespaces,
 		$dbName,
 		Title $title,
-		$latestRevIsRedirect = false
+		$latestRevIsRedirect = false,
+		$latestRevIsNull = false
 	) {
 		$handler = new CognatePageHookHandler( $namespaces, $dbName );
-		$handler->overrideRevisionNewFromId( function () use ( $latestRevIsRedirect ) {
-			$content = $this->getMockContent();
-			$content->expects( $this->any() )
-				->method( 'isRedirect' )
-				->will( $this->returnValue( $latestRevIsRedirect ) );
-			$revision = $this->getMockRevision();
-			$revision->expects( $this->any() )
-				->method( 'getContent' )
-				->will( $this->returnValue( $content ) );
-			return $revision;
-		} );
+		if ( $latestRevIsNull ) {
+			$handler->overrideRevisionNewFromId( function () {
+				return null;
+			} );
+		} else {
+			$handler->overrideRevisionNewFromId( function () use ( $latestRevIsRedirect ) {
+				$content = $this->getMockContent();
+				$content->expects( $this->any() )
+					->method( 'isRedirect' )
+					->will( $this->returnValue( $latestRevIsRedirect ) );
+				$revision = $this->getMockRevision();
+				$revision->expects( $this->any() )
+					->method( 'getContent' )
+					->will( $this->returnValue( $content ) );
+				return $revision;
+			} );
+		}
+
 		$handler->onArticleUndelete(
 			$title
 		);

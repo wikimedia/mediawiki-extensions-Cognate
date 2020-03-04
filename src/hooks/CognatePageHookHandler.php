@@ -137,11 +137,11 @@ class CognatePageHookHandler {
 	public function onArticleUndelete(
 		Title $title
 	) {
-		if ( !$this->isActionableTarget( $title ) ) {
+		$revision = $this->newRevisionFromId( $title->getLatestRevID() );
+		if ( !$this->isActionableTarget( $title ) || $revision == null ) {
 			return;
 		}
 
-		$revision = $this->newRevisionFromId( $title->getLatestRevID() );
 		$this->onContentChange(
 			$title,
 			true,
