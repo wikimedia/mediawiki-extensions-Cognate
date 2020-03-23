@@ -66,7 +66,12 @@ class CognateIntegrationTest extends MediaWikiTestCase {
 		$pageDetails = $this->insertPage( $this->pageName );
 		$page = WikiPage::newFromID( $pageDetails['id'] );
 
-		$page->doDeleteArticle( __METHOD__ );
+		if ( version_compare( MW_VERSION, '1.35', '<' ) ) {
+			$page->doDeleteArticle( __METHOD__ );
+		} else {
+			$page->doDeleteArticleReal( __METHOD__, $this->getTestSysop()->getUser() );
+		}
+
 		DeferredUpdates::doUpdates();
 
 		$this->assertNoTitle( $pageDetails['title'] );
@@ -94,7 +99,12 @@ class CognateIntegrationTest extends MediaWikiTestCase {
 		$page = WikiPage::newFromID( $pageDetails['id'] );
 		$title = $page->getTitle();
 
-		$page->doDeleteArticle( __METHOD__ );
+		if ( version_compare( MW_VERSION, '1.35', '<' ) ) {
+			$page->doDeleteArticle( __METHOD__ );
+		} else {
+			$page->doDeleteArticleReal( __METHOD__, $this->getTestSysop()->getUser() );
+		}
+
 		DeferredUpdates::doUpdates();
 		$archive = new PageArchive( $title );
 		// Warning! If the "move" test above is executed first, this undeletes a redirect!
