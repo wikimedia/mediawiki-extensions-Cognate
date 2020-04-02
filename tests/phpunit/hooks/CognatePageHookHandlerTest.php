@@ -8,6 +8,7 @@ use Cognate\CognateStore;
 use Content;
 use DeferrableUpdate;
 use MediaWiki\Linker\LinkTarget;
+use MediaWiki\Revision\RevisionRecord;
 use PHPUnit\Framework\MockObject\MockObject;
 use Revision;
 use Title;
@@ -301,7 +302,7 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 				$content->expects( $this->any() )
 					->method( 'isRedirect' )
 					->will( $this->returnValue( $latestRevIsRedirect ) );
-				$revision = $this->getMockRevision();
+				$revision = $this->createMock( RevisionRecord::class );
 				$revision->expects( $this->any() )
 					->method( 'getContent' )
 					->will( $this->returnValue( $content ) );

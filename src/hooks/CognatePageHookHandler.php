@@ -4,7 +4,9 @@ namespace Cognate;
 
 use DeferrableUpdate;
 use MediaWiki\Linker\LinkTarget;
+use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\Revision\SlotRecord;
 use MWCallableUpdate;
 use MWException;
 use Revision;
@@ -39,12 +41,14 @@ class CognatePageHookHandler {
 		$this->namespaces = $namespaces;
 		$this->dbName = $dbName;
 		$this->newRevisionFromIdCallable = function ( $id ) {
-			return Revision::newFromId( $id );
+			return MediaWikiServices::getInstance()
+				->getRevisionLookup()
+				->getRevisionById( $id );
 		};
 	}
 
 	/**
-	 * Overrides the use of Revision::newFromId in this class
+	 * Overrides the use of RevisionLookup::getRevisionById in this class
 	 * This is intended for use while testing and will fail if MW_PHPUNIT_TEST is not defined.
 	 *
 	 * @param callable $callback
@@ -53,7 +57,7 @@ class CognatePageHookHandler {
 	public function overrideRevisionNewFromId( callable $callback ) {
 		if ( !defined( 'MW_PHPUNIT_TEST' ) ) {
 			throw new MWException(
-				'Cannot override Revision::newFromId callback in operation.'
+				'Cannot override RevisionLookup::getRevisionById callback in operation.'
 			);
 		}
 		$this->newRevisionFromIdCallable = $callback;
@@ -137,7 +141,7 @@ class CognatePageHookHandler {
 	public function onArticleUndelete(
 		Title $title
 	) {
-		$revision = $this->newRevisionFromId( $title->getLatestRevID() );
+		$revision = $this->newRevisionRecordFromId( $title->getLatestRevID() );
 		if ( !$this->isActionableTarget( $title ) || $revision == null ) {
 			return;
 		}
@@ -145,7 +149,7 @@ class CognatePageHookHandler {
 		$this->onContentChange(
 			$title,
 			true,
-			$revision->getContent( RevisionRecord::RAW )->isRedirect(),
+			$revision->getContent( SlotRecord::MAIN, RevisionRecord::RAW )->isRedirect(),
 			false
 		);
 	}
@@ -153,9 +157,9 @@ class CognatePageHookHandler {
 	/**
 	 * @param int $id
 	 *
-	 * @return null|Revision
+	 * @return null|RevisionRecord
 	 */
-	private function newRevisionFromId( $id ) {
+	private function newRevisionRecordFromId( $id ) {
 		return call_user_func( $this->newRevisionFromIdCallable, $id );
 	}
 
