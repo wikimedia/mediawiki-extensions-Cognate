@@ -5,10 +5,8 @@ namespace Cognate;
 use Content;
 use DatabaseUpdater;
 use DeferrableUpdate;
-use MediaWiki\MediaWikiServices;
 use ParserOutput;
 use Title;
-use Wikimedia\Rdbms\LoadBalancer;
 use WikiPage;
 
 /**
@@ -117,52 +115,7 @@ class CognateHooks {
 	 * @param DatabaseUpdater $updater
 	 */
 	public static function onLoadExtensionSchemaUpdates( DatabaseUpdater $updater ) {
-		global $wgCognateDb, $wgCognateCluster;
-
-		// At install time, extension configuration is not loaded T198331
-		if ( !isset( $wgCognateDb ) ) {
-			$wgCognateDb = false;
-		}
-		if ( !isset( $wgCognateCluster ) ) {
-			$wgCognateCluster = false;
-		}
-
-		// Avoid running this code again when calling CognateUpdater::newForDB
-		static $hasRunOnce = false;
-		if ( $hasRunOnce ) {
-			return;
-		} else {
-			$hasRunOnce = true;
-		}
-
-		// Setup and run our own updater
-		if ( $wgCognateDb === false && $wgCognateCluster === false ) {
-			$cognateUpdater = CognateUpdater::newForDB( $updater->getDB() );
-		} else {
-			$services = MediaWikiServices::getInstance();
-			if ( $wgCognateCluster !== false ) {
-				$loadBalancerFactory = $services->getDBLoadBalancerFactory();
-				$loadBalancer = $loadBalancerFactory->getExternalLB( $wgCognateCluster );
-			} else {
-				$loadBalancer = $services->getDBLoadBalancer();
-			}
-			$cognateDatabase = $loadBalancer->getConnection( LoadBalancer::DB_MASTER, [], $wgCognateDb );
-			$cognateUpdater = CognateUpdater::newForCognateDB( $updater->getDB(), $cognateDatabase );
-		}
-
-		$cognateUpdater->addExtensionUpdate(
-			[ 'addTable', 'cognate_pages', __DIR__ . '/../db/addCognatePages.sql', true ]
-		);
-		$cognateUpdater->addExtensionUpdate(
-			[ 'addTable', 'cognate_titles', __DIR__ . '/../db/addCognateTitles.sql', true ]
-		);
-		$cognateUpdater->addExtensionUpdate(
-			[ 'addTable', 'cognate_sites', __DIR__ . '/../db/addCognateSites.sql', true ]
-		);
-
-		$updater->addExtensionUpdate(
-			[ [ CognateUpdater::class, 'realDoUpdates' ], $cognateUpdater ]
-		);
+		// Add our updater
+		$updater->addExtensionUpdate( [ [ CognateUpdater::class, 'update' ] ] );
 	}
-
 }
