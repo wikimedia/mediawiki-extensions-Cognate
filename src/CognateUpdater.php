@@ -3,87 +3,72 @@
 namespace Cognate;
 
 use DatabaseUpdater;
-use Maintenance;
-use MWException;
-use Wikimedia\Rdbms\IDatabase;
+use MediaWiki\MediaWikiServices;
+use Wikimedia\Rdbms\IMaintainableDatabase;
+use Wikimedia\Rdbms\LoadBalancer;
 
 /**
- * @author Addshore
- *
- * This class is needed simply to override the static newForDB method and gain access to the
- * protected extensionUpdates member.
- *
- * This code is only used while running cores update.php maintenance script via the
- * LoadExtensionSchemaUpdates hook.
- *
- * DatabaseUpdater::__construct populates extensionUpdates using the LoadExtensionSchemaUpdates hook
- * This newForCognateDB then empties the list of extensionUpdates and alters the Updater database
- * instance to be the Cognate database.
- * This allows CognateUpdater::newForCognateDB to be called and return an Updater without any pre
- * loaded extensionUpdates which also points to the correct database.
- *
- * The Cognate database instance can not be passed directly into DatabaseUpdater::newForDB as some
- * hooks that are fired may call methods on the updater which make db calls expecting tables to
- * exist that do not.
- * For example Flow calls the updateRowExists method which expects the updatelog table.
- * This in turn allows only Cognate extension updates to be loaded and run using the DB / Updater.
+ * Helper class for CognateHooks::onLoadExtensionSchemaUpdates
  */
-class CognateUpdater extends DatabaseUpdater {
+class CognateUpdater {
+	/** @var DatabaseUpdater */
+	private $updater;
 
-	/**
-	 * @param IDatabase $mainDb
-	 * @param IDatabase $cognateDb
-	 * @param bool $shared
-	 * @param Maintenance|null $maintenance
-	 *
-	 * @throws MWException
-	 * @return DatabaseUpdater
-	 */
-	public static function newForCognateDB(
-		IDatabase $mainDb,
-		IDatabase $cognateDb,
-		$shared = false,
-		Maintenance $maintenance = null
-	) {
-		$updater = parent::newForDB(
-			// @phan-suppress-next-line PhanTypeMismatchArgument
-			$mainDb,
-			$shared,
-			$maintenance
-		);
+	/** @var IMaintainableDatabase */
+	private $db;
 
-		$updater->extensionUpdates = [];
+	public static function update( DatabaseUpdater $updater ) {
+		$cognateUpdater = new self( $updater );
+		$cognateUpdater->doUpdate();
+	}
 
-		// Copied from DatabaseUpdater::__construct to alter the db after construction.
-		$updater->db = $cognateDb;
-		$updater->db->setFlag( DBO_DDLMODE );
-		$updater->maintenance->setDB( $updater->db );
+	private function __construct( DatabaseUpdater $updater ) {
+		global $wgCognateDb, $wgCognateCluster;
 
-		return $updater;
+		$this->updater = $updater;
+
+		// At install time, extension configuration is not loaded T198331
+		if ( !isset( $wgCognateDb ) ) {
+			$wgCognateDb = false;
+		}
+		if ( !isset( $wgCognateCluster ) ) {
+			$wgCognateCluster = false;
+		}
+
+		if ( $wgCognateDb === false && $wgCognateCluster === false ) {
+			$this->db = $updater->getDB();
+		} else {
+			$services = MediaWikiServices::getInstance();
+			if ( $wgCognateCluster !== false ) {
+				$loadBalancerFactory = $services->getDBLoadBalancerFactory();
+				$loadBalancer = $loadBalancerFactory->getExternalLB( $wgCognateCluster );
+			} else {
+				$loadBalancer = $services->getDBLoadBalancer();
+			}
+			$this->db = $loadBalancer->getConnection( LoadBalancer::DB_MASTER, [], $wgCognateDb );
+		}
+	}
+
+	private function doUpdate() {
+		$this->addTable( 'cognate_pages', __DIR__ . '/../db/addCognatePages.sql' );
+		$this->addTable( 'cognate_titles', __DIR__ . '/../db/addCognateTitles.sql' );
+		$this->addTable( 'cognate_sites', __DIR__ . '/../db/addCognateSites.sql' );
 	}
 
 	/**
-	 * @inheritDoc
-	 */
-	protected function getCoreUpdateList() {
-		// not used but is abstract and must be implemented
-		return [];
-	}
-
-	/**
-	 * Really do the updates we care about.
-	 * Passed as a callable into DatabaseUpdater::addExtensionUpdate in the
-	 * LoadExtensionSchemaUpdates hook
+	 * Add a new table to the database
 	 *
-	 * @param DatabaseUpdater $updater
-	 *        Automatically added when called through DatabaseUpdater::addExtensionUpdate
-	 * @param DatabaseUpdater $cognateUpdater Our actual updater object
+	 * @param string $name Name of the new table
+	 * @param string $patch Path to the patch file
 	 */
-	public static function realDoUpdates(
-		DatabaseUpdater $updater,
-		DatabaseUpdater $cognateUpdater
-	) {
-		$cognateUpdater->doUpdates( [ 'extensions' ] );
+	private function addTable( $name, $patch ) {
+		if ( $this->db->tableExists( $name, __METHOD__ ) ) {
+			$this->updater->output( "...$name table already exists.\n" );
+		} else {
+			$this->updater->output( "Creating $name table ..." );
+			$this->db->sourceFile( $patch );
+			$this->updater->output( "done.\n" );
+		}
 	}
 
 }
