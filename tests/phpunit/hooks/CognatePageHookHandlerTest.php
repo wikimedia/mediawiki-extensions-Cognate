@@ -10,7 +10,6 @@ use DeferrableUpdate;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Revision\RevisionRecord;
 use PHPUnit\Framework\MockObject\MockObject;
-use Revision;
 use Title;
 
 /**
@@ -141,34 +140,34 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 		LinkTarget $linkTarget,
 		array $options = []
 	) {
-		$revision = null;
+		$revisionRecord = null;
+		$previousRevisionRecord = null;
 		if ( !in_array( 'hasNoRevision', $options ) ) {
-			$revision = $this->getMockRevision();
-
-			$previousRevision = null;
+			$revisionRecord = $this->getMockRevisionRecord();
 			if ( in_array( 'hasPreviousRevision', $options ) ) {
 				$previousContent = $this->createMock( Content::class );
 				$previousContent->expects( $this->any() )
 					->method( 'isRedirect' )
 					->will( $this->returnValue( in_array( 'wasRedirect', $options ) ) );
 
-				$previousRevision = $this->getMockRevision();
-				$previousRevision->expects( $this->any() )
+				$previousRevisionRecord = $this->getMockRevisionRecord();
+				$previousRevisionRecord->expects( $this->any() )
 					->method( 'getContent' )
 					->will( $this->returnValue( $previousContent ) );
 			}
-
-			$revision->expects( $this->any() )
-				->method( 'getPrevious' )
-				->will( $this->returnValue( $previousRevision ) );
 		}
 
 		$handler = new CognatePageHookHandler( $namespaces, $dbName );
+		$handler->overridePreviousRevision(
+			function ( $revRecord ) use ( $previousRevisionRecord ) {
+				return $previousRevisionRecord;
+			}
+		);
 		$handler->onPageContentSaveComplete(
 			$linkTarget,
 			in_array( 'isRedirect', $options ),
 			in_array( 'isNew', $options ),
-			$revision
+			$revisionRecord
 		);
 	}
 
@@ -395,10 +394,10 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 	}
 
 	/**
-	 * @return MockObject|Revision
+	 * @return MockObject|RevisionRecord
 	 */
-	private function getMockRevision() {
-		return $this->getMockBuilder( Revision::class )
+	private function getMockRevisionRecord() {
+		return $this->getMockBuilder( RevisionRecord::class )
 			->disableOriginalConstructor()
 			->getMock();
 	}

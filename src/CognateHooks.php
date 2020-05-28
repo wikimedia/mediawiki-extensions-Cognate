@@ -48,7 +48,7 @@ class CognateHooks {
 			$page->getTitle(),
 			$content->isRedirect(),
 			(bool)( $flags & EDIT_NEW ),
-			$revision
+			$revision ? $revision->getRevisionRecord() : null
 		);
 	}
 

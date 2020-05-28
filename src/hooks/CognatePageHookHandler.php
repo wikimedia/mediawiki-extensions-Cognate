@@ -9,7 +9,6 @@ use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
 use MWCallableUpdate;
 use MWException;
-use Revision;
 use Title;
 
 /**
@@ -34,6 +33,11 @@ class CognatePageHookHandler {
 	private $newRevisionFromIdCallable;
 
 	/**
+	 * @var callable
+	 */
+	private $previousRevisionCallable;
+
+	/**
 	 * @param int[] $namespaces array of namespace ids the hooks should operate on
 	 * @param string $dbName The dbName of the current site
 	 */
@@ -44,6 +48,11 @@ class CognatePageHookHandler {
 			return MediaWikiServices::getInstance()
 				->getRevisionLookup()
 				->getRevisionById( $id );
+		};
+		$this->previousRevisionCallable = function ( $revRecord ) {
+			return MediaWikiServices::getInstance()
+				->getRevisionLookup()
+				->getPreviousRevision( $revRecord );
 		};
 	}
 
@@ -64,22 +73,38 @@ class CognatePageHookHandler {
 	}
 
 	/**
+	 * Overrides the use of RevisionLookup::getPreviousRevision in this class
+	 * This is intended for use while testing and will fail if MW_PHPUNIT_TEST is not defined.
+	 *
+	 * @param callable $callback
+	 * @throws MWException
+	 */
+	public function overridePreviousRevision( callable $callback ) {
+		if ( !defined( 'MW_PHPUNIT_TEST' ) ) {
+			throw new MWException(
+				'Cannot override RevisionLookup::getPreviousRevision callback in operation.'
+			);
+		}
+		$this->previousRevisionCallable = $callback;
+	}
+
+	/**
 	 * Occurs after the save page request has been processed.
 	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/PageContentSaveComplete
 	 *
 	 * @param LinkTarget $title
 	 * @param bool $isRedirect
 	 * @param bool $isNewPage
-	 * @param Revision|null $revision
+	 * @param RevisionRecord|null $revisionRecord
 	 */
 	public function onPageContentSaveComplete(
 		LinkTarget $title,
 		$isRedirect,
 		$isNewPage,
-		Revision $revision = null
+		RevisionRecord $revisionRecord = null
 	) {
 		// A null revision means a null edit / no-op edit was made, no need to process that.
-		if ( $revision === null ) {
+		if ( $revisionRecord === null ) {
 			return;
 		}
 
@@ -87,10 +112,13 @@ class CognatePageHookHandler {
 			return;
 		}
 
-		$previousRevision = $revision->getPrevious();
+		$previousRevisionRecord = call_user_func(
+			$this->previousRevisionCallable,
+			$revisionRecord
+		);
 		$previousContent =
-			$previousRevision ?
-				$previousRevision->getContent( RevisionRecord::RAW ) :
+			$previousRevisionRecord ?
+				$previousRevisionRecord->getContent( SlotRecord::MAIN, RevisionRecord::RAW ) :
 				null;
 
 		$this->onContentChange(
