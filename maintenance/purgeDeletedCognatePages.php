@@ -169,7 +169,8 @@ class PurgeDeletedCognatePages extends Maintenance {
 						)
 					],
 					IDatabase::LIST_AND
-				)
+				),
+				__METHOD__
 			);
 		}
 
