@@ -5,6 +5,8 @@ namespace Cognate;
 use Content;
 use DatabaseUpdater;
 use DeferrableUpdate;
+use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\User\UserIdentity;
 use ParserOutput;
 use Title;
 use WikiPage;
@@ -15,6 +17,51 @@ use WikiPage;
  * @author Addshore
  */
 class CognateHooks {
+
+	/**
+	 * Callback on extension registration
+	 *
+	 * Register hooks based on version to keep support for mediawiki versions before 1.35
+	 */
+	public static function onRegistration() {
+		global $wgHooks;
+
+		if ( version_compare( MW_VERSION, '1.35', '>=' ) ) {
+			$wgHooks['PageSaveComplete'][] = 'Cognate\\CognateHooks::onPageSaveComplete';
+		} else {
+			$wgHooks['PageContentSaveComplete'][] = 'Cognate\\CognateHooks::onPageContentSaveComplete';
+		}
+	}
+
+	/**
+	 * Only run in versions of mediawiki begining 1.35; before 1.35, ::onPageContentSaveComplete
+	 * is used used
+	 *
+	 * @note paramaters include classes not available before 1.35, so for those typehints
+	 * are not used. The variable name reflects the class
+	 *
+	 * @param WikiPage $wikiPage
+	 * @param UserIdentity $userIdentity
+	 * @param string $summary
+	 * @param int $flags
+	 * @param RevisionRecord $revisionRecord
+	 * @param mixed $editResult unused
+	 */
+	public static function onPageSaveComplete(
+		WikiPage $wikiPage,
+		UserIdentity $userIdentity,
+		string $summary,
+		int $flags,
+		RevisionRecord $revisionRecord,
+		$editResult
+	) {
+		CognateServices::getPageHookHandler()->onPageContentSaveComplete(
+			$wikiPage->getTitle(),
+			$wikiPage->getContent()->isRedirect(),
+			(bool)( $flags & EDIT_NEW ),
+			$revisionRecord
+		);
+	}
 
 	/**
 	 * @param WikiPage $page

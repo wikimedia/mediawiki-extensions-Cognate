@@ -56,13 +56,13 @@
 		"src/ServiceWiring.php"
 	],
 	"Hooks": {
-		"PageContentSaveComplete": "Cognate\\CognateHooks::onPageContentSaveComplete",
 		"ContentAlterParserOutput": "Cognate\\CognateHooks::onContentAlterParserOutput",
 		"WikiPageDeletionUpdates": "Cognate\\CognateHooks::onWikiPageDeletionUpdates",
 		"ArticleUndelete": "Cognate\\CognateHooks::onArticleUndelete",
 		"TitleMoveComplete": "Cognate\\CognateHooks::onTitleMoveComplete",
 		"LoadExtensionSchemaUpdates": "Cognate\\CognateHooks::onLoadExtensionSchemaUpdates"
 	},
+	"callback": "Cognate\\CognateHooks::onRegistration",
 	"MessagesDirs": {
 		"Cognate": [
 			"i18n"

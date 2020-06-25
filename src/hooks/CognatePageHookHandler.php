@@ -92,6 +92,9 @@ class CognatePageHookHandler {
 	 * Occurs after the save page request has been processed.
 	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/PageContentSaveComplete
 	 *
+	 * @note for mediawiki 1.35+, this is run for the PageSaveComplete hook instead of the
+	 * PageContentSaveComplete hook
+	 *
 	 * @param LinkTarget $title
 	 * @param bool $isRedirect
 	 * @param bool $isNewPage
