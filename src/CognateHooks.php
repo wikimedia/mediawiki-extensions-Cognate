@@ -5,6 +5,7 @@ namespace Cognate;
 use Content;
 use DatabaseUpdater;
 use DeferrableUpdate;
+use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\User\UserIdentity;
 use ParserOutput;
@@ -28,8 +29,10 @@ class CognateHooks {
 
 		if ( version_compare( MW_VERSION, '1.35', '>=' ) ) {
 			$wgHooks['PageSaveComplete'][] = 'Cognate\\CognateHooks::onPageSaveComplete';
+			$wgHooks['PageMoveComplete'][] = 'Cognate\\CognateHooks::onPageMoveComplete';
 		} else {
 			$wgHooks['PageContentSaveComplete'][] = 'Cognate\\CognateHooks::onPageContentSaveComplete';
+			$wgHooks['TitleMoveComplete'][] = 'Cognate\\CognateHooks::onTitleMoveComplete';
 		}
 	}
 
@@ -130,6 +133,18 @@ class CognateHooks {
 		$newid,
 		$reason,
 		$nullRevision
+	) {
+		CognateServices::getPageHookHandler()->onTitleMoveComplete( $title, $newTitle );
+	}
+
+	public static function onPageMoveComplete(
+		LinkTarget $title,
+		LinkTarget $newTitle,
+		$userIdentity,
+		$oldid,
+		$newid,
+		$reason,
+		$nullRevisionRecord
 	) {
 		CognateServices::getPageHookHandler()->onTitleMoveComplete( $title, $newTitle );
 	}

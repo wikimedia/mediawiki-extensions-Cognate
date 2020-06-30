@@ -200,6 +200,9 @@ class CognatePageHookHandler {
 	 *
 	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/TitleMoveComplete
 	 *
+	 * @note for mediawiki 1.35+, this is run for the PageMoveComplete hook instead of the
+	 * TitleMoveComplete hook
+	 *
 	 * @param LinkTarget $title
 	 * @param LinkTarget $newTitle
 	 */

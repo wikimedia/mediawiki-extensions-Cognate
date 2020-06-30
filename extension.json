@@ -59,7 +59,6 @@
 		"ContentAlterParserOutput": "Cognate\\CognateHooks::onContentAlterParserOutput",
 		"WikiPageDeletionUpdates": "Cognate\\CognateHooks::onWikiPageDeletionUpdates",
 		"ArticleUndelete": "Cognate\\CognateHooks::onArticleUndelete",
-		"TitleMoveComplete": "Cognate\\CognateHooks::onTitleMoveComplete",
 		"LoadExtensionSchemaUpdates": "Cognate\\CognateHooks::onLoadExtensionSchemaUpdates"
 	},
 	"callback": "Cognate\\CognateHooks::onRegistration",
