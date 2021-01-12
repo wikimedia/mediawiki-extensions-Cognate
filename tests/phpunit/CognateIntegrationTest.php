@@ -8,7 +8,6 @@ use DeferredUpdates;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MediaWikiServices;
 use MediaWikiTestCase;
-use MovePage;
 use PageArchive;
 use Title;
 use TitleValue;
@@ -86,7 +85,7 @@ class CognateIntegrationTest extends MediaWikiTestCase {
 		$oldTitle = $page->getTitle();
 		$newTitle = Title::newFromText( $oldTitle->getDBkey() . '-new' );
 
-		$movePage = new MovePage( $oldTitle, $newTitle );
+		$movePage = MediaWikiServices::getInstance()->getMovePageFactory()->newMovePage( $oldTitle, $newTitle );
 		$movePage->move( User::newFromId( 0 ), 'reason', true );
 		DeferredUpdates::doUpdates();
 
