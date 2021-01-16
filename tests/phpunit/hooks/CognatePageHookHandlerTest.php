@@ -1,5 +1,7 @@
 <?php
 
+// phpcs:disable MediaWiki.NamingConventions.LowerCamelFunctionsName
+
 namespace Cognate\Tests;
 
 use Cognate\CognatePageHookHandler;

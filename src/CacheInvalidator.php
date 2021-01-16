@@ -17,6 +17,9 @@ class CacheInvalidator {
 	 */
 	private $jobQueueGroup;
 
+	/**
+	 * @param JobQueueGroup $jobQueueGroup
+	 */
 	public function __construct( JobQueueGroup $jobQueueGroup ) {
 		$this->jobQueueGroup = $jobQueueGroup;
 	}

@@ -29,7 +29,9 @@ class CognateIntegrationTest extends MediaWikiTestCase {
 
 	use CheckSystemReqsTrait;
 
+	/** @var string */
 	private $pageName;
+	/** @var string */
 	private $dbName;
 
 	public function setUp() : void {
@@ -123,6 +125,9 @@ class CognateIntegrationTest extends MediaWikiTestCase {
 		return MediaWikiServices::getInstance()->getService( 'CognateRepo' );
 	}
 
+	/**
+	 * @param LinkTarget $target
+	 */
 	private function assertTitle( LinkTarget $target ) {
 		$this->assertSame(
 			[ str_replace( '_', ' ', $this->dbName ) . '-prefix:' . $target->getDBkey() ],
@@ -130,6 +135,9 @@ class CognateIntegrationTest extends MediaWikiTestCase {
 		);
 	}
 
+	/**
+	 * @param LinkTarget $target
+	 */
 	private function assertNoTitle( LinkTarget $target ) {
 		$this->assertSame(
 			[],
