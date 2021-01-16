@@ -116,6 +116,12 @@ class CognateHooks {
 			->onWikiPageDeletionUpdates( $page->getTitle(), $updates );
 	}
 
+	/**
+	 * @param Title $title
+	 * @param bool $create
+	 * @param string $comment
+	 * @param int $oldPageId
+	 */
 	public static function onArticleUndelete(
 		Title $title,
 		$create,
@@ -125,6 +131,15 @@ class CognateHooks {
 		CognateServices::getPageHookHandler()->onArticleUndelete( $title );
 	}
 
+	/**
+	 * @param Title $title
+	 * @param Title $newTitle
+	 * @param \User $user
+	 * @param int $oldid
+	 * @param int $newid
+	 * @param string $reason
+	 * @param \Revision $nullRevision
+	 */
 	public static function onTitleMoveComplete(
 		Title $title,
 		Title $newTitle,
@@ -137,6 +152,15 @@ class CognateHooks {
 		CognateServices::getPageHookHandler()->onTitleMoveComplete( $title, $newTitle );
 	}
 
+	/**
+	 * @param LinkTarget $title
+	 * @param LinkTarget $newTitle
+	 * @param UserIdentity $userIdentity
+	 * @param int $oldid
+	 * @param int $newid
+	 * @param string $reason
+	 * @param RevisionRecord $nullRevisionRecord
+	 */
 	public static function onPageMoveComplete(
 		LinkTarget $title,
 		LinkTarget $newTitle,

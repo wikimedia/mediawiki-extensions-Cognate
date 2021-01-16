@@ -50,6 +50,10 @@ class PopulateCognateSites extends Maintenance {
 		return true;
 	}
 
+	/**
+	 * @param SiteList $siteList
+	 * @return string[]
+	 */
 	private function getSiteDetailsFromSiteList( SiteList $siteList ) {
 		$sites = [];
 		foreach ( $siteList as $site ) {

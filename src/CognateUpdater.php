@@ -17,11 +17,17 @@ class CognateUpdater {
 	/** @var IMaintainableDatabase */
 	private $db;
 
+	/**
+	 * @param DatabaseUpdater $updater
+	 */
 	public static function update( DatabaseUpdater $updater ) {
 		$cognateUpdater = new self( $updater );
 		$cognateUpdater->doUpdate();
 	}
 
+	/**
+	 * @param DatabaseUpdater $updater
+	 */
 	private function __construct( DatabaseUpdater $updater ) {
 		global $wgCognateDb, $wgCognateCluster;
 

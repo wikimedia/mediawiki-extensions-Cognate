@@ -44,6 +44,10 @@ class CognateStoreIntegrationTest extends \MediaWikiTestCase {
 		$this->UTPageNameHash = $this->hash( 'UTPage' );
 	}
 
+	/**
+	 * @param string $string
+	 * @return int
+	 */
 	private function hash( $string ) {
 		return $this->hasher->hash( $string );
 	}

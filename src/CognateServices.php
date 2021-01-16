@@ -13,6 +13,12 @@ use Wikimedia\Rdbms\ConnectionManager;
  */
 class CognateServices {
 
+	/**
+	 * @param MediaWikiServices|null $services
+	 * @param string $name
+	 * phpcs:ignore MediaWiki.Commenting.FunctionComment.ObjectTypeHintReturn
+	 * @return object
+	 */
 	private static function getService( ?MediaWikiServices $services, $name ) {
 		if ( $services === null ) {
 			$services = MediaWikiServices::getInstance();

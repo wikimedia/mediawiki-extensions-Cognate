@@ -41,6 +41,12 @@ class CognateRepo implements StatsdAwareInterface {
 	 */
 	private $stats;
 
+	/**
+	 * @param CognateStore $store
+	 * @param CacheInvalidator $cacheInvalidator
+	 * @param TitleFormatter $titleFormatter
+	 * @param LoggerInterface $logger
+	 */
 	public function __construct(
 		CognateStore $store,
 		CacheInvalidator $cacheInvalidator,
@@ -54,6 +60,9 @@ class CognateRepo implements StatsdAwareInterface {
 		$this->stats = new NullStatsdDataFactory();
 	}
 
+	/**
+	 * @param StatsdDataFactoryInterface $statsFactory
+	 */
 	public function setStatsdDataFactory( StatsdDataFactoryInterface $statsFactory ) {
 		$this->stats = $statsFactory;
 	}
