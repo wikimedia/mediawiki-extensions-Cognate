@@ -4,10 +4,11 @@ namespace Cognate;
 
 use HTMLCacheUpdateJob;
 use Job;
+use JobQueueGroup;
 use Title;
 
 /**
- * A job that runs on local wikis running HTMLCacheUpdateJob internally.
+ * A job that runs on local wikis queuing HTMLCacheUpdateJob internally.
  *
  * The creation of the HTMLCacheUpdateJob makes the assumption that when this
  * job is constructed on the local wiki the Title object contained within has
@@ -27,7 +28,7 @@ class CacheUpdateJob extends Job {
 		parent::__construct( 'CognateCacheUpdateJob', $title, $params );
 	}
 
-	public function run() {
+	public function run(): bool {
 		$title = $this->getTitle();
 
 		$coreJob = new HTMLCacheUpdateJob(
@@ -37,7 +38,8 @@ class CacheUpdateJob extends Job {
 			]
 		);
 
-		return $coreJob->run();
+		JobQueueGroup::singleton()->push( $coreJob );
+		return true;
 	}
 
 }
