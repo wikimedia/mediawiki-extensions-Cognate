@@ -40,7 +40,7 @@ class CognateHooks {
 	 * Only run in versions of mediawiki begining 1.35; before 1.35, ::onPageContentSaveComplete
 	 * is used used
 	 *
-	 * @note paramaters include classes not available before 1.35, so for those typehints
+	 * @note parameters include classes not available before 1.35, so for those typehints
 	 * are not used. The variable name reflects the class
 	 *
 	 * @param WikiPage $wikiPage
