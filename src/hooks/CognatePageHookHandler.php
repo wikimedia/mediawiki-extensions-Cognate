@@ -6,7 +6,6 @@ use DeferrableUpdate;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\RevisionRecord;
-use MediaWiki\Revision\SlotRecord;
 use MWCallableUpdate;
 use MWException;
 use Title;
@@ -96,14 +95,10 @@ class CognatePageHookHandler {
 	 * PageContentSaveComplete hook
 	 *
 	 * @param LinkTarget $title
-	 * @param bool $isRedirect
-	 * @param bool $isNewPage
 	 * @param RevisionRecord|null $revisionRecord
 	 */
 	public function onPageContentSaveComplete(
 		LinkTarget $title,
-		$isRedirect,
-		$isNewPage,
 		RevisionRecord $revisionRecord = null
 	) {
 		// A null revision means a null edit / no-op edit was made, no need to process that.
@@ -115,21 +110,7 @@ class CognatePageHookHandler {
 			return;
 		}
 
-		$previousRevisionRecord = call_user_func(
-			$this->previousRevisionCallable,
-			$revisionRecord
-		);
-		$previousContent =
-			$previousRevisionRecord ?
-				$previousRevisionRecord->getContent( SlotRecord::MAIN, RevisionRecord::RAW ) :
-				null;
-
-		$this->onContentChange(
-			$title,
-			$isNewPage,
-			$isRedirect,
-			$previousContent ? $previousContent->isRedirect() : null
-		);
+		$this->onContentChange( $title );
 	}
 
 	/**
@@ -177,12 +158,7 @@ class CognatePageHookHandler {
 			return;
 		}
 
-		$this->onContentChange(
-			$title,
-			true,
-			$revision->getContent( SlotRecord::MAIN, RevisionRecord::RAW )->isRedirect(),
-			false
-		);
+		$this->onContentChange( $title );
 	}
 
 	/**
@@ -241,24 +217,9 @@ class CognatePageHookHandler {
 
 	/**
 	 * @param LinkTarget $linkTarget
-	 * @param bool $isNewPage
-	 * @param bool $isRedirect
-	 * @param bool|null $wasRedirect
 	 */
-	private function onContentChange(
-		LinkTarget $linkTarget,
-		$isNewPage,
-		$isRedirect,
-		$wasRedirect = null
-	) {
-		if (
-			( $isNewPage && !$isRedirect ) ||
-			( $wasRedirect && !$isRedirect )
-		) {
-			$this->getRepo()->savePage( $this->dbName, $linkTarget );
-		} elseif ( !$isNewPage && !$wasRedirect && $isRedirect ) {
-			$this->getRepo()->deletePage( $this->dbName, $linkTarget );
-		}
+	private function onContentChange( LinkTarget $linkTarget ) {
+		$this->getRepo()->savePage( $this->dbName, $linkTarget );
 	}
 
 }

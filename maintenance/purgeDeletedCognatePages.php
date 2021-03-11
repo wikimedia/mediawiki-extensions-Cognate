@@ -126,22 +126,6 @@ class PurgeDeletedCognatePages extends Maintenance {
 			$start = $rawTitleKey;
 		}
 
-		// Select pages that exist in mediawiki with the given titles
-		$pageRows = $dbr->select(
-			'page',
-			[ 'page_namespace', 'page_title', 'page_is_redirect' ],
-			$dbr->makeWhereFrom2d( $cognateData, 'page_namespace', 'page_title' ),
-			__METHOD__
-		);
-
-		// Remove pages that do exist on wiki from the cognate data
-		foreach ( $pageRows as $row ) {
-			// Pages that are redirects should be removed from the cognate table
-			if ( $row->page_is_redirect == 0 ) {
-				unset( $cognateData[$row->page_namespace][$row->page_title] );
-			}
-		}
-
 		// Get an array to delete with
 		$cognateDeletionData = [];
 		$rowsDeleting = 0;
