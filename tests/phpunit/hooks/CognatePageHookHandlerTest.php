@@ -76,7 +76,6 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 
 	public function test_onPageContentSaveComplete_namespaceMatch_createNewRedirect() {
 		$this->repo->expects( $this->never() )->method( 'deletePage' );
-		$this->repo->expects( $this->never() )->method( 'savePage' );
 
 		$this->call_onPageContentSaveComplete(
 			[ 0 ], 'abc2', Title::newFromText( 'ArticleDbKey' ),
@@ -86,7 +85,6 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 
 	public function test_onPageContentSaveComplete_namespaceMatch_editExistingNonRedirect() {
 		$this->repo->expects( $this->never() )->method( 'deletePage' );
-		$this->repo->expects( $this->never() )->method( 'savePage' );
 
 		$this->call_onPageContentSaveComplete(
 			[ 0 ], 'abc2', Title::newFromText( 'ArticleDbKey' ),
@@ -96,23 +94,10 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 
 	public function test_onPageContentSaveComplete_namespaceMatch_editExistingRedirect() {
 		$this->repo->expects( $this->never() )->method( 'deletePage' );
-		$this->repo->expects( $this->never() )->method( 'savePage' );
 
 		$this->call_onPageContentSaveComplete(
 			[ 0 ], 'abc2', Title::newFromText( 'ArticleDbKey' ),
-			[ 'isRedirect', 'wasRedirect', 'hasPreviousRevision' ]
-		);
-	}
-
-	public function test_onPageContentSaveComplete_namespaceMatch_editNonRedirectToRedirect() {
-		$this->repo->expects( $this->once() )
-			->method( 'deletePage' )
-			->with( 'abc2', Title::newFromText( 'ArticleDbKey' ) );
-		$this->repo->expects( $this->never() )->method( 'savePage' );
-
-		$this->call_onPageContentSaveComplete(
-			[ 0 ], 'abc2', Title::newFromText( 'ArticleDbKey' ),
-			[ 'isRedirect', 'hasPreviousRevision' ]
+			[ 'hasPreviousRevision' ]
 		);
 	}
 
@@ -124,7 +109,7 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 
 		$this->call_onPageContentSaveComplete(
 			[ 0 ], 'abc2', Title::newFromText( 'ArticleDbKey' ),
-			[ 'wasRedirect', 'hasPreviousRevision' ]
+			[]
 		);
 	}
 
@@ -167,8 +152,6 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 		);
 		$handler->onPageContentSaveComplete(
 			$linkTarget,
-			in_array( 'isRedirect', $options ),
-			in_array( 'isNew', $options ),
 			$revisionRecord
 		);
 	}
@@ -238,18 +221,6 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 			[ 0 ],
 			'abc2',
 			Title::newFromText( 'ArticleDbKey' )
-		);
-	}
-
-	public function test_onArticleUndelete_namespaceMatch_redirect() {
-		$this->repo->expects( $this->never() )->method( 'deletePage' );
-		$this->repo->expects( $this->never() )->method( 'savePage' );
-
-		$this->call_onArticleUndelete(
-			[ 0 ],
-			'abc2',
-			Title::newFromText( 'ArticleDbKey' ),
-			true
 		);
 	}
 

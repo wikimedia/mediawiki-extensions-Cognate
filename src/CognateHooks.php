@@ -60,8 +60,6 @@ class CognateHooks {
 	) {
 		CognateServices::getPageHookHandler()->onPageContentSaveComplete(
 			$wikiPage->getTitle(),
-			$wikiPage->getContent()->isRedirect(),
-			(bool)( $flags & EDIT_NEW ),
 			$revisionRecord
 		);
 	}
@@ -96,8 +94,6 @@ class CognateHooks {
 	) {
 		CognateServices::getPageHookHandler()->onPageContentSaveComplete(
 			$page->getTitle(),
-			$content->isRedirect(),
-			(bool)( $flags & EDIT_NEW ),
 			$revision ? $revision->getRevisionRecord() : null
 		);
 	}
