@@ -9,7 +9,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "other",
 	"requires": {
-		"MediaWiki": ">= 1.34.0"
+		"MediaWiki": ">= 1.35.0"
 	},
 	"AutoloadClasses": {
 		"Cognate\\CognateHooks": "src/CognateHooks.php",
@@ -56,12 +56,13 @@
 		"src/ServiceWiring.php"
 	],
 	"Hooks": {
+		"PageSaveComplete": "Cognate\\CognateHooks::onPageSaveComplete",
+		"PageMoveComplete": "Cognate\\CognateHooks::onPageMoveComplete",
 		"ContentAlterParserOutput": "Cognate\\CognateHooks::onContentAlterParserOutput",
 		"WikiPageDeletionUpdates": "Cognate\\CognateHooks::onWikiPageDeletionUpdates",
 		"ArticleUndelete": "Cognate\\CognateHooks::onArticleUndelete",
 		"LoadExtensionSchemaUpdates": "Cognate\\CognateHooks::onLoadExtensionSchemaUpdates"
 	},
-	"callback": "Cognate\\CognateHooks::onRegistration",
 	"MessagesDirs": {
 		"Cognate": [
 			"i18n"

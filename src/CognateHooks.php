@@ -7,6 +7,7 @@ use DatabaseUpdater;
 use DeferrableUpdate;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\Storage\EditResult;
 use MediaWiki\User\UserIdentity;
 use ParserOutput;
 use Title;
@@ -20,35 +21,12 @@ use WikiPage;
 class CognateHooks {
 
 	/**
-	 * Callback on extension registration
-	 *
-	 * Register hooks based on version to keep support for mediawiki versions before 1.35
-	 */
-	public static function onRegistration() {
-		global $wgHooks;
-
-		if ( version_compare( MW_VERSION, '1.35', '>=' ) ) {
-			$wgHooks['PageSaveComplete'][] = 'Cognate\\CognateHooks::onPageSaveComplete';
-			$wgHooks['PageMoveComplete'][] = 'Cognate\\CognateHooks::onPageMoveComplete';
-		} else {
-			$wgHooks['PageContentSaveComplete'][] = 'Cognate\\CognateHooks::onPageContentSaveComplete';
-			$wgHooks['TitleMoveComplete'][] = 'Cognate\\CognateHooks::onTitleMoveComplete';
-		}
-	}
-
-	/**
-	 * Only run in versions of mediawiki begining 1.35; before 1.35, ::onPageContentSaveComplete
-	 * is used used
-	 *
-	 * @note parameters include classes not available before 1.35, so for those typehints
-	 * are not used. The variable name reflects the class
-	 *
 	 * @param WikiPage $wikiPage
 	 * @param UserIdentity $userIdentity
 	 * @param string $summary
 	 * @param int $flags
 	 * @param RevisionRecord $revisionRecord
-	 * @param mixed $editResult unused
+	 * @param EditResult $editResult unused
 	 */
 	public static function onPageSaveComplete(
 		WikiPage $wikiPage,
@@ -61,40 +39,6 @@ class CognateHooks {
 		CognateServices::getPageHookHandler()->onPageContentSaveComplete(
 			$wikiPage->getTitle(),
 			$revisionRecord
-		);
-	}
-
-	/**
-	 * @param WikiPage $page
-	 * @param \User $user
-	 * @param Content $content
-	 * @param string $summary
-	 * @param bool $isMinor
-	 * @param bool $isWatch
-	 * @param string $section
-	 * @param int $flags
-	 * @param ?\Revision $revision
-	 * @param \Status $status
-	 * @param int $baseRevId
-	 * @param int|null $undidRevId
-	 */
-	public static function onPageContentSaveComplete(
-		WikiPage $page,
-		$user,
-		Content $content,
-		$summary,
-		$isMinor,
-		$isWatch,
-		$section,
-		$flags,
-		?\Revision $revision,
-		$status,
-		$baseRevId,
-		$undidRevId = null
-	) {
-		CognateServices::getPageHookHandler()->onPageContentSaveComplete(
-			$page->getTitle(),
-			$revision ? $revision->getRevisionRecord() : null
 		);
 	}
 
@@ -125,27 +69,6 @@ class CognateHooks {
 		$oldPageId
 	) {
 		CognateServices::getPageHookHandler()->onArticleUndelete( $title );
-	}
-
-	/**
-	 * @param Title $title
-	 * @param Title $newTitle
-	 * @param \User $user
-	 * @param int $oldid
-	 * @param int $newid
-	 * @param string $reason
-	 * @param \Revision $nullRevision
-	 */
-	public static function onTitleMoveComplete(
-		Title $title,
-		Title $newTitle,
-		$user,
-		$oldid,
-		$newid,
-		$reason,
-		$nullRevision
-	) {
-		CognateServices::getPageHookHandler()->onTitleMoveComplete( $title, $newTitle );
 	}
 
 	/**

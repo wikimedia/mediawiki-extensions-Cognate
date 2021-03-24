@@ -67,11 +67,7 @@ class CognateIntegrationTest extends MediaWikiTestCase {
 		$pageDetails = $this->insertPage( $this->pageName );
 		$page = WikiPage::newFromID( $pageDetails['id'] );
 
-		if ( version_compare( MW_VERSION, '1.35', '<' ) ) {
-			$page->doDeleteArticle( __METHOD__ );
-		} else {
-			$page->doDeleteArticleReal( __METHOD__, $this->getTestSysop()->getUser() );
-		}
+		$page->doDeleteArticleReal( __METHOD__, $this->getTestSysop()->getUser() );
 
 		DeferredUpdates::doUpdates();
 
@@ -100,11 +96,7 @@ class CognateIntegrationTest extends MediaWikiTestCase {
 		$page = WikiPage::newFromID( $pageDetails['id'] );
 		$title = $page->getTitle();
 
-		if ( version_compare( MW_VERSION, '1.35', '<' ) ) {
-			$page->doDeleteArticle( __METHOD__ );
-		} else {
-			$page->doDeleteArticleReal( __METHOD__, $this->getTestSysop()->getUser() );
-		}
+		$page->doDeleteArticleReal( __METHOD__, $this->getTestSysop()->getUser() );
 
 		DeferredUpdates::doUpdates();
 		$archive = new PageArchive( $title );
