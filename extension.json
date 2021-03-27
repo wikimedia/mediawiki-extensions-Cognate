@@ -12,18 +12,11 @@
 		"MediaWiki": ">= 1.35.0"
 	},
 	"AutoloadClasses": {
-		"Cognate\\CognateHooks": "src/CognateHooks.php",
-		"Cognate\\CognateRepo": "src/CognateRepo.php",
-		"Cognate\\CognateServices": "src/CognateServices.php",
-		"Cognate\\CognateStore": "src/CognateStore.php",
-		"Cognate\\CognateUpdater": "src/CognateUpdater.php",
-		"Cognate\\CacheInvalidator": "src/CacheInvalidator.php",
-		"Cognate\\LocalJobSubmitJob": "src/LocalJobSubmitJob.php",
-		"Cognate\\CacheUpdateJob": "src/CacheUpdateJob.php",
-		"Cognate\\StringNormalizer": "src/StringNormalizer.php",
-		"Cognate\\StringHasher": "src/StringHasher.php",
 		"Cognate\\CognatePageHookHandler": "src/hooks/CognatePageHookHandler.php",
 		"Cognate\\CognateParseHookHandler": "src/hooks/CognateParseHookHandler.php"
+	},
+	"AutoloadNamespaces": {
+		"Cognate\\": "src/"
 	},
 	"TestAutoloadClasses": {
 		"Cognate\\Tests\\CheckSystemReqsTrait": "tests/phpunit/CheckSystemReqsTrait.php"
