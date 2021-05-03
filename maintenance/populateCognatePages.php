@@ -42,7 +42,7 @@ class PopulateCognatePages extends Maintenance {
 		$namespaces = $services->getMainConfig()->get( 'CognateNamespaces' );
 		$namespaces = array_filter(
 			array_map( 'intval', $namespaces ),
-			function ( $namespace ) {
+			static function ( $namespace ) {
 				return $namespace >= NS_MAIN && $namespace <= NS_CATEGORY_TALK;
 			}
 		);

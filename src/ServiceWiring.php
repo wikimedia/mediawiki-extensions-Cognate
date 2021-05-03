@@ -12,11 +12,11 @@ use Wikimedia\Rdbms\ConnectionManager;
  */
 
 return [
-	'CognateLogger' => function ( MediaWikiServices $services ) {
+	'CognateLogger' => static function ( MediaWikiServices $services ) {
 		return LoggerFactory::getInstance( 'Cognate' );
 	},
 
-	'CognateRepo' => function ( MediaWikiServices $services ) {
+	'CognateRepo' => static function ( MediaWikiServices $services ) {
 		$repo = new CognateRepo(
 			CognateServices::getStore( $services ),
 			CognateServices::getCacheInvalidator( $services ),
@@ -29,7 +29,7 @@ return [
 		return $repo;
 	},
 
-	'CognateConnectionManager' => function ( MediaWikiServices $services ) {
+	'CognateConnectionManager' => static function ( MediaWikiServices $services ) {
 		$lbFactory = $services->getDBLoadBalancerFactory();
 		$cognateDb = $services->getMainConfig()->get( 'CognateDb' );
 		$cognateCluster = $services->getMainConfig()->get( 'CognateCluster' );
@@ -46,7 +46,7 @@ return [
 		);
 	},
 
-	'CognateStore' => function ( MediaWikiServices $services ) {
+	'CognateStore' => static function ( MediaWikiServices $services ) {
 		return new CognateStore(
 			CognateServices::getConnectionManager( $services ),
 			new StringNormalizer(),
@@ -55,14 +55,14 @@ return [
 		);
 	},
 
-	'CognatePageHookHandler' => function ( MediaWikiServices $services ) {
+	'CognatePageHookHandler' => static function ( MediaWikiServices $services ) {
 		return new CognatePageHookHandler(
 			$services->getMainConfig()->get( 'CognateNamespaces' ),
 			$services->getMainConfig()->get( 'DBname' )
 		);
 	},
 
-	'CognateCacheInvalidator' => function ( MediaWikiServices $services ) {
+	'CognateCacheInvalidator' => static function ( MediaWikiServices $services ) {
 		return new CacheInvalidator( JobQueueGroup::singleton() );
 	},
 ];

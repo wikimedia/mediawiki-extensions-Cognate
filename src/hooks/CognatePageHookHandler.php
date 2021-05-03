@@ -43,12 +43,12 @@ class CognatePageHookHandler {
 	public function __construct( array $namespaces, $dbName ) {
 		$this->namespaces = $namespaces;
 		$this->dbName = $dbName;
-		$this->newRevisionFromIdCallable = function ( $id ) {
+		$this->newRevisionFromIdCallable = static function ( $id ) {
 			return MediaWikiServices::getInstance()
 				->getRevisionLookup()
 				->getRevisionById( $id );
 		};
-		$this->previousRevisionCallable = function ( $revRecord ) {
+		$this->previousRevisionCallable = static function ( $revRecord ) {
 			return MediaWikiServices::getInstance()
 				->getRevisionLookup()
 				->getPreviousRevision( $revRecord );

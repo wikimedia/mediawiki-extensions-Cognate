@@ -36,7 +36,7 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 		$this->overrideMwServices(
 			null,
 			[
-				'CognateRepo' => function () use ( $repo ) {
+				'CognateRepo' => static function () use ( $repo ) {
 					return $repo;
 				},
 			]
@@ -146,7 +146,7 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 
 		$handler = new CognatePageHookHandler( $namespaces, $dbName );
 		$handler->overridePreviousRevision(
-			function ( $revRecord ) use ( $previousRevisionRecord ) {
+			static function ( $revRecord ) use ( $previousRevisionRecord ) {
 				return $previousRevisionRecord;
 			}
 		);
@@ -265,7 +265,7 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 	) {
 		$handler = new CognatePageHookHandler( $namespaces, $dbName );
 		if ( $latestRevIsNull ) {
-			$handler->overrideRevisionNewFromId( function () {
+			$handler->overrideRevisionNewFromId( static function () {
 				return null;
 			} );
 		} else {
