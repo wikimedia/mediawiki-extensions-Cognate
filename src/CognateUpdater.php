@@ -51,7 +51,7 @@ class CognateUpdater {
 			} else {
 				$loadBalancer = $services->getDBLoadBalancer();
 			}
-			$this->db = $loadBalancer->getConnection( LoadBalancer::DB_MASTER, [], $wgCognateDb );
+			$this->db = $loadBalancer->getConnection( LoadBalancer::DB_PRIMARY, [], $wgCognateDb );
 		}
 	}
 
