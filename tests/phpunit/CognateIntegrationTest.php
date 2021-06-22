@@ -101,11 +101,7 @@ class CognateIntegrationTest extends MediaWikiTestCase {
 		DeferredUpdates::doUpdates();
 		$archive = new PageArchive( $title );
 		// Warning! If the "move" test above is executed first, this undeletes a redirect!
-		if ( method_exists( $archive, 'undeleteAsUser' ) ) {
-			$archive->undeleteAsUser( [], $this->getTestSysop()->getUser() );
-		} else {
-			$archive->undelete( [] );
-		}
+		$archive->undeleteAsUser( [], $this->getTestSysop()->getUser() );
 
 		$this->assertTitle( $title );
 	}
