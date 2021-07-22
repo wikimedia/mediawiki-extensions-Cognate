@@ -29,7 +29,7 @@ class CognateStoreIntegrationTest extends \MediaWikiTestCase {
 	/** @var int */
 	private $UTPageNameHash;
 
-	protected function setUp() : void {
+	protected function setUp(): void {
 		parent::setUp();
 
 		$this->markTestSkippedIfNo64bit();

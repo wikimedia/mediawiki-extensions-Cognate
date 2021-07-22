@@ -27,7 +27,7 @@ class CognatePageHookHandlerTest extends \MediaWikiTestCase {
 	 */
 	private $repo;
 
-	public function setUp() : void {
+	public function setUp(): void {
 		parent::setUp();
 		$repo = $this->getMockBuilder( CognateRepo::class )
 			->disableOriginalConstructor()

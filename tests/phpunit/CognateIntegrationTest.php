@@ -34,7 +34,7 @@ class CognateIntegrationTest extends MediaWikiTestCase {
 	/** @var string */
 	private $dbName;
 
-	public function setUp() : void {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->markTestSkippedIfNo64bit();
