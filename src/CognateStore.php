@@ -359,6 +359,7 @@ class CognateStore {
 
 	/**
 	 * @throws DBReadOnlyError
+	 * @return never
 	 */
 	private function throwReadOnlyException() {
 		throw new DBReadOnlyError( null, 'Cognate is in Read Only mode' );
