@@ -29,7 +29,7 @@ class CacheInvalidator {
 	 * @param LinkTarget $linkTarget
 	 */
 	public function invalidate( array $dbNames, LinkTarget $linkTarget ) {
-		$this->jobQueueGroup->push(
+		$this->jobQueueGroup->lazyPush(
 			new LocalJobSubmitJob( Title::newFromLinkTarget( $linkTarget ), [ 'dbNames' => $dbNames ] )
 		);
 	}
