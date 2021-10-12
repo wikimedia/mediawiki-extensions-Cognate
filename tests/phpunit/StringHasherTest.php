@@ -11,7 +11,7 @@ use UtfNormal\Validator;
  * @license GPL-2.0-or-later
  * @author Addshore
  */
-class StringHasherTest extends \MediaWikiTestCase {
+class StringHasherTest extends \MediaWikiIntegrationTestCase {
 
 	use CheckSystemReqsTrait;
 

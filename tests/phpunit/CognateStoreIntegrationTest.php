@@ -16,7 +16,7 @@ use TitleValue;
  *
  * @group Database
  */
-class CognateStoreIntegrationTest extends \MediaWikiTestCase {
+class CognateStoreIntegrationTest extends \MediaWikiIntegrationTestCase {
 
 	use CheckSystemReqsTrait;
 

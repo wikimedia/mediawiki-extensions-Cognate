@@ -20,7 +20,7 @@ use Title;
  * @license GPL-2.0-or-later
  * @author Addshore
  */
-class CognatePageHookHandlerTest extends \MediaWikiTestCase {
+class CognatePageHookHandlerTest extends \MediaWikiIntegrationTestCase {
 
 	/**
 	 * @var MockObject|CognateStore

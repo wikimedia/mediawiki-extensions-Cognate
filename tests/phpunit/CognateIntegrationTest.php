@@ -7,7 +7,7 @@ use Cognate\CognateStore;
 use DeferredUpdates;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MediaWikiServices;
-use MediaWikiTestCase;
+use MediaWikiIntegrationTestCase;
 use PageArchive;
 use Title;
 use TitleValue;
@@ -25,7 +25,7 @@ use WikiPage;
  *
  * @group Database
  */
-class CognateIntegrationTest extends MediaWikiTestCase {
+class CognateIntegrationTest extends MediaWikiIntegrationTestCase {
 
 	use CheckSystemReqsTrait;
 

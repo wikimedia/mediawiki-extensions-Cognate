@@ -6,7 +6,7 @@ use Cognate\CacheInvalidator;
 use Cognate\LocalJobSubmitJob;
 use Job;
 use JobQueueGroup;
-use MediaWikiTestCase;
+use MediaWikiIntegrationTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 use Title;
 
@@ -17,7 +17,7 @@ use Title;
  * @license GPL-2.0-or-later
  * @author Addshore
  */
-class CacheInvalidatorTest extends MediaWikiTestCase {
+class CacheInvalidatorTest extends MediaWikiIntegrationTestCase {
 
 	public function testJobIsQueued() {
 		$title = Title::newFromText( 'Foo' );

@@ -10,7 +10,7 @@ use Cognate\StringNormalizer;
  * @license GPL-2.0-or-later
  * @author Addshore
  */
-class StringNormalizerTest extends \MediaWikiTestCase {
+class StringNormalizerTest extends \MediaWikiIntegrationTestCase {
 
 	public function provideNormalizations() {
 		return [

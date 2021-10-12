@@ -17,7 +17,7 @@ use TitleValue;
  * @license GPL-2.0-or-later
  * @author Addshore
  */
-class CognateRepoUnitTest extends \MediaWikiTestCase {
+class CognateRepoUnitTest extends \MediaWikiIntegrationTestCase {
 
 	/**
 	 * @return MockObject|CognateStore

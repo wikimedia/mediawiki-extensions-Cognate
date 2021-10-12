@@ -15,7 +15,7 @@ use Wikimedia\Rdbms\ConnectionManager;
  * @license GPL-2.0-or-later
  * @author Addshore
  */
-class ServiceWiringTest extends \MediaWikiTestCase {
+class ServiceWiringTest extends \MediaWikiIntegrationTestCase {
 
 	public function provideServices() {
 		return [
