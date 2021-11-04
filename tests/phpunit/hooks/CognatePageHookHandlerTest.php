@@ -27,11 +27,9 @@ class CognatePageHookHandlerTest extends \MediaWikiIntegrationTestCase {
 	 */
 	private $repo;
 
-	public function setUp(): void {
+	protected function setUp(): void {
 		parent::setUp();
-		$repo = $this->getMockBuilder( CognateRepo::class )
-			->disableOriginalConstructor()
-			->getMock();
+		$repo = $this->createMock( CognateRepo::class );
 		$this->repo = $repo;
 		$this->overrideMwServices(
 			null,
@@ -130,17 +128,15 @@ class CognatePageHookHandlerTest extends \MediaWikiIntegrationTestCase {
 		$revisionRecord = null;
 		$previousRevisionRecord = null;
 		if ( !in_array( 'hasNoRevision', $options ) ) {
-			$revisionRecord = $this->getMockRevisionRecord();
+			$revisionRecord = $this->createMock( RevisionRecord::class );
 			if ( in_array( 'hasPreviousRevision', $options ) ) {
 				$previousContent = $this->createMock( Content::class );
-				$previousContent->expects( $this->any() )
-					->method( 'isRedirect' )
-					->will( $this->returnValue( in_array( 'wasRedirect', $options ) ) );
+				$previousContent->method( 'isRedirect' )
+					->willReturn( in_array( 'wasRedirect', $options ) );
 
-				$previousRevisionRecord = $this->getMockRevisionRecord();
-				$previousRevisionRecord->expects( $this->any() )
-					->method( 'getContent' )
-					->will( $this->returnValue( $previousContent ) );
+				$previousRevisionRecord = $this->createMock( RevisionRecord::class );
+				$previousRevisionRecord->method( 'getContent' )
+					->willReturn( $previousContent );
 			}
 		}
 
@@ -270,14 +266,12 @@ class CognatePageHookHandlerTest extends \MediaWikiIntegrationTestCase {
 			} );
 		} else {
 			$handler->overrideRevisionNewFromId( function () use ( $latestRevIsRedirect ) {
-				$content = $this->getMockContent();
-				$content->expects( $this->any() )
-					->method( 'isRedirect' )
-					->will( $this->returnValue( $latestRevIsRedirect ) );
+				$content = $this->createMock( Content::class );
+				$content->method( 'isRedirect' )
+					->willReturn( $latestRevIsRedirect );
 				$revision = $this->createMock( RevisionRecord::class );
-				$revision->expects( $this->any() )
-					->method( 'getContent' )
-					->will( $this->returnValue( $content ) );
+				$revision->method( 'getContent' )
+					->willReturn( $content );
 				return $revision;
 			} );
 		}
@@ -364,24 +358,6 @@ class CognatePageHookHandlerTest extends \MediaWikiIntegrationTestCase {
 			Title::newFromLinkTarget( $linkTarget ),
 			Title::newFromLinkTarget( $newLinkTarget )
 		);
-	}
-
-	/**
-	 * @return MockObject|RevisionRecord
-	 */
-	private function getMockRevisionRecord() {
-		return $this->getMockBuilder( RevisionRecord::class )
-			->disableOriginalConstructor()
-			->getMock();
-	}
-
-	/**
-	 * @return MockObject|Content
-	 */
-	private function getMockContent() {
-		return $this->getMockBuilder( Content::class )
-			->disableOriginalConstructor()
-			->getMock();
 	}
 
 }

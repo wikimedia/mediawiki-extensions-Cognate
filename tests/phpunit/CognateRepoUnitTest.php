@@ -20,23 +20,12 @@ use TitleValue;
 class CognateRepoUnitTest extends \MediaWikiIntegrationTestCase {
 
 	/**
-	 * @return MockObject|CognateStore
-	 */
-	private function getMockStore() {
-		return $this->getMockBuilder( CognateStore::class )
-			->disableOriginalConstructor()
-			->getMock();
-	}
-
-	/**
 	 * @param array[] $expectedInvalidateCalls
 	 *
 	 * @return MockObject|CacheInvalidator
 	 */
 	private function getMockCacheInvalidator( array $expectedInvalidateCalls = [] ) {
-		$mock = $this->getMockBuilder( CacheInvalidator::class )
-			->disableOriginalConstructor()
-			->getMock();
+		$mock = $this->createMock( CacheInvalidator::class );
 		if ( $expectedInvalidateCalls === [] ) {
 			$mock->expects( $this->never() )->method( 'invalidate' );
 		}
@@ -54,8 +43,7 @@ class CognateRepoUnitTest extends \MediaWikiIntegrationTestCase {
 	 */
 	private function getMockTitleFormatter() {
 		$mock = $this->createMock( TitleFormatter::class );
-		$mock->expects( $this->any() )
-			->method( 'formatTitle' )
+		$mock->method( 'formatTitle' )
 			->will( $this->returnCallback( static function ( $ns, $title, $fragment, $interwiki ) {
 				return "$interwiki:$ns:$title";
 			} ) );
@@ -64,11 +52,11 @@ class CognateRepoUnitTest extends \MediaWikiIntegrationTestCase {
 
 	public function testSavePage_successAndInvalidate() {
 		$titleValue = new TitleValue( 0, 'My_test_page' );
-		$store = $this->getMockStore();
+		$store = $this->createMock( CognateStore::class );
 		$store->expects( $this->once() )
 			->method( 'insertPage' )
 			->with( 'siteName', $titleValue )
-			->will( $this->returnValue( true ) );
+			->willReturn( true );
 
 		$repo = new CognateRepo(
 			$store,
@@ -81,11 +69,11 @@ class CognateRepoUnitTest extends \MediaWikiIntegrationTestCase {
 
 	public function testSavePage_failLogAndNoInvalidate() {
 		$titleValue = new TitleValue( 0, 'My_test_page' );
-		$store = $this->getMockStore();
+		$store = $this->createMock( CognateStore::class );
 		$store->expects( $this->once() )
 			->method( 'insertPage' )
 			->with( 'siteName', $titleValue )
-			->will( $this->returnValue( false ) );
+			->willReturn( false );
 
 		/** @var LoggerInterface|MockObject $mockLogger */
 		$mockLogger = $this->createMock( NullLogger::class );
@@ -111,11 +99,11 @@ class CognateRepoUnitTest extends \MediaWikiIntegrationTestCase {
 
 	public function testDeletePage_successAndInvalidate() {
 		$titleValue = new TitleValue( 0, 'My_test_page' );
-		$store = $this->getMockStore();
+		$store = $this->createMock( CognateStore::class );
 		$store->expects( $this->once() )
 			->method( 'deletePage' )
 			->with( 'siteName', $titleValue )
-			->will( $this->returnValue( true ) );
+			->willReturn( true );
 
 		$repo = new CognateRepo(
 			$store,
@@ -128,11 +116,11 @@ class CognateRepoUnitTest extends \MediaWikiIntegrationTestCase {
 
 	public function testDeletePage_failAndNoInvalidate() {
 		$titleValue = new TitleValue( 0, 'My_test_page' );
-		$store = $this->getMockStore();
+		$store = $this->createMock( CognateStore::class );
 		$store->expects( $this->once() )
 			->method( 'deletePage' )
 			->with( 'siteName', $titleValue )
-			->will( $this->returnValue( false ) );
+			->willReturn( false );
 
 		$repo = new CognateRepo(
 			$store,
@@ -145,16 +133,15 @@ class CognateRepoUnitTest extends \MediaWikiIntegrationTestCase {
 
 	public function testGetLinksForPage_passesThrough() {
 		$titleValue = new TitleValue( 0, 'My_test_page' );
-		$store = $this->getMockStore();
+		$store = $this->createMock( CognateStore::class );
 		$store->expects( $this->once() )
 			->method( 'selectLinkDetailsForPage' )
 			->with( 'siteName', $titleValue )
-			->will( $this->returnValue( [ [
-					'namespaceID' => 0,
-					'title' => 'bar',
-					'interwiki' => 'foo',
-				] ]
-			) );
+			->willReturn( [ [
+				'namespaceID' => 0,
+				'title' => 'bar',
+				'interwiki' => 'foo',
+			] ] );
 
 		$repo = new CognateRepo(
 			$store,

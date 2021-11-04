@@ -23,9 +23,7 @@ class CacheInvalidatorTest extends MediaWikiIntegrationTestCase {
 		$title = Title::newFromText( 'Foo' );
 
 		/** @var JobQueueGroup|MockObject $mockJobQueueGroup */
-		$mockJobQueueGroup = $this->getMockBuilder( JobQueueGroup::class )
-			->disableOriginalConstructor()
-			->getMock();
+		$mockJobQueueGroup = $this->createMock( JobQueueGroup::class );
 		$mockJobQueueGroup->expects( $this->once() )
 			->method( 'lazyPush' )
 			->with( $this->isInstanceOf( LocalJobSubmitJob::class ) )

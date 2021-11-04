@@ -21,9 +21,7 @@ class CognateStoreUnitTest extends TestCase {
 
 	private function newReadOnlyCognateStore() {
 		/** @var ConnectionManager $connectionManager */
-		$connectionManager = $this->getMockBuilder( ConnectionManager::class )
-			->disableOriginalConstructor()
-			->getMock();
+		$connectionManager = $this->createMock( ConnectionManager::class );
 
 		return new CognateStore(
 			$connectionManager,
