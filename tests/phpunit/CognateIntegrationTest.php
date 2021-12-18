@@ -6,13 +6,11 @@ use Cognate\CognateRepo;
 use Cognate\CognateStore;
 use DeferredUpdates;
 use MediaWiki\Linker\LinkTarget;
-use MediaWiki\MediaWikiServices;
 use MediaWikiIntegrationTestCase;
 use PageArchive;
 use Title;
 use TitleValue;
 use User;
-use WikiPage;
 
 /**
  * @covers \Cognate\CognateHooks
@@ -39,7 +37,7 @@ class CognateIntegrationTest extends MediaWikiIntegrationTestCase {
 
 		$this->markTestSkippedIfNo64bit();
 
-		$services = MediaWikiServices::getInstance();
+		$services = $this->getServiceContainer();
 		$config = $services->getMainConfig();
 		$this->pageName = 'CognateIntegrationTest-pageName';
 		$this->dbName = $config->get( 'DBname' );
@@ -65,7 +63,7 @@ class CognateIntegrationTest extends MediaWikiIntegrationTestCase {
 
 	public function testCreateAndDeletePageResultsInNoEntry() {
 		$pageDetails = $this->insertPage( $this->pageName );
-		$page = WikiPage::newFromID( $pageDetails['id'] );
+		$page = $this->getServiceContainer()->getWikiPageFactory()->newFromID( $pageDetails['id'] );
 
 		$page->doDeleteArticleReal( __METHOD__, $this->getTestSysop()->getUser() );
 
@@ -79,11 +77,12 @@ class CognateIntegrationTest extends MediaWikiIntegrationTestCase {
 	 */
 	public function testCreateAndMovePageResultsInCorrectEntry() {
 		$pageDetails = $this->insertPage( $this->pageName );
-		$page = WikiPage::newFromID( $pageDetails['id'] );
+		$services = $this->getServiceContainer();
+		$page = $services->getWikiPageFactory()->newFromID( $pageDetails['id'] );
 		$oldTitle = $page->getTitle();
 		$newTitle = Title::newFromText( $oldTitle->getDBkey() . '-new' );
 
-		$movePage = MediaWikiServices::getInstance()->getMovePageFactory()->newMovePage( $oldTitle, $newTitle );
+		$movePage = $services->getMovePageFactory()->newMovePage( $oldTitle, $newTitle );
 		$movePage->move( User::newFromId( 0 ), 'reason', true );
 		DeferredUpdates::doUpdates();
 
@@ -93,7 +92,7 @@ class CognateIntegrationTest extends MediaWikiIntegrationTestCase {
 
 	public function testCreateDeleteAndRestorePageResultsInEntry() {
 		$pageDetails = $this->insertPage( $this->pageName );
-		$page = WikiPage::newFromID( $pageDetails['id'] );
+		$page = $this->getServiceContainer()->getWikiPageFactory()->newFromID( $pageDetails['id'] );
 		$title = $page->getTitle();
 
 		$page->doDeleteArticleReal( __METHOD__, $this->getTestSysop()->getUser() );
@@ -110,7 +109,7 @@ class CognateIntegrationTest extends MediaWikiIntegrationTestCase {
 	 * @return CognateRepo
 	 */
 	private function getRepo() {
-		return MediaWikiServices::getInstance()->getService( 'CognateRepo' );
+		return $this->getServiceContainer()->getService( 'CognateRepo' );
 	}
 
 	/**
