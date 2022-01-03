@@ -56,9 +56,7 @@ class CognateUpdater {
 	}
 
 	private function doUpdate() {
-		$this->addTable( 'cognate_pages', __DIR__ . '/../db/addCognatePages.sql' );
-		$this->addTable( 'cognate_titles', __DIR__ . '/../db/addCognateTitles.sql' );
-		$this->addTable( 'cognate_sites', __DIR__ . '/../db/addCognateSites.sql' );
+		$this->addTable( 'cognate_pages', __DIR__ . '/../sql/' . $this->db->getType() . '/tables-generated.sql' );
 	}
 
 	/**

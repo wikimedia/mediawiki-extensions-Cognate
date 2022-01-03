@@ -1,0 +1,74 @@
+[
+	{
+		"name": "cognate_pages",
+		"columns": [
+			{
+				"name": "cgpa_site",
+				"type": "bigint",
+				"options": { "notnull": true }
+			},
+			{
+				"name": "cgpa_namespace",
+				"type": "integer",
+				"options": { "notnull": true }
+			},
+			{
+				"name": "cgpa_title",
+				"type": "bigint",
+				"options": { "notnull": true }
+			}
+		],
+		"indexes": [],
+		"pk": [ "cgpa_title", "cgpa_namespace", "cgpa_site" ]
+	},
+	{
+		"name": "cognate_sites",
+		"columns": [
+			{
+				"name": "cgsi_key",
+				"type": "bigint",
+				"options": { "notnull": true }
+			},
+			{
+				"name": "cgsi_dbname",
+				"type": "binary",
+				"options": { "notnull": true, "length": 32 }
+			},
+			{
+				"name": "cgsi_interwiki",
+				"type": "binary",
+				"options": { "notnull": true, "length": 32 }
+			}
+		],
+		"indexes": [],
+		"pk": [ "cgsi_key" ]
+	},
+	{
+		"name": "cognate_titles",
+		"columns": [
+			{
+				"name": "cgti_raw_key",
+				"type": "bigint",
+				"options": { "notnull": true }
+			},
+			{
+				"name": "cgti_raw",
+				"type": "binary",
+				"options": { "notnull": true, "length": 255 }
+			},
+			{
+				"name": "cgti_normalized_key",
+				"type": "bigint",
+				"options": { "notnull": true }
+			}
+		],
+		"indexes": [
+			{
+				"name": "cgti_normalized_keys",
+				"columns": [ "cgti_normalized_key" ],
+				"unique": false
+			}
+		],
+		"pk": [ "cgti_raw_key" ]
+	}
+]
