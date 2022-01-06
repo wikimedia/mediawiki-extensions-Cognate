@@ -2,7 +2,6 @@
 
 namespace Cognate;
 
-use JobQueueGroup;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
 use Wikimedia\Rdbms\ConnectionManager;
@@ -63,6 +62,6 @@ return [
 	},
 
 	'CognateCacheInvalidator' => static function ( MediaWikiServices $services ) {
-		return new CacheInvalidator( JobQueueGroup::singleton() );
+		return new CacheInvalidator( $services->getJobQueueGroup() );
 	},
 ];

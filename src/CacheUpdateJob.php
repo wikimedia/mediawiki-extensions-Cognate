@@ -4,7 +4,7 @@ namespace Cognate;
 
 use HTMLCacheUpdateJob;
 use Job;
-use JobQueueGroup;
+use MediaWiki\MediaWikiServices;
 use Title;
 
 /**
@@ -38,7 +38,9 @@ class CacheUpdateJob extends Job {
 			]
 		);
 
-		JobQueueGroup::singleton()->push( $coreJob );
+		MediaWikiServices::getInstance()
+			->getJobQueueGroup()
+			->push( $coreJob );
 		return true;
 	}
 
