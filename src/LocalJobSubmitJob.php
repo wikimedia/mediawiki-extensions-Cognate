@@ -3,7 +3,7 @@
 namespace Cognate;
 
 use Job;
-use JobQueueGroup;
+use MediaWiki\MediaWikiServices;
 use Title;
 
 /**
@@ -21,8 +21,9 @@ class LocalJobSubmitJob extends Job {
 	public function run() {
 		$job = new CacheUpdateJob( $this->getTitle(), [] );
 
+		$jobQueueGroupFactory = MediaWikiServices::getInstance()->getJobQueueGroupFactory();
 		foreach ( $this->params['dbNames'] as $dbName ) {
-			JobQueueGroup::singleton( $dbName )->push( $job );
+			$jobQueueGroupFactory->makeJobQueueGroup( $dbName )->push( $job );
 		}
 
 		return true;
