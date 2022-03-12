@@ -14,7 +14,7 @@ use User;
 
 /**
  * @covers \Cognate\CognateHooks
- * @covers \Cognate\CognatePageHookHandler
+ * @covers \Cognate\HookHandler\CognatePageHookHandler
  * @covers \Cognate\CognateRepo
  * @covers \Cognate\CognateStore
  *

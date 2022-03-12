@@ -11,10 +11,6 @@
 	"requires": {
 		"MediaWiki": ">= 1.37.0"
 	},
-	"AutoloadClasses": {
-		"Cognate\\CognatePageHookHandler": "src/hooks/CognatePageHookHandler.php",
-		"Cognate\\CognateParseHookHandler": "src/hooks/CognateParseHookHandler.php"
-	},
 	"AutoloadNamespaces": {
 		"Cognate\\": "src/"
 	},

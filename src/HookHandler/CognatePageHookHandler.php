@@ -1,7 +1,9 @@
 <?php
 
-namespace Cognate;
+namespace Cognate\HookHandler;
 
+use Cognate\CognateRepo;
+use Cognate\CognateServices;
 use DeferrableUpdate;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MediaWikiServices;

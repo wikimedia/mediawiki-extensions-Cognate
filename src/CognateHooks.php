@@ -2,6 +2,7 @@
 
 namespace Cognate;
 
+use Cognate\HookHandler\CognateParseHookHandler;
 use Content;
 use DatabaseUpdater;
 use DeferrableUpdate;

@@ -2,11 +2,11 @@
 
 // phpcs:disable MediaWiki.NamingConventions.LowerCamelFunctionsName
 
-namespace Cognate\Tests;
+namespace Cognate\Tests\HookHandler;
 
-use Cognate\CognatePageHookHandler;
 use Cognate\CognateRepo;
 use Cognate\CognateStore;
+use Cognate\HookHandler\CognatePageHookHandler;
 use Content;
 use DeferrableUpdate;
 use MediaWiki\Linker\LinkTarget;
@@ -15,7 +15,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Title;
 
 /**
- * @covers \Cognate\CognatePageHookHandler
+ * @covers \Cognate\HookHandler\CognatePageHookHandler
  *
  * @license GPL-2.0-or-later
  * @author Addshore

@@ -3,9 +3,9 @@
 namespace Cognate\Tests;
 
 use Cognate\CacheInvalidator;
-use Cognate\CognatePageHookHandler;
 use Cognate\CognateRepo;
 use Cognate\CognateStore;
+use Cognate\HookHandler\CognatePageHookHandler;
 use MediaWiki\MediaWikiServices;
 use Wikimedia\Rdbms\ConnectionManager;
 

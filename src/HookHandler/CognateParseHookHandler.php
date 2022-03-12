@@ -1,7 +1,9 @@
 <?php
 
-namespace Cognate;
+namespace Cognate\HookHandler;
 
+use Cognate\CognateRepo;
+use Cognate\CognateServices;
 use MediaWiki\MediaWikiServices;
 use ParserOutput;
 use Title;

@@ -2,6 +2,7 @@
 
 namespace Cognate;
 
+use Cognate\HookHandler\CognatePageHookHandler;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
 use Wikimedia\Rdbms\ConnectionManager;
