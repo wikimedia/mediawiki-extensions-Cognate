@@ -29,12 +29,9 @@ class CognateRepoUnitTest extends \MediaWikiIntegrationTestCase {
 		if ( $expectedInvalidateCalls === [] ) {
 			$mock->expects( $this->never() )->method( 'invalidate' );
 		}
-		foreach ( $expectedInvalidateCalls as $key => $details ) {
-			list( $dbName, $linkTarget ) = $details;
-			$mock->expects( $this->at( $key ) )
-				->method( 'invalidate' )
-				->with( $dbName, $linkTarget );
-		}
+		$mock->expects( $this->atLeast( count( $expectedInvalidateCalls ) ) )
+			->method( 'invalidate' )
+			->withConsecutive( ...$expectedInvalidateCalls );
 		return $mock;
 	}
 
