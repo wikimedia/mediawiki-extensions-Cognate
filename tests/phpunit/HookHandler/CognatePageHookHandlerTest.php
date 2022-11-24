@@ -181,7 +181,7 @@ class CognatePageHookHandlerTest extends \MediaWikiIntegrationTestCase {
 			Title::newFromText( 'ArticleDbKey' )
 		);
 
-		$this->assertEmpty( $updates );
+		$this->assertSame( [], $updates );
 	}
 
 	/**
