@@ -41,7 +41,7 @@ class PurgeDeletedCognatePages extends Maintenance {
 
 		/** @var ConnectionManager $connectionManager */
 		$connectionManager = $services->getService( 'CognateConnectionManager' );
-		$dbrCognate = $connectionManager->getReadConnectionRef();
+		$dbrCognate = $connectionManager->getReadConnection();
 
 		$dbName = $services->getMainConfig()->get( 'DBname' );
 		$stringHasher = new StringHasher();
@@ -66,7 +66,7 @@ class PurgeDeletedCognatePages extends Maintenance {
 		}
 
 		$loadBalancerFactory = $services->getDBLoadBalancerFactory();
-		$dbwCognate = $connectionManager->getWriteConnectionRef();
+		$dbwCognate = $connectionManager->getWriteConnection();
 		$dbr = $this->getDB( DB_REPLICA );
 
 		while ( $start ) {
