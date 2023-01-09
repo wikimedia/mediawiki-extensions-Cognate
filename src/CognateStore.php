@@ -90,7 +90,6 @@ class CognateStore {
 			[ 'cgti_raw_key' => $this->getStringHash( $linkTarget->getDBkey() ) ],
 			__METHOD__
 		);
-		$this->connectionManager->releaseConnection( $dbr );
 
 		if ( $row && $row->cgti_raw !== $linkTarget->getDBkey() ) {
 			return false;
@@ -98,7 +97,7 @@ class CognateStore {
 
 		$insertQueryCounter = 0;
 
-		$dbw = $this->connectionManager->getWriteConnectionRef();
+		$dbw = $this->connectionManager->getWriteConnection();
 		if ( !$row ) {
 			$dbw->insert(
 				self::TITLES_TABLE_NAME,
@@ -139,7 +138,7 @@ class CognateStore {
 			'cgpa_title' => $this->getStringHash( $linkTarget->getDBkey() ),
 			'cgpa_namespace' => $linkTarget->getNamespace(),
 		];
-		$dbw = $this->connectionManager->getWriteConnectionRef();
+		$dbw = $this->connectionManager->getWriteConnection();
 		$result = $dbw->delete( self::PAGES_TABLE_NAME, $pageData, __METHOD__ );
 
 		return (bool)$result;
@@ -174,7 +173,6 @@ class CognateStore {
 			],
 			__METHOD__
 		);
-		$this->connectionManager->releaseConnection( $dbr );
 
 		$linkDetails = [];
 		foreach ( $result as $row ) {
@@ -210,7 +208,6 @@ class CognateStore {
 			],
 			__METHOD__
 		);
-		$this->connectionManager->releaseConnection( $dbr );
 		return $sites;
 	}
 
@@ -242,7 +239,7 @@ class CognateStore {
 			);
 		}
 
-		$dbw = $this->connectionManager->getWriteConnectionRef();
+		$dbw = $this->connectionManager->getWriteConnection();
 		$dbw->insert(
 			self::TITLES_TABLE_NAME,
 			$titlesToInsert,
@@ -306,7 +303,7 @@ class CognateStore {
 			];
 		}
 
-		$dbw = $this->connectionManager->getWriteConnectionRef();
+		$dbw = $this->connectionManager->getWriteConnection();
 		$dbw->insert(
 			'cognate_sites',
 			$toInsert,
@@ -327,7 +324,7 @@ class CognateStore {
 			throw new RuntimeException( __METHOD__ . ' can only be used for maintenance or tests.' );
 		}
 
-		$dbw = $this->connectionManager->getWriteConnectionRef();
+		$dbw = $this->connectionManager->getWriteConnection();
 		$dbw->delete(
 			'cognate_pages',
 			[
