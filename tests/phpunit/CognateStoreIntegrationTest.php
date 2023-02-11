@@ -206,4 +206,23 @@ class CognateStoreIntegrationTest extends \MediaWikiIntegrationTestCase {
 		);
 	}
 
+	public function testSelectSitesForPage_empty() {
+		$this->assertSame(
+			[],
+			$this->store->selectSitesForPage( new TitleValue( 0, 'Blah' ) )
+		);
+	}
+
+	public function testSelectSitesForPage() {
+		$this->store->insertSites( [ 'enwiktionary' => 'en', 'frwiktionary' => 'fr' ] );
+		$this->store->insertPages( [
+			[ 'site' => 'enwiktionary', 'namespace' => 0, 'title' => 'Berlin' ],
+			[ 'site' => 'frwiktionary', 'namespace' => 0, 'title' => 'Berlin' ],
+		] );
+		$this->assertArrayEquals(
+			[ 'frwiktionary', 'enwiktionary' ],
+			$this->store->selectSitesForPage( new TitleValue( 0, 'Berlin' ) )
+		);
+	}
+
 }
