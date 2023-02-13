@@ -7,6 +7,7 @@ use MediaWiki\MediaWikiServices;
 use Wikimedia\Rdbms\ConnectionManager;
 use Wikimedia\Rdbms\Database;
 use Wikimedia\Rdbms\DBUnexpectedError;
+use Wikimedia\Rdbms\SelectQueryBuilder;
 
 if ( getenv( 'MW_INSTALL_PATH' ) !== false ) {
 	require_once getenv( 'MW_INSTALL_PATH' ) . '/maintenance/Maintenance.php';
@@ -81,16 +82,14 @@ class RecalculateCognateNormalizedHashes extends Maintenance {
 
 		while ( $batchStart ) {
 			$this->output( "Getting batch starting from $batchStart\n" );
-			$rows = $this->dbr->select(
-				CognateStore::TITLES_TABLE_NAME,
-				[ 'cgti_raw', 'cgti_raw_key', 'cgti_normalized_key' ],
-				[ 'cgti_raw_key > ' . $batchStart ],
-				__METHOD__,
-				[
-					'LIMIT' => $this->mBatchSize,
-					'ORDER BY' => 'cgti_raw_key ASC',
-				]
-			);
+			$rows = $this->dbr->newSelectQueryBuilder()
+				->select( [ 'cgti_raw', 'cgti_raw_key', 'cgti_normalized_key' ] )
+				->from( CognateStore::TITLES_TABLE_NAME )
+				->where( [ 'cgti_raw_key > ' . $batchStart ] )
+				->orderBy( 'cgti_raw_key', SelectQueryBuilder::SORT_ASC )
+				->limit( $this->mBatchSize )
+				->caller( __METHOD__ )
+				->fetchResultSet();
 
 			$this->output( "Calculating new hashes..\n" );
 			$batchStart = false;
@@ -143,12 +142,11 @@ class RecalculateCognateNormalizedHashes extends Maintenance {
 	 * @throws DBUnexpectedError
 	 */
 	private function getLowestRawKey() {
-		return $this->dbr->selectField(
-			CognateStore::TITLES_TABLE_NAME,
-			'MIN(cgti_raw_key)-1',
-			[],
-			__METHOD__
-		);
+		return $this->dbr->newSelectQueryBuilder()
+			->select( 'MIN(cgti_raw_key)-1' )
+			->from( CognateStore::TITLES_TABLE_NAME )
+			->caller( __METHOD__ )
+			->fetchField();
 	}
 
 	/**
