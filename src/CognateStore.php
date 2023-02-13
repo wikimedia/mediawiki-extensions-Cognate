@@ -84,12 +84,12 @@ class CognateStore {
 			$dbName
 		);
 
-		$row = $dbr->selectRow(
-			self::TITLES_TABLE_NAME,
-			[ 'cgti_raw' ],
-			[ 'cgti_raw_key' => $this->getStringHash( $linkTarget->getDBkey() ) ],
-			__METHOD__
-		);
+		$row = $dbr->newSelectQueryBuilder()
+			->select( 'cgti_raw' )
+			->from( self::TITLES_TABLE_NAME )
+			->where( [ 'cgti_raw_key' => $this->getStringHash( $linkTarget->getDBkey() ) ] )
+			->caller( __METHOD__ )
+			->fetchRow();
 
 		if ( $row && $row->cgti_raw !== $linkTarget->getDBkey() ) {
 			return false;
@@ -153,26 +153,22 @@ class CognateStore {
 	 */
 	public function selectLinkDetailsForPage( $dbName, LinkTarget $linkTarget ) {
 		$dbr = $this->connectionManager->getReadConnection();
-		$result = $dbr->select(
-			[
-				self::TITLES_TABLE_NAME,
-				self::PAGES_TABLE_NAME,
-				self::SITES_TABLE_NAME,
-			],
-			[
+		$result = $dbr->newSelectQueryBuilder()
+			->select( [
 				'cgsi_interwiki',
 				'cgpa_namespace',
 				'cgti_raw',
-			],
-			[
+			] )
+			->from( self::TITLES_TABLE_NAME )
+			->join( self::PAGES_TABLE_NAME, null, 'cgti_raw_key = cgpa_title' )
+			->join( self::SITES_TABLE_NAME, null, 'cgpa_site = cgsi_key' )
+			->where( [
 				'cgsi_dbname != ' . $dbr->addQuotes( $dbName ),
 				'cgti_normalized_key' => $this->getNormalizedStringHash( $linkTarget->getDBkey() ),
 				'cgpa_namespace' => $linkTarget->getNamespace(),
-				'cgti_raw_key = cgpa_title',
-				'cgpa_site = cgsi_key',
-			],
-			__METHOD__
-		);
+			] )
+			->caller( __METHOD__ )
+			->fetchResultSet();
 
 		$linkDetails = [];
 		foreach ( $result as $row ) {
@@ -193,22 +189,17 @@ class CognateStore {
 	 */
 	public function selectSitesForPage( LinkTarget $linkTarget ) {
 		$dbr = $this->connectionManager->getReadConnection();
-		$sites = $dbr->selectFieldValues(
-			[
-				self::TITLES_TABLE_NAME,
-				self::PAGES_TABLE_NAME,
-				self::SITES_TABLE_NAME,
-			],
-			'cgsi_dbname',
-			[
+		return $dbr->newSelectQueryBuilder()
+			->select( 'cgsi_dbname' )
+			->from( self::TITLES_TABLE_NAME )
+			->join( self::PAGES_TABLE_NAME, null, 'cgti_raw_key = cgpa_title' )
+			->join( self::SITES_TABLE_NAME, null, 'cgpa_site = cgsi_key' )
+			->where( [
 				'cgti_normalized_key' => $this->getNormalizedStringHash( $linkTarget->getDBkey() ),
 				'cgpa_namespace' => $linkTarget->getNamespace(),
-				'cgti_raw_key = cgpa_title',
-				'cgpa_site = cgsi_key',
-			],
-			__METHOD__
-		);
-		return $sites;
+			] )
+			->caller( __METHOD__ )
+			->fetchFieldValues();
 	}
 
 	/**
