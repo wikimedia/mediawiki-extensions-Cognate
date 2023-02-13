@@ -7,6 +7,7 @@ use MediaWiki\MediaWikiServices;
 use RuntimeException;
 use Wikimedia\Rdbms\ConnectionManager;
 use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\SelectQueryBuilder;
 
 if ( getenv( 'MW_INSTALL_PATH' ) !== false ) {
 	require_once getenv( 'MW_INSTALL_PATH' ) . '/maintenance/Maintenance.php';
@@ -52,14 +53,14 @@ class PurgeDeletedCognatePages extends Maintenance {
 			$this->output( "In DRY RUN mode.\n" );
 		}
 
-		$start = $dbrCognate->selectField(
-			'cognate_pages',
-			'MIN(cgpa_title)',
-			[
+		$start = $dbrCognate->newSelectQueryBuilder()
+			->select( 'MIN(cgpa_title)' )
+			->from( 'cognate_pages' )
+			->where( [
 				'cgpa_site' => $siteKey,
-			],
-			__METHOD__
-		);
+			] )
+			->caller( __METHOD__ )
+			->fetchField();
 		if ( !$start ) {
 			$this->output( "Nothing to do.\n" );
 			return true;
@@ -95,23 +96,18 @@ class PurgeDeletedCognatePages extends Maintenance {
 		$start
 	) {
 		// Select a batch of pages that are in the cognate page table
-		$cognateRows = $dbrCognate->select(
-			[
-				CognateStore::TITLES_TABLE_NAME,
-				CognateStore::PAGES_TABLE_NAME,
-			],
-			[ 'cgpa_namespace', 'cgpa_title', 'cgti_raw' ],
-			[
+		$cognateRows = $dbrCognate->newSelectQueryBuilder()
+			->select( [ 'cgpa_namespace', 'cgpa_title', 'cgti_raw' ] )
+			->from( CognateStore::TITLES_TABLE_NAME )
+			->join( CognateStore::PAGES_TABLE_NAME, null, 'cgpa_title = cgti_raw_key' )
+			->where( [
 				'cgpa_site' => $siteKey,
 				'cgpa_title >= ' . $start,
-				'cgpa_title = cgti_raw_key',
-			],
-			__METHOD__,
-			[
-				'LIMIT' => $this->mBatchSize,
-				'ORDER BY' => 'cgpa_title ASC'
-			]
-		);
+			] )
+			->orderBy( 'cgpa_title', SelectQueryBuilder::SORT_ASC )
+			->limit( $this->mBatchSize )
+			->caller( __METHOD__ )
+			->fetchResultSet();
 
 		// Get an array to select with
 		$cognateData = [];
@@ -127,12 +123,12 @@ class PurgeDeletedCognatePages extends Maintenance {
 		}
 
 		// Select pages that exist in mediawiki with the given titles
-		$pageRows = $dbr->select(
-			'page',
-			[ 'page_namespace', 'page_title' ],
-			$dbr->makeWhereFrom2d( $cognateData, 'page_namespace', 'page_title' ),
-			__METHOD__
-		);
+		$pageRows = $dbr->newSelectQueryBuilder()
+			->select( [ 'page_namespace', 'page_title' ] )
+			->from( 'page' )
+			->where( $dbr->makeWhereFrom2d( $cognateData, 'page_namespace', 'page_title' ) )
+			->caller( __METHOD__ )
+			->fetchResultSet();
 		// Remove pages that do exist on wiki from the cognate data
 		foreach ( $pageRows as $row ) {
 			unset( $cognateData[$row->page_namespace][$row->page_title] );
