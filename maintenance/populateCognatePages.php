@@ -60,29 +60,38 @@ class PopulateCognatePages extends Maintenance {
 
 		$start = $this->getOption( 'start' );
 		if ( $start === null ) {
-			$start = $dbr->selectField( 'page', 'MIN(page_id)', '', __METHOD__ );
+			$start = $dbr->newSelectQueryBuilder()
+				->select( 'MIN(page_id)' )
+				->from( 'page' )
+				->caller( __METHOD__ )
+				->fetchField();
 		}
 		if ( !$start ) {
 			$this->output( "Nothing to do.\n" );
 			return true;
 		}
 
-		$end = $dbr->selectField( 'page', 'MAX(page_id)', '', __METHOD__ );
+		$end = $dbr->newSelectQueryBuilder()
+			->select( 'MAX(page_id)' )
+			->from( 'page' )
+			->caller( __METHOD__ )
+			->fetchField();
+
 		$blockStart = (int)$start;
 		$blockEnd = $blockStart + $this->mBatchSize - 1;
 		$loadBalancerFactory = $services->getDBLoadBalancerFactory();
 
 		while ( $blockStart <= $end ) {
-			$rows = $dbr->select(
-				'page',
-				[ 'page_namespace', 'page_title' ],
-				[
+			$rows = $dbr->newSelectQueryBuilder()
+				->select( [ 'page_namespace', 'page_title' ] )
+				->from( 'page' )
+				->where( [
 					"page_id BETWEEN $blockStart AND $blockEnd",
 					'page_namespace' => $namespaces,
-					'page_is_redirect = 0'
-				],
-				__METHOD__
-			);
+					'page_is_redirect = 0',
+				] )
+				->caller( __METHOD__ )
+				->fetchResultSet();
 
 			$titleDetails = [];
 			foreach ( $rows as $row ) {
