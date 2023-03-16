@@ -1,78 +1,49 @@
 <?php
 
+declare( strict_types = 1 );
+
 namespace Cognate;
 
 use Cognate\HookHandler\CognatePageHookHandler;
 use MediaWiki\MediaWikiServices;
+use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Wikimedia\Rdbms\ConnectionManager;
 
 /**
  * @license GPL-2.0-or-later
  * @author Addshore
- * @codeCoverageIgnore
  */
 class CognateServices {
 
-	/**
-	 * @param MediaWikiServices|null $services
-	 * @param string $name
-	 * phpcs:ignore MediaWiki.Commenting.FunctionComment.ObjectTypeHintReturn
-	 * @return object
-	 */
-	private static function getService( ?MediaWikiServices $services, $name ) {
-		if ( $services === null ) {
-			$services = MediaWikiServices::getInstance();
-		}
-		return $services->getService( $name );
+	public static function getLogger( ContainerInterface $services = null ): LoggerInterface {
+		return ( $services ?: MediaWikiServices::getInstance() )
+			->get( 'CognateLogger' );
 	}
 
-	/**
-	 * @param MediaWikiServices|null $services
-	 * @return LoggerInterface
-	 */
-	public static function getLogger( MediaWikiServices $services = null ) {
-		return self::getService( $services, 'CognateLogger' );
+	public static function getRepo( ContainerInterface $services = null ): CognateRepo {
+		return ( $services ?: MediaWikiServices::getInstance() )
+			->get( 'CognateRepo' );
 	}
 
-	/**
-	 * @param MediaWikiServices|null $services
-	 * @return CognateRepo
-	 */
-	public static function getRepo( MediaWikiServices $services = null ) {
-		return self::getService( $services, 'CognateRepo' );
+	public static function getConnectionManager( ContainerInterface $services = null ): ConnectionManager {
+		return ( $services ?: MediaWikiServices::getInstance() )
+			->get( 'CognateConnectionManager' );
 	}
 
-	/**
-	 * @param MediaWikiServices|null $services
-	 * @return ConnectionManager
-	 */
-	public static function getConnectionManager( MediaWikiServices $services = null ) {
-		return self::getService( $services, 'CognateConnectionManager' );
+	public static function getStore( ContainerInterface $services = null ): CognateStore {
+		return ( $services ?: MediaWikiServices::getInstance() )
+			->get( 'CognateStore' );
 	}
 
-	/**
-	 * @param MediaWikiServices|null $services
-	 * @return CognateStore
-	 */
-	public static function getStore( MediaWikiServices $services = null ) {
-		return self::getService( $services, 'CognateStore' );
+	public static function getPageHookHandler( ContainerInterface $services = null ): CognatePageHookHandler {
+		return ( $services ?: MediaWikiServices::getInstance() )
+			->get( 'CognatePageHookHandler' );
 	}
 
-	/**
-	 * @param MediaWikiServices|null $services
-	 * @return CognatePageHookHandler
-	 */
-	public static function getPageHookHandler( MediaWikiServices $services = null ) {
-		return self::getService( $services, 'CognatePageHookHandler' );
-	}
-
-	/**
-	 * @param MediaWikiServices|null $services
-	 * @return CacheInvalidator
-	 */
-	public static function getCacheInvalidator( MediaWikiServices $services = null ) {
-		return self::getService( $services, 'CognateCacheInvalidator' );
+	public static function getCacheInvalidator( ContainerInterface $services = null ): CacheInvalidator {
+		return ( $services ?: MediaWikiServices::getInstance() )
+			->get( 'CognateCacheInvalidator' );
 	}
 
 }
