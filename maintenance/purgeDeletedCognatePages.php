@@ -109,6 +109,10 @@ class PurgeDeletedCognatePages extends Maintenance {
 			->caller( __METHOD__ )
 			->fetchResultSet();
 
+		if ( !$cognateRows->numRows() ) {
+			return false;
+		}
+
 		// Get an array to select with
 		$cognateData = [];
 		foreach ( $cognateRows as $row ) {
