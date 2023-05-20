@@ -15,7 +15,7 @@ class StringHasherTest extends \MediaWikiIntegrationTestCase {
 
 	use CheckSystemReqsTrait;
 
-	public function provideHashes() {
+	public static function provideHashes() {
 		return [
 			[ '', -2039914840885289964 ],
 			[ ' ', 3938934374763561727 ],

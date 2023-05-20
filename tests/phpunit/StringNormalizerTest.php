@@ -12,7 +12,7 @@ use Cognate\StringNormalizer;
  */
 class StringNormalizerTest extends \MediaWikiIntegrationTestCase {
 
-	public function provideNormalizations() {
+	public static function provideNormalizations() {
 		return [
 			[ 'JustAString', 'JustAString' ],
 			[ 'Foo bar', 'Foo_bar' ],

@@ -17,7 +17,7 @@ use Wikimedia\Rdbms\ConnectionManager;
  */
 class ServiceWiringTest extends \MediaWikiIntegrationTestCase {
 
-	public function provideServices() {
+	public static function provideServices() {
 		return [
 			[ 'CognateRepo', CognateRepo::class ],
 			[ 'CognateConnectionManager', ConnectionManager::class ],
