@@ -2,6 +2,7 @@
 
 namespace Cognate\HookHandler;
 
+use BadMethodCallException;
 use Cognate\CognateRepo;
 use Cognate\CognateServices;
 use DeferrableUpdate;
@@ -9,7 +10,6 @@ use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\RevisionRecord;
 use MWCallableUpdate;
-use MWException;
 use Title;
 
 /**
@@ -62,11 +62,10 @@ class CognatePageHookHandler {
 	 * This is intended for use while testing and will fail if MW_PHPUNIT_TEST is not defined.
 	 *
 	 * @param callable $callback
-	 * @throws MWException
 	 */
 	public function overrideRevisionNewFromId( callable $callback ) {
 		if ( !defined( 'MW_PHPUNIT_TEST' ) ) {
-			throw new MWException(
+			throw new BadMethodCallException(
 				'Cannot override RevisionLookup::getRevisionById callback in operation.'
 			);
 		}
@@ -78,11 +77,10 @@ class CognatePageHookHandler {
 	 * This is intended for use while testing and will fail if MW_PHPUNIT_TEST is not defined.
 	 *
 	 * @param callable $callback
-	 * @throws MWException
 	 */
 	public function overridePreviousRevision( callable $callback ) {
 		if ( !defined( 'MW_PHPUNIT_TEST' ) ) {
-			throw new MWException(
+			throw new BadMethodCallException(
 				'Cannot override RevisionLookup::getPreviousRevision callback in operation.'
 			);
 		}
