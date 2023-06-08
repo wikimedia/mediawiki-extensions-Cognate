@@ -7,6 +7,7 @@ use MediaWiki\MediaWikiServices;
 use RuntimeException;
 use Wikimedia\Rdbms\ConnectionManager;
 use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\SelectQueryBuilder;
 
 if ( getenv( 'MW_INSTALL_PATH' ) !== false ) {
@@ -80,8 +81,8 @@ class PurgeDeletedCognatePages extends Maintenance {
 	}
 
 	/**
-	 * @param IDatabase $dbr
-	 * @param IDatabase $dbrCognate
+	 * @param IReadableDatabase $dbr
+	 * @param IReadableDatabase $dbrCognate
 	 * @param IDatabase $dbwCognate
 	 * @param int $siteKey
 	 * @param string $start
@@ -89,8 +90,8 @@ class PurgeDeletedCognatePages extends Maintenance {
 	 * @return bool|string cgpa_title to continue from or false if no more rows to process
 	 */
 	private function executeMainLoop(
-		IDatabase $dbr,
-		IDatabase $dbrCognate,
+		IReadableDatabase $dbr,
+		IReadableDatabase $dbrCognate,
 		IDatabase $dbwCognate,
 		$siteKey,
 		$start
