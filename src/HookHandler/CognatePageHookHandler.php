@@ -9,8 +9,8 @@ use DeferrableUpdate;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\Title\Title;
 use MWCallableUpdate;
-use Title;
 
 /**
  * @license GPL-2.0-or-later

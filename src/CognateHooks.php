@@ -9,9 +9,9 @@ use DeferrableUpdate;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Storage\EditResult;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
 use ParserOutput;
-use Title;
 use WikiPage;
 
 /**

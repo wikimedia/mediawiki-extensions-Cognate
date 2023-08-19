@@ -5,7 +5,7 @@ namespace Cognate;
 use HTMLCacheUpdateJob;
 use Job;
 use MediaWiki\MediaWikiServices;
-use Title;
+use MediaWiki\Title\Title;
 
 /**
  * A job that runs on local wikis queuing HTMLCacheUpdateJob internally.
