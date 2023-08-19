@@ -6,9 +6,9 @@ use Cognate\CacheInvalidator;
 use Cognate\LocalJobSubmitJob;
 use Job;
 use JobQueueGroup;
+use MediaWiki\Title\Title;
 use MediaWikiIntegrationTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
-use Title;
 
 /**
  * @covers \Cognate\CacheInvalidator

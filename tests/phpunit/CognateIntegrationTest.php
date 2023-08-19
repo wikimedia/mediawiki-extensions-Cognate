@@ -6,9 +6,9 @@ use Cognate\CognateRepo;
 use Cognate\CognateStore;
 use DeferredUpdates;
 use MediaWiki\Linker\LinkTarget;
+use MediaWiki\Title\Title;
 use MediaWikiIntegrationTestCase;
 use PageArchive;
-use Title;
 use TitleValue;
 use User;
 

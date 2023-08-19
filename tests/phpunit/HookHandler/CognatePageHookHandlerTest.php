@@ -11,8 +11,8 @@ use Content;
 use DeferrableUpdate;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\Title\Title;
 use PHPUnit\Framework\MockObject\MockObject;
-use Title;
 
 /**
  * @covers \Cognate\HookHandler\CognatePageHookHandler
