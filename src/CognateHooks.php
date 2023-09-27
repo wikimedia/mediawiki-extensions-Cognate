@@ -4,11 +4,15 @@ namespace Cognate;
 
 use Cognate\HookHandler\CognateParseHookHandler;
 use Content;
-use DatabaseUpdater;
 use DeferrableUpdate;
+use MediaWiki\Content\Hook\ContentAlterParserOutputHook;
+use MediaWiki\Hook\PageMoveCompleteHook;
 use MediaWiki\Linker\LinkTarget;
+use MediaWiki\Page\Hook\ArticleUndeleteHook;
+use MediaWiki\Page\Hook\WikiPageDeletionUpdatesHook;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Storage\EditResult;
+use MediaWiki\Storage\Hook\PageSaveCompleteHook;
 use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
 use ParserOutput;
@@ -19,7 +23,13 @@ use WikiPage;
  * @author Gabriel Birke < gabriel.birke@wikimedia.de >
  * @author Addshore
  */
-class CognateHooks {
+class CognateHooks implements
+	PageSaveCompleteHook,
+	PageMoveCompleteHook,
+	ContentAlterParserOutputHook,
+	WikiPageDeletionUpdatesHook,
+	ArticleUndeleteHook
+{
 
 	/**
 	 * @param WikiPage $wikiPage
@@ -29,12 +39,12 @@ class CognateHooks {
 	 * @param RevisionRecord $revisionRecord
 	 * @param EditResult $editResult unused
 	 */
-	public static function onPageSaveComplete(
-		WikiPage $wikiPage,
-		UserIdentity $userIdentity,
-		string $summary,
-		int $flags,
-		RevisionRecord $revisionRecord,
+	public function onPageSaveComplete(
+		$wikiPage,
+		$userIdentity,
+		$summary,
+		$flags,
+		$revisionRecord,
 		$editResult
 	) {
 		CognateServices::getPageHookHandler()->onPageContentSaveComplete(
@@ -48,10 +58,10 @@ class CognateHooks {
 	 * @param Content|null $content
 	 * @param DeferrableUpdate[] &$updates
 	 */
-	public static function onWikiPageDeletionUpdates(
-		WikiPage $page,
+	public function onWikiPageDeletionUpdates(
+		$page,
 		$content,
-		array &$updates
+		&$updates
 	) {
 		CognateServices::getPageHookHandler()
 			->onWikiPageDeletionUpdates( $page->getTitle(), $updates );
@@ -62,12 +72,14 @@ class CognateHooks {
 	 * @param bool $create
 	 * @param string $comment
 	 * @param int $oldPageId
+	 * @param array $restoredPages
 	 */
-	public static function onArticleUndelete(
-		Title $title,
+	public function onArticleUndelete(
+		$title,
 		$create,
 		$comment,
-		$oldPageId
+		$oldPageId,
+		$restoredPages
 	) {
 		CognateServices::getPageHookHandler()->onArticleUndelete( $title );
 	}
@@ -81,9 +93,9 @@ class CognateHooks {
 	 * @param string $reason
 	 * @param RevisionRecord $nullRevisionRecord
 	 */
-	public static function onPageMoveComplete(
-		LinkTarget $title,
-		LinkTarget $newTitle,
+	public function onPageMoveComplete(
+		$title,
+		$newTitle,
 		$userIdentity,
 		$oldid,
 		$newid,
@@ -98,10 +110,10 @@ class CognateHooks {
 	 * @param Title $title
 	 * @param ParserOutput $parserOutput
 	 */
-	public static function onContentAlterParserOutput(
+	public function onContentAlterParserOutput(
 		$content,
-		Title $title,
-		ParserOutput $parserOutput
+		$title,
+		$parserOutput
 	) {
 		// this hook tries to access repo SiteLinkTable
 		// it interferes with any test that parses something, like a page or a message
@@ -111,17 +123,5 @@ class CognateHooks {
 
 		$handler = CognateParseHookHandler::newFromGlobalState();
 		$handler->doContentAlterParserOutput( $title, $parserOutput );
-	}
-
-	/**
-	 * Run database updates
-	 *
-	 * @see CognateUpdater regarding the complexities of this hook
-	 *
-	 * @param DatabaseUpdater $updater
-	 */
-	public static function onLoadExtensionSchemaUpdates( DatabaseUpdater $updater ) {
-		// Add our updater
-		$updater->addExtensionUpdate( [ [ CognateUpdater::class, 'update' ] ] );
 	}
 }

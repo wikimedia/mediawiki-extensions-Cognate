@@ -45,12 +45,20 @@
 		"src/ServiceWiring.php"
 	],
 	"Hooks": {
-		"PageSaveComplete": "Cognate\\CognateHooks::onPageSaveComplete",
-		"PageMoveComplete": "Cognate\\CognateHooks::onPageMoveComplete",
-		"ContentAlterParserOutput": "Cognate\\CognateHooks::onContentAlterParserOutput",
-		"WikiPageDeletionUpdates": "Cognate\\CognateHooks::onWikiPageDeletionUpdates",
-		"ArticleUndelete": "Cognate\\CognateHooks::onArticleUndelete",
-		"LoadExtensionSchemaUpdates": "Cognate\\CognateHooks::onLoadExtensionSchemaUpdates"
+		"PageSaveComplete": "main",
+		"PageMoveComplete": "main",
+		"ContentAlterParserOutput": "main",
+		"WikiPageDeletionUpdates": "main",
+		"ArticleUndelete": "main",
+		"LoadExtensionSchemaUpdates": "schema"
+	},
+	"HookHandlers": {
+		"main": {
+			"class": "Cognate\\CognateHooks"
+		},
+		"schema": {
+			"class": "Cognate\\CognateSchemaHooks"
+		}
 	},
 	"MessagesDirs": {
 		"Cognate": [
