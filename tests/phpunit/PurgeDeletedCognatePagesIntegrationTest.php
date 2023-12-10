@@ -6,7 +6,7 @@ use Cognate\CognateStore;
 use Cognate\PurgeDeletedCognatePages;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Tests\Maintenance\MaintenanceBaseTestCase;
-use TitleValue;
+use MediaWiki\Title\TitleValue;
 
 // files in maintenance/ are not autoloaded, so load explicitly
 require_once __DIR__ . '/../../maintenance/purgeDeletedCognatePages.php';

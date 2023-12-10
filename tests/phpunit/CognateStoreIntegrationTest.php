@@ -5,7 +5,7 @@ namespace Cognate\Tests;
 use Cognate\CognateStore;
 use Cognate\StringHasher;
 use MediaWiki\MediaWikiServices;
-use TitleValue;
+use MediaWiki\Title\TitleValue;
 
 /**
  * @covers \Cognate\CognateStore

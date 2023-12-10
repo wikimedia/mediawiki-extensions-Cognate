@@ -8,7 +8,7 @@ use Cognate\CognateRepo;
 use Cognate\CognateStore;
 use Cognate\HookHandler\CognatePageHookHandler;
 use Content;
-use DeferrableUpdate;
+use MediaWiki\Deferred\DeferrableUpdate;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Title\Title;

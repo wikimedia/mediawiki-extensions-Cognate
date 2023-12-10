@@ -5,12 +5,12 @@ namespace Cognate\HookHandler;
 use BadMethodCallException;
 use Cognate\CognateRepo;
 use Cognate\CognateServices;
-use DeferrableUpdate;
+use MediaWiki\Deferred\DeferrableUpdate;
+use MediaWiki\Deferred\MWCallableUpdate;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Title\Title;
-use MWCallableUpdate;
 
 /**
  * @license GPL-2.0-or-later

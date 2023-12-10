@@ -3,8 +3,8 @@
 namespace Cognate;
 
 use MediaWiki\Linker\LinkTarget;
+use MediaWiki\Title\TitleValue;
 use RuntimeException;
-use TitleValue;
 use Wikimedia\Rdbms\ConnectionManager;
 use Wikimedia\Rdbms\DBReadOnlyError;
 

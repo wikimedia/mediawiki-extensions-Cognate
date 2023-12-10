@@ -5,8 +5,8 @@ namespace Cognate\Tests;
 use Cognate\CognateStore;
 use Cognate\StringHasher;
 use Cognate\StringNormalizer;
+use MediaWiki\Title\TitleValue;
 use PHPUnit\Framework\TestCase;
-use TitleValue;
 use Wikimedia\Rdbms\ConnectionManager;
 use Wikimedia\Rdbms\DBReadOnlyError;
 

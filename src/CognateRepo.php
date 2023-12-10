@@ -4,10 +4,10 @@ namespace Cognate;
 
 use Liuggio\StatsdClient\Factory\StatsdDataFactoryInterface;
 use MediaWiki\Linker\LinkTarget;
+use MediaWiki\Title\TitleFormatter;
 use NullStatsdDataFactory;
 use Psr\Log\LoggerInterface;
 use StatsdAwareInterface;
-use TitleFormatter;
 use Wikimedia\Rdbms\DBReadOnlyError;
 
 /**

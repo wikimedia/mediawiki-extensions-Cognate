@@ -5,11 +5,11 @@ namespace Cognate\Tests;
 use Cognate\CacheInvalidator;
 use Cognate\CognateRepo;
 use Cognate\CognateStore;
+use MediaWiki\Title\TitleFormatter;
+use MediaWiki\Title\TitleValue;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
-use TitleFormatter;
-use TitleValue;
 
 /**
  * @covers \Cognate\CognateRepo

@@ -4,8 +4,8 @@ namespace Cognate;
 
 use Cognate\HookHandler\CognateParseHookHandler;
 use Content;
-use DeferrableUpdate;
 use MediaWiki\Content\Hook\ContentAlterParserOutputHook;
+use MediaWiki\Deferred\DeferrableUpdate;
 use MediaWiki\Hook\PageMoveCompleteHook;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Page\Hook\ArticleUndeleteHook;

@@ -4,13 +4,13 @@ namespace Cognate\Tests;
 
 use Cognate\CognateRepo;
 use Cognate\CognateStore;
-use DeferredUpdates;
+use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleValue;
+use MediaWiki\User\User;
 use MediaWikiIntegrationTestCase;
 use PageArchive;
-use TitleValue;
-use User;
 
 /**
  * @covers \Cognate\CognateHooks
