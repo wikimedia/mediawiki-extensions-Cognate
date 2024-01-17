@@ -20,18 +20,19 @@ use Psr\Log\NullLogger;
 class CognateRepoUnitTest extends \MediaWikiIntegrationTestCase {
 
 	/**
-	 * @param array[] $expectedInvalidateCalls
+	 * @param array|null $expectedInvalidateArguments
 	 *
 	 * @return MockObject|CacheInvalidator
 	 */
-	private function getMockCacheInvalidator( array $expectedInvalidateCalls = [] ) {
+	private function getMockCacheInvalidator( array $expectedInvalidateArguments = null ) {
 		$mock = $this->createMock( CacheInvalidator::class );
-		if ( $expectedInvalidateCalls === [] ) {
+		if ( $expectedInvalidateArguments === null ) {
 			$mock->expects( $this->never() )->method( 'invalidate' );
+		} else {
+			$mock->expects( $this->once() )
+				->method( 'invalidate' )
+				->with( ...$expectedInvalidateArguments );
 		}
-		$mock->expects( $this->atLeast( count( $expectedInvalidateCalls ) ) )
-			->method( 'invalidate' )
-			->withConsecutive( ...$expectedInvalidateCalls );
 		return $mock;
 	}
 
@@ -57,7 +58,7 @@ class CognateRepoUnitTest extends \MediaWikiIntegrationTestCase {
 
 		$repo = new CognateRepo(
 			$store,
-			$this->getMockCacheInvalidator( [ [ [ 'siteName' ], $titleValue ] ] ),
+			$this->getMockCacheInvalidator( [ [ 'siteName' ], $titleValue ] ),
 			$this->getMockTitleFormatter(),
 			new NullLogger()
 		);
@@ -87,7 +88,7 @@ class CognateRepoUnitTest extends \MediaWikiIntegrationTestCase {
 
 		$repo = new CognateRepo(
 			$store,
-			$this->getMockCacheInvalidator( [] ),
+			$this->getMockCacheInvalidator(),
 			$this->getMockTitleFormatter(),
 			$mockLogger
 		);
@@ -104,7 +105,7 @@ class CognateRepoUnitTest extends \MediaWikiIntegrationTestCase {
 
 		$repo = new CognateRepo(
 			$store,
-			$this->getMockCacheInvalidator( [ [ [ 'siteName' ], $titleValue ] ] ),
+			$this->getMockCacheInvalidator( [ [ 'siteName' ], $titleValue ] ),
 			$this->getMockTitleFormatter(),
 			new NullLogger()
 		);
@@ -121,7 +122,7 @@ class CognateRepoUnitTest extends \MediaWikiIntegrationTestCase {
 
 		$repo = new CognateRepo(
 			$store,
-			$this->getMockCacheInvalidator( [] ),
+			$this->getMockCacheInvalidator(),
 			$this->getMockTitleFormatter(),
 			new NullLogger()
 		);
@@ -142,7 +143,7 @@ class CognateRepoUnitTest extends \MediaWikiIntegrationTestCase {
 
 		$repo = new CognateRepo(
 			$store,
-			$this->getMockCacheInvalidator( [] ),
+			$this->getMockCacheInvalidator(),
 			$this->getMockTitleFormatter(),
 			new NullLogger()
 		);
