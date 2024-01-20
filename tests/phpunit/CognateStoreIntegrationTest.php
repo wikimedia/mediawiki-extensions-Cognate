@@ -34,11 +34,6 @@ class CognateStoreIntegrationTest extends \MediaWikiIntegrationTestCase {
 
 		$this->markTestSkippedIfNo64bit();
 
-		$this->tablesUsed = [
-			CognateStore::PAGES_TABLE_NAME,
-			CognateStore::TITLES_TABLE_NAME,
-			CognateStore::SITES_TABLE_NAME,
-		];
 		$this->store = MediaWikiServices::getInstance()->getService( 'CognateStore' );
 		$this->hasher = new StringHasher();
 		$this->UTPageNameHash = $this->hash( 'UTPage' );

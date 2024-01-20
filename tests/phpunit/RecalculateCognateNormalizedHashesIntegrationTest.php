@@ -35,11 +35,6 @@ class RecalculateCognateNormalizedHashesIntegrationTest extends MaintenanceBaseT
 
 		$this->markTestSkippedIfNo64bit();
 
-		$this->tablesUsed = [
-			CognateStore::PAGES_TABLE_NAME,
-			CognateStore::TITLES_TABLE_NAME,
-			CognateStore::SITES_TABLE_NAME,
-		];
 		$this->overrideConfigValue( 'CognateNamespaces', [ $this->getDefaultWikitextNS() ] );
 		$this->store = MediaWikiServices::getInstance()->getService( 'CognateStore' );
 	}

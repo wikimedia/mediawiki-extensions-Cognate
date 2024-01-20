@@ -41,9 +41,6 @@ class CognateIntegrationTest extends MediaWikiIntegrationTestCase {
 		$config = $services->getMainConfig();
 		$this->pageName = 'CognateIntegrationTest-pageName';
 		$this->dbName = $config->get( 'DBname' );
-		$this->tablesUsed[] = CognateStore::TITLES_TABLE_NAME;
-		$this->tablesUsed[] = CognateStore::PAGES_TABLE_NAME;
-		$this->tablesUsed[] = CognateStore::SITES_TABLE_NAME;
 
 		// Insert the current site to our sites table
 		/** @var CognateStore $store */
