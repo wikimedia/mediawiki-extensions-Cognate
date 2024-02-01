@@ -5,6 +5,7 @@ namespace Cognate;
 use Cognate\HookHandler\CognatePageHookHandler;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
+use Psr\Log\LoggerInterface;
 use Wikimedia\Rdbms\ConnectionManager;
 
 /**
@@ -12,11 +13,11 @@ use Wikimedia\Rdbms\ConnectionManager;
  */
 
 return [
-	'CognateLogger' => static function ( MediaWikiServices $services ) {
+	'CognateLogger' => static function ( MediaWikiServices $services ): LoggerInterface {
 		return LoggerFactory::getInstance( 'Cognate' );
 	},
 
-	'CognateRepo' => static function ( MediaWikiServices $services ) {
+	'CognateRepo' => static function ( MediaWikiServices $services ): CognateRepo {
 		$repo = new CognateRepo(
 			CognateServices::getStore( $services ),
 			CognateServices::getCacheInvalidator( $services ),
@@ -29,7 +30,7 @@ return [
 		return $repo;
 	},
 
-	'CognateConnectionManager' => static function ( MediaWikiServices $services ) {
+	'CognateConnectionManager' => static function ( MediaWikiServices $services ): ConnectionManager {
 		$lbFactory = $services->getDBLoadBalancerFactory();
 		$cognateDb = $services->getMainConfig()->get( 'CognateDb' );
 		$cognateCluster = $services->getMainConfig()->get( 'CognateCluster' );
@@ -46,7 +47,7 @@ return [
 		);
 	},
 
-	'CognateStore' => static function ( MediaWikiServices $services ) {
+	'CognateStore' => static function ( MediaWikiServices $services ): CognateStore {
 		return new CognateStore(
 			CognateServices::getConnectionManager( $services ),
 			new StringNormalizer(),
@@ -55,14 +56,14 @@ return [
 		);
 	},
 
-	'CognatePageHookHandler' => static function ( MediaWikiServices $services ) {
+	'CognatePageHookHandler' => static function ( MediaWikiServices $services ): CognatePageHookHandler {
 		return new CognatePageHookHandler(
 			$services->getMainConfig()->get( 'CognateNamespaces' ),
 			$services->getMainConfig()->get( 'DBname' )
 		);
 	},
 
-	'CognateCacheInvalidator' => static function ( MediaWikiServices $services ) {
+	'CognateCacheInvalidator' => static function ( MediaWikiServices $services ): CacheInvalidator {
 		return new CacheInvalidator( $services->getJobQueueGroup() );
 	},
 ];
