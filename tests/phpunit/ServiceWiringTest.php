@@ -7,7 +7,6 @@ use Cognate\CognateRepo;
 use Cognate\CognateStore;
 use Cognate\HookHandler\CognatePageHookHandler;
 use MediaWiki\MediaWikiServices;
-use Wikimedia\Rdbms\ConnectionManager;
 
 /**
  * @coversNothing
@@ -20,7 +19,6 @@ class ServiceWiringTest extends \MediaWikiIntegrationTestCase {
 	public static function provideServices() {
 		return [
 			[ 'CognateRepo', CognateRepo::class ],
-			[ 'CognateConnectionManager', ConnectionManager::class ],
 			[ 'CognateStore', CognateStore::class ],
 			[ 'CognatePageHookHandler', CognatePageHookHandler::class ],
 			[ 'CognateCacheInvalidator', CacheInvalidator::class ],

@@ -5,7 +5,6 @@ namespace Cognate;
 use Maintenance;
 use MediaWiki\MediaWikiServices;
 use RuntimeException;
-use Wikimedia\Rdbms\ConnectionManager;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\SelectQueryBuilder;
@@ -41,9 +40,8 @@ class PurgeDeletedCognatePages extends Maintenance {
 
 		$services = MediaWikiServices::getInstance();
 
-		/** @var ConnectionManager $connectionManager */
-		$connectionManager = $services->getService( 'CognateConnectionManager' );
-		$dbrCognate = $connectionManager->getReadConnection();
+		$connectionProvider = $services->getConnectionProvider();
+		$dbrCognate = $connectionProvider->getReplicaDatabase( 'virtual-cognate' );
 
 		$dbName = $services->getMainConfig()->get( 'DBname' );
 		$stringHasher = new StringHasher();
@@ -68,7 +66,7 @@ class PurgeDeletedCognatePages extends Maintenance {
 		}
 
 		$loadBalancerFactory = $services->getDBLoadBalancerFactory();
-		$dbwCognate = $connectionManager->getWriteConnection();
+		$dbwCognate = $connectionProvider->getPrimaryDatabase( 'virtual-cognate' );
 		$dbr = $this->getDB( DB_REPLICA );
 
 		while ( $start ) {

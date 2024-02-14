@@ -7,8 +7,8 @@ use Cognate\StringHasher;
 use Cognate\StringNormalizer;
 use MediaWiki\Title\TitleValue;
 use PHPUnit\Framework\TestCase;
-use Wikimedia\Rdbms\ConnectionManager;
 use Wikimedia\Rdbms\DBReadOnlyError;
+use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
  * @covers \Cognate\CognateStore
@@ -20,11 +20,11 @@ class CognateStoreUnitTest extends TestCase {
 	use CheckSystemReqsTrait;
 
 	private function newReadOnlyCognateStore() {
-		/** @var ConnectionManager $connectionManager */
-		$connectionManager = $this->createMock( ConnectionManager::class );
+		/** @var IConnectionProvider $connectionProvider */
+		$connectionProvider = $this->createMock( IConnectionProvider::class );
 
 		return new CognateStore(
-			$connectionManager,
+			$connectionProvider,
 			new StringNormalizer(),
 			new StringHasher(),
 			true
