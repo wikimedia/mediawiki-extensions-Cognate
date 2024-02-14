@@ -44,11 +44,14 @@ No translation links will be generated, except if you add manual entries to the 
 ### Multiple language setup
 
 For the multiple language setup (that reflects the state of the Wiktionary projects), you need to have at least 2 MediaWiki installations in different languages that act as the different Wiktionary projects.
-You need to set up the load balancer configurations with wiki names for each project.
-You need to add a line like this to the `LocalSettings.php` of all the other Wikis:
+You can use virtual domain mapping so that a central database is used for your entire wiki farm.
 
-    $wgCognateDb = 'wiktionary'
-    $wgCognateCluster = 'extension1'
+    $wgVirtualDomainsMapping['virtual-cognate'] = [ 'db' => 'wiktionary' ];
+
+If the database is on an external cluster, you will also need to configure that.
+
+    $wgVirtualDomainsMapping['virtual-cognate'] = [ 'cluster' => 'extension1', 'db' => 'wiktionary' ];
+
 
 
 ## Development
@@ -64,8 +67,6 @@ To run Cognate locally in multiple language setup (that reflects the state of th
 1. Set the following in your `LocalSetting.php`:
 ```
 $wgEnableParserCache = false; // Disable the parser cache to be able to see the interwiki links added immediately after you create a page.
-
-$wgCognateDb = 'default'; // The name of the database which will have Cognate, in this case the default wiki.
 
 $wgCognateNamespaces = [ 0 ]; // Cognate will work only for entries in the main namespace
 

@@ -8,7 +8,6 @@ use Cognate\HookHandler\CognatePageHookHandler;
 use MediaWiki\MediaWikiServices;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
-use Wikimedia\Rdbms\ConnectionManager;
 
 /**
  * @license GPL-2.0-or-later
@@ -24,11 +23,6 @@ class CognateServices {
 	public static function getRepo( ContainerInterface $services = null ): CognateRepo {
 		return ( $services ?: MediaWikiServices::getInstance() )
 			->get( 'CognateRepo' );
-	}
-
-	public static function getConnectionManager( ContainerInterface $services = null ): ConnectionManager {
-		return ( $services ?: MediaWikiServices::getInstance() )
-			->get( 'CognateConnectionManager' );
 	}
 
 	public static function getStore( ContainerInterface $services = null ): CognateStore {

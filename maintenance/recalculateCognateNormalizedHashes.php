@@ -4,7 +4,6 @@ namespace Cognate;
 
 use Maintenance;
 use MediaWiki\MediaWikiServices;
-use Wikimedia\Rdbms\ConnectionManager;
 use Wikimedia\Rdbms\Database;
 use Wikimedia\Rdbms\DBUnexpectedError;
 use Wikimedia\Rdbms\SelectQueryBuilder;
@@ -54,10 +53,9 @@ class RecalculateCognateNormalizedHashes extends Maintenance {
 
 	private function setupServices() {
 		$services = MediaWikiServices::getInstance();
-		/** @var ConnectionManager $connectionManager */
-		$connectionManager = $services->getService( 'CognateConnectionManager' );
-		$this->dbr = $connectionManager->getReadConnection();
-		$this->dbw = $connectionManager->getWriteConnection();
+		$connectionProvider = $services->getConnectionProvider();
+		$this->dbr = $connectionProvider->getReplicaDatabase( 'virtual-cognate' );
+		$this->dbw = $connectionProvider->getPrimaryDatabase( 'virtual-cognate' );
 		$this->stringHasher = new StringHasher();
 		$this->stringNormalizer = new StringNormalizer();
 	}

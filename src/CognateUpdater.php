@@ -5,7 +5,6 @@ namespace Cognate;
 use DatabaseUpdater;
 use MediaWiki\MediaWikiServices;
 use Wikimedia\Rdbms\IMaintainableDatabase;
-use Wikimedia\Rdbms\LoadBalancer;
 
 /**
  * Helper class for CognateHooks::onLoadExtensionSchemaUpdates
@@ -29,30 +28,11 @@ class CognateUpdater {
 	 * @param DatabaseUpdater $updater
 	 */
 	private function __construct( DatabaseUpdater $updater ) {
-		global $wgCognateDb, $wgCognateCluster;
-
 		$this->updater = $updater;
 
-		// At install time, extension configuration is not loaded T198331
-		if ( !isset( $wgCognateDb ) ) {
-			$wgCognateDb = false;
-		}
-		if ( !isset( $wgCognateCluster ) ) {
-			$wgCognateCluster = false;
-		}
+		$services = MediaWikiServices::getInstance();
 
-		if ( $wgCognateDb === false && $wgCognateCluster === false ) {
-			$this->db = $updater->getDB();
-		} else {
-			$services = MediaWikiServices::getInstance();
-			if ( $wgCognateCluster !== false ) {
-				$loadBalancerFactory = $services->getDBLoadBalancerFactory();
-				$loadBalancer = $loadBalancerFactory->getExternalLB( $wgCognateCluster );
-			} else {
-				$loadBalancer = $services->getDBLoadBalancer();
-			}
-			$this->db = $loadBalancer->getConnection( LoadBalancer::DB_PRIMARY, [], $wgCognateDb );
-		}
+		$this->db = $services->getConnectionProvider()->getPrimaryDatabase( 'virtual-cognate' );
 	}
 
 	private function doUpdate() {

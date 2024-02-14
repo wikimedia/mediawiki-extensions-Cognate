@@ -6,7 +6,6 @@ use Cognate\HookHandler\CognatePageHookHandler;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
 use Psr\Log\LoggerInterface;
-use Wikimedia\Rdbms\ConnectionManager;
 
 /**
  * Cognate wiring for MediaWiki services.
@@ -30,26 +29,9 @@ return [
 		return $repo;
 	},
 
-	'CognateConnectionManager' => static function ( MediaWikiServices $services ): ConnectionManager {
-		$lbFactory = $services->getDBLoadBalancerFactory();
-		$cognateDb = $services->getMainConfig()->get( 'CognateDb' );
-		$cognateCluster = $services->getMainConfig()->get( 'CognateCluster' );
-
-		if ( $cognateCluster ) {
-			$lb = $lbFactory->getExternalLB( $cognateCluster );
-		} else {
-			$lb = $lbFactory->getMainLB( $cognateDb );
-		}
-
-		return new ConnectionManager(
-			$lb,
-			$cognateDb
-		);
-	},
-
 	'CognateStore' => static function ( MediaWikiServices $services ): CognateStore {
 		return new CognateStore(
-			CognateServices::getConnectionManager( $services ),
+			$services->getConnectionProvider(),
 			new StringNormalizer(),
 			new StringHasher(),
 			$services->getMainConfig()->get( 'CognateReadOnly' )
