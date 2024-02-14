@@ -22,14 +22,6 @@
 		"CognateCacheUpdateJob": "Cognate\\CacheUpdateJob"
 	},
 	"config": {
-		"CognateDb": {
-			"description": "The database to use for storing Cognate data. The default is to use the db of the current site.",
-			"value": false
-		},
-		"CognateCluster": {
-			"description": "The cluster to use for storing Cognate data. The default is to use the cluster / server of the current site. See $wgLBFactoryConf.",
-			"value": false
-		},
 		"CognateReadOnly": {
 			"description": "Sets the CognateStore to be read only. This will mean the cognate_pages and cognate_titles tables will become out of sync with reality and populateCognatePages.php will have to be run after read only mode is disabled as well as deleted pages purged from the table.",
 			"value": false
@@ -65,5 +57,8 @@
 			"i18n"
 		]
 	},
+	"DatabaseVirtualDomains": [
+		"virtual-cognate"
+	],
 	"manifest_version": 2
 }

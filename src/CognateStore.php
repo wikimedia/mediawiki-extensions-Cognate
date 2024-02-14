@@ -5,8 +5,8 @@ namespace Cognate;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Title\TitleValue;
 use RuntimeException;
-use Wikimedia\Rdbms\ConnectionManager;
 use Wikimedia\Rdbms\DBReadOnlyError;
+use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
  * Database access for the Cognate tables.
@@ -21,9 +21,9 @@ use Wikimedia\Rdbms\DBReadOnlyError;
 class CognateStore {
 
 	/**
-	 * @var ConnectionManager
+	 * @var IConnectionProvider
 	 */
-	private $connectionManager;
+	private $connectionProvider;
 
 	/**
 	 * @var StringNormalizer
@@ -45,18 +45,18 @@ class CognateStore {
 	public const TITLES_TABLE_NAME = 'cognate_titles';
 
 	/**
-	 * @param ConnectionManager $connectionManager
+	 * @param IConnectionProvider $connectionProvider
 	 * @param StringNormalizer $stringNormalizer
 	 * @param StringHasher $stringHasher
 	 * @param bool $readOnly Is Cognate in readonly mode?
 	 */
 	public function __construct(
-		ConnectionManager $connectionManager,
+		IConnectionProvider $connectionProvider,
 		StringNormalizer $stringNormalizer,
 		StringHasher $stringHasher,
 		$readOnly
 	) {
-		$this->connectionManager = $connectionManager;
+		$this->connectionProvider = $connectionProvider;
 		$this->stringNormalizer = $stringNormalizer;
 		$this->stringHasher = $stringHasher;
 		$this->readOnly = $readOnly;
@@ -77,7 +77,7 @@ class CognateStore {
 			$this->throwReadOnlyException();
 		}
 
-		$dbr = $this->connectionManager->getReadConnection();
+		$dbr = $this->connectionProvider->getReplicaDatabase( 'virtual-cognate' );
 
 		list( $pagesToInsert, $titlesToInsert ) = $this->buildRows(
 			$linkTarget,
@@ -97,7 +97,7 @@ class CognateStore {
 
 		$insertQueryCounter = 0;
 
-		$dbw = $this->connectionManager->getWriteConnection();
+		$dbw = $this->connectionProvider->getPrimaryDatabase( 'virtual-cognate' );
 		if ( !$row ) {
 			$dbw->insert(
 				self::TITLES_TABLE_NAME,
@@ -138,7 +138,7 @@ class CognateStore {
 			'cgpa_title' => $this->getStringHash( $linkTarget->getDBkey() ),
 			'cgpa_namespace' => $linkTarget->getNamespace(),
 		];
-		$dbw = $this->connectionManager->getWriteConnection();
+		$dbw = $this->connectionProvider->getPrimaryDatabase( 'virtual-cognate' );
 		$result = $dbw->delete( self::PAGES_TABLE_NAME, $pageData, __METHOD__ );
 
 		return (bool)$result;
@@ -152,7 +152,7 @@ class CognateStore {
 	 *                 [ 'interwiki' => 'en', 'namespaceID' => 0, 'title' => 'Berlin' ]
 	 */
 	public function selectLinkDetailsForPage( $dbName, LinkTarget $linkTarget ) {
-		$dbr = $this->connectionManager->getReadConnection();
+		$dbr = $this->connectionProvider->getReplicaDatabase( 'virtual-cognate' );
 		$result = $dbr->newSelectQueryBuilder()
 			->select( [
 				'cgsi_interwiki',
@@ -188,7 +188,7 @@ class CognateStore {
 	 * @return string[] array of dbnames
 	 */
 	public function selectSitesForPage( LinkTarget $linkTarget ) {
-		$dbr = $this->connectionManager->getReadConnection();
+		$dbr = $this->connectionProvider->getReplicaDatabase( 'virtual-cognate' );
 		return $dbr->newSelectQueryBuilder()
 			->select( 'cgsi_dbname' )
 			->from( self::TITLES_TABLE_NAME )
@@ -230,7 +230,7 @@ class CognateStore {
 			);
 		}
 
-		$dbw = $this->connectionManager->getWriteConnection();
+		$dbw = $this->connectionProvider->getPrimaryDatabase( 'virtual-cognate' );
 		$dbw->insert(
 			self::TITLES_TABLE_NAME,
 			$titlesToInsert,
@@ -294,7 +294,7 @@ class CognateStore {
 			];
 		}
 
-		$dbw = $this->connectionManager->getWriteConnection();
+		$dbw = $this->connectionProvider->getPrimaryDatabase( 'virtual-cognate' );
 		$dbw->insert(
 			'cognate_sites',
 			$toInsert,
@@ -315,7 +315,7 @@ class CognateStore {
 			throw new RuntimeException( __METHOD__ . ' can only be used for maintenance or tests.' );
 		}
 
-		$dbw = $this->connectionManager->getWriteConnection();
+		$dbw = $this->connectionProvider->getPrimaryDatabase( 'virtual-cognate' );
 		$dbw->delete(
 			'cognate_pages',
 			[
