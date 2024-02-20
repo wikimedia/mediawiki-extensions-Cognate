@@ -2,7 +2,7 @@
 
 namespace Cognate;
 
-use DatabaseUpdater;
+use MediaWiki\Installer\DatabaseUpdater;
 use MediaWiki\Installer\Hook\LoadExtensionSchemaUpdatesHook;
 
 /**
@@ -13,12 +13,17 @@ class CognateSchemaHooks implements LoadExtensionSchemaUpdatesHook {
 	/**
 	 * Run database updates
 	 *
-	 * @see CognateUpdater regarding the complexities of this hook
-	 *
 	 * @param DatabaseUpdater $updater
 	 */
 	public function onLoadExtensionSchemaUpdates( $updater ) {
-		// Add our updater
-		$updater->addExtensionUpdate( [ [ CognateUpdater::class, 'update' ] ] );
+		$dbType = $updater->getDB()->getType();
+
+		$updater->addExtensionUpdateOnVirtualDomain( [
+			'virtual-cognate',
+			'addTable',
+			'cognate_pages',
+			__DIR__ . '/../sql/' . $dbType . '/tables-generated.sql',
+			true
+		] );
 	}
 }
