@@ -15,6 +15,8 @@ use Psr\Log\LoggerInterface;
  */
 class CognateServices {
 
+	public const VIRTUAL_DOMAIN = 'virtual-cognate';
+
 	public static function getLogger( ContainerInterface $services = null ): LoggerInterface {
 		return ( $services ?: MediaWikiServices::getInstance() )
 			->get( 'CognateLogger' );

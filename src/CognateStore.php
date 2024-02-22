@@ -77,7 +77,7 @@ class CognateStore {
 			$this->throwReadOnlyException();
 		}
 
-		$dbr = $this->connectionProvider->getReplicaDatabase( 'virtual-cognate' );
+		$dbr = $this->connectionProvider->getReplicaDatabase( CognateServices::VIRTUAL_DOMAIN );
 
 		list( $pagesToInsert, $titlesToInsert ) = $this->buildRows(
 			$linkTarget,
@@ -97,7 +97,7 @@ class CognateStore {
 
 		$insertQueryCounter = 0;
 
-		$dbw = $this->connectionProvider->getPrimaryDatabase( 'virtual-cognate' );
+		$dbw = $this->connectionProvider->getPrimaryDatabase( CognateServices::VIRTUAL_DOMAIN );
 		if ( !$row ) {
 			$dbw->insert(
 				self::TITLES_TABLE_NAME,
@@ -138,7 +138,7 @@ class CognateStore {
 			'cgpa_title' => $this->getStringHash( $linkTarget->getDBkey() ),
 			'cgpa_namespace' => $linkTarget->getNamespace(),
 		];
-		$dbw = $this->connectionProvider->getPrimaryDatabase( 'virtual-cognate' );
+		$dbw = $this->connectionProvider->getPrimaryDatabase( CognateServices::VIRTUAL_DOMAIN );
 		$result = $dbw->delete( self::PAGES_TABLE_NAME, $pageData, __METHOD__ );
 
 		return (bool)$result;
@@ -152,7 +152,7 @@ class CognateStore {
 	 *                 [ 'interwiki' => 'en', 'namespaceID' => 0, 'title' => 'Berlin' ]
 	 */
 	public function selectLinkDetailsForPage( $dbName, LinkTarget $linkTarget ) {
-		$dbr = $this->connectionProvider->getReplicaDatabase( 'virtual-cognate' );
+		$dbr = $this->connectionProvider->getReplicaDatabase( CognateServices::VIRTUAL_DOMAIN );
 		$result = $dbr->newSelectQueryBuilder()
 			->select( [
 				'cgsi_interwiki',
@@ -188,7 +188,7 @@ class CognateStore {
 	 * @return string[] array of dbnames
 	 */
 	public function selectSitesForPage( LinkTarget $linkTarget ) {
-		$dbr = $this->connectionProvider->getReplicaDatabase( 'virtual-cognate' );
+		$dbr = $this->connectionProvider->getReplicaDatabase( CognateServices::VIRTUAL_DOMAIN );
 		return $dbr->newSelectQueryBuilder()
 			->select( 'cgsi_dbname' )
 			->from( self::TITLES_TABLE_NAME )
@@ -230,7 +230,7 @@ class CognateStore {
 			);
 		}
 
-		$dbw = $this->connectionProvider->getPrimaryDatabase( 'virtual-cognate' );
+		$dbw = $this->connectionProvider->getPrimaryDatabase( CognateServices::VIRTUAL_DOMAIN );
 		$dbw->insert(
 			self::TITLES_TABLE_NAME,
 			$titlesToInsert,
@@ -294,7 +294,7 @@ class CognateStore {
 			];
 		}
 
-		$dbw = $this->connectionProvider->getPrimaryDatabase( 'virtual-cognate' );
+		$dbw = $this->connectionProvider->getPrimaryDatabase( CognateServices::VIRTUAL_DOMAIN );
 		$dbw->insert(
 			'cognate_sites',
 			$toInsert,
@@ -315,7 +315,7 @@ class CognateStore {
 			throw new RuntimeException( __METHOD__ . ' can only be used for maintenance or tests.' );
 		}
 
-		$dbw = $this->connectionProvider->getPrimaryDatabase( 'virtual-cognate' );
+		$dbw = $this->connectionProvider->getPrimaryDatabase( CognateServices::VIRTUAL_DOMAIN );
 		$dbw->delete(
 			'cognate_pages',
 			[

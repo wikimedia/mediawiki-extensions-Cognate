@@ -41,7 +41,7 @@ class PurgeDeletedCognatePages extends Maintenance {
 		$services = MediaWikiServices::getInstance();
 
 		$connectionProvider = $services->getConnectionProvider();
-		$dbrCognate = $connectionProvider->getReplicaDatabase( 'virtual-cognate' );
+		$dbrCognate = $connectionProvider->getReplicaDatabase( CognateServices::VIRTUAL_DOMAIN );
 
 		$dbName = $services->getMainConfig()->get( 'DBname' );
 		$stringHasher = new StringHasher();
@@ -66,7 +66,7 @@ class PurgeDeletedCognatePages extends Maintenance {
 		}
 
 		$loadBalancerFactory = $services->getDBLoadBalancerFactory();
-		$dbwCognate = $connectionProvider->getPrimaryDatabase( 'virtual-cognate' );
+		$dbwCognate = $connectionProvider->getPrimaryDatabase( CognateServices::VIRTUAL_DOMAIN );
 		$dbr = $this->getDB( DB_REPLICA );
 
 		while ( $start ) {

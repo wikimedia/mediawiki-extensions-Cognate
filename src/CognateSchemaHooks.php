@@ -19,7 +19,7 @@ class CognateSchemaHooks implements LoadExtensionSchemaUpdatesHook {
 		$dbType = $updater->getDB()->getType();
 
 		$updater->addExtensionUpdateOnVirtualDomain( [
-			'virtual-cognate',
+			CognateServices::VIRTUAL_DOMAIN,
 			'addTable',
 			'cognate_pages',
 			__DIR__ . '/../sql/' . $dbType . '/tables-generated.sql',

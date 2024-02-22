@@ -54,8 +54,8 @@ class RecalculateCognateNormalizedHashes extends Maintenance {
 	private function setupServices() {
 		$services = MediaWikiServices::getInstance();
 		$connectionProvider = $services->getConnectionProvider();
-		$this->dbr = $connectionProvider->getReplicaDatabase( 'virtual-cognate' );
-		$this->dbw = $connectionProvider->getPrimaryDatabase( 'virtual-cognate' );
+		$this->dbr = $connectionProvider->getReplicaDatabase( CognateServices::VIRTUAL_DOMAIN );
+		$this->dbw = $connectionProvider->getPrimaryDatabase( CognateServices::VIRTUAL_DOMAIN );
 		$this->stringHasher = new StringHasher();
 		$this->stringNormalizer = new StringNormalizer();
 	}
