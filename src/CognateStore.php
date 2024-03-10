@@ -79,7 +79,7 @@ class CognateStore {
 
 		$dbr = $this->connectionProvider->getReplicaDatabase( CognateServices::VIRTUAL_DOMAIN );
 
-		list( $pagesToInsert, $titlesToInsert ) = $this->buildRows(
+		[ $pagesToInsert, $titlesToInsert ] = $this->buildRows(
 			$linkTarget,
 			$dbName
 		);

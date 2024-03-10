@@ -27,9 +27,9 @@ class CacheInvalidatorTest extends MediaWikiIntegrationTestCase {
 		$mockJobQueueGroup->expects( $this->once() )
 			->method( 'lazyPush' )
 			->with( $this->isInstanceOf( LocalJobSubmitJob::class ) )
-			->will( $this->returnCallback( function ( Job $job ) use ( $title ) {
+			->willReturnCallback( function ( Job $job ) use ( $title ) {
 				$this->assertTrue( $job->getTitle()->equals( $title ) );
-			} ) );
+			} );
 
 		$cacheInvalidator = new CacheInvalidator( $mockJobQueueGroup );
 		$cacheInvalidator->invalidate( [ 'frwiktionary' ], $title );

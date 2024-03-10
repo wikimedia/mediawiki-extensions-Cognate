@@ -42,9 +42,9 @@ class CognateRepoUnitTest extends \MediaWikiIntegrationTestCase {
 	private function getMockTitleFormatter() {
 		$mock = $this->createMock( TitleFormatter::class );
 		$mock->method( 'formatTitle' )
-			->will( $this->returnCallback( static function ( $ns, $title, $fragment, $interwiki ) {
+			->willReturnCallback( static function ( $ns, $title, $fragment, $interwiki ) {
 				return "$interwiki:$ns:$title";
-			} ) );
+			} );
 		return $mock;
 	}
 
