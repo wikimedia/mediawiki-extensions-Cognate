@@ -163,7 +163,7 @@ class CognateStore {
 			->join( self::PAGES_TABLE_NAME, null, 'cgti_raw_key = cgpa_title' )
 			->join( self::SITES_TABLE_NAME, null, 'cgpa_site = cgsi_key' )
 			->where( [
-				'cgsi_dbname != ' . $dbr->addQuotes( $dbName ),
+				$dbr->expr( 'cgsi_dbname', '!=', $dbName ),
 				'cgti_normalized_key' => $this->getNormalizedStringHash( $linkTarget->getDBkey() ),
 				'cgpa_namespace' => $linkTarget->getNamespace(),
 			] )
