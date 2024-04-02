@@ -106,17 +106,19 @@ class RecalculateCognateNormalizedHashes extends Maintenance {
 			$numberOfUpdates = count( $rowsToUpdate );
 			$totalUpdates += $numberOfUpdates;
 
-			if ( !$this->hasOption( 'dry-run' ) ) {
+			if ( $numberOfUpdates > 0 && !$this->hasOption( 'dry-run' ) ) {
 				$this->output( "Performing $numberOfUpdates updates\n" );
-				$this->dbw->upsert(
-					CognateStore::TITLES_TABLE_NAME,
-					$rowsToUpdate,
-					[ 'cgti_raw_key' ],
-					[
-						'cgti_normalized_key=VALUES(cgti_normalized_key)',
-					],
-					__METHOD__
-				);
+				// @phan-suppress-next-line SecurityCheck-SQLInjection
+				$this->dbw->newInsertQueryBuilder()
+					->insertInto( CognateStore::TITLES_TABLE_NAME )
+					->rows( $rowsToUpdate )
+					->onDuplicateKeyUpdate()
+					->uniqueIndexFields( 'cgti_raw_key' )
+					->set( [
+						'cgti_normalized_key=' . $this->dbw->buildExcludedValue( 'cgti_normalized_key' ),
+					] )
+					->caller( __METHOD__ )
+					->execute();
 			}
 
 			$this->output(
