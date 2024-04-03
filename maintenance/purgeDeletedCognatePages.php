@@ -152,21 +152,18 @@ class PurgeDeletedCognatePages extends Maintenance {
 
 		// Delete any remaining titles from the cognate pages table
 		if ( !$this->hasOption( 'dry-run' ) && $rowsDeleting > 0 ) {
-			$dbwCognate->delete(
-				CognateStore::PAGES_TABLE_NAME,
-				$dbrCognate->makeList(
-					[
-						'cgpa_site' => $siteKey,
-						$dbrCognate->makeWhereFrom2d(
-							$cognateDeletionData,
-							'cgpa_namespace',
-							'cgpa_title'
-						)
-					],
-					IDatabase::LIST_AND
-				),
-				__METHOD__
-			);
+			$dbwCognate->newDeleteQueryBuilder()
+				->deleteFrom( CognateStore::PAGES_TABLE_NAME )
+				->where( [
+					'cgpa_site' => $siteKey,
+					$dbrCognate->makeWhereFrom2d(
+						$cognateDeletionData,
+						'cgpa_namespace',
+						'cgpa_title'
+					)
+				] )
+				->caller( __METHOD__ )
+				->execute();
 		}
 
 		$this->output(

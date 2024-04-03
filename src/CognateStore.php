@@ -99,21 +99,21 @@ class CognateStore {
 
 		$dbw = $this->connectionProvider->getPrimaryDatabase( CognateServices::VIRTUAL_DOMAIN );
 		if ( !$row ) {
-			$dbw->insert(
-				self::TITLES_TABLE_NAME,
-				$titlesToInsert,
-				__METHOD__,
-				[ 'IGNORE' ]
-			);
+			$dbw->newInsertQueryBuilder()
+				->insertInto( self::TITLES_TABLE_NAME )
+				->ignore()
+				->rows( $titlesToInsert )
+				->caller( __METHOD__ )
+				->execute();
 			$insertQueryCounter++;
 		}
 
-		$dbw->insert(
-			self::PAGES_TABLE_NAME,
-			$pagesToInsert,
-			__METHOD__,
-			[ 'IGNORE' ]
-		);
+		$dbw->newInsertQueryBuilder()
+			->insertInto( self::PAGES_TABLE_NAME )
+			->ignore()
+			->rows( $pagesToInsert )
+			->caller( __METHOD__ )
+			->execute();
 		$insertQueryCounter++;
 
 		return $insertQueryCounter;
@@ -139,9 +139,13 @@ class CognateStore {
 			'cgpa_namespace' => $linkTarget->getNamespace(),
 		];
 		$dbw = $this->connectionProvider->getPrimaryDatabase( CognateServices::VIRTUAL_DOMAIN );
-		$result = $dbw->delete( self::PAGES_TABLE_NAME, $pageData, __METHOD__ );
+		$dbw->newDeleteQueryBuilder()
+			->deleteFrom( self::PAGES_TABLE_NAME )
+			->where( $pageData )
+			->caller( __METHOD__ )
+			->execute();
 
-		return (bool)$result;
+		return true;
 	}
 
 	/**
@@ -219,6 +223,10 @@ class CognateStore {
 			throw new RuntimeException( __METHOD__ . ' can only be used for maintenance or tests.' );
 		}
 
+		if ( !$pageDetailsArray ) {
+			return;
+		}
+
 		$pagesToInsert = [];
 		$titlesToInsert = [];
 		foreach ( $pageDetailsArray as $pageDetails ) {
@@ -231,19 +239,19 @@ class CognateStore {
 		}
 
 		$dbw = $this->connectionProvider->getPrimaryDatabase( CognateServices::VIRTUAL_DOMAIN );
-		$dbw->insert(
-			self::TITLES_TABLE_NAME,
-			$titlesToInsert,
-			__METHOD__,
-			[ 'IGNORE' ]
-		);
+		$dbw->newInsertQueryBuilder()
+			->insertInto( self::TITLES_TABLE_NAME )
+			->ignore()
+			->rows( $titlesToInsert )
+			->caller( __METHOD__ )
+			->execute();
 
-		$dbw->insert(
-			self::PAGES_TABLE_NAME,
-			$pagesToInsert,
-			__METHOD__,
-			[ 'IGNORE' ]
-		);
+		$dbw->newInsertQueryBuilder()
+			->insertInto( self::PAGES_TABLE_NAME )
+			->ignore()
+			->rows( $pagesToInsert )
+			->caller( __METHOD__ )
+			->execute();
 	}
 
 	/**
@@ -285,6 +293,10 @@ class CognateStore {
 			throw new RuntimeException( __METHOD__ . ' can only be used for maintenance or tests.' );
 		}
 
+		if ( !$sites ) {
+			return;
+		}
+
 		$toInsert = [];
 		foreach ( $sites as $dbname => $interwikiPrefix ) {
 			$toInsert[] = [
@@ -295,12 +307,12 @@ class CognateStore {
 		}
 
 		$dbw = $this->connectionProvider->getPrimaryDatabase( CognateServices::VIRTUAL_DOMAIN );
-		$dbw->insert(
-			'cognate_sites',
-			$toInsert,
-			__METHOD__,
-			[ 'IGNORE' ]
-		);
+		$dbw->newInsertQueryBuilder()
+			->insertInto( 'cognate_sites' )
+			->ignore()
+			->rows( $toInsert )
+			->caller( __METHOD__ )
+			->execute();
 	}
 
 	/**
@@ -316,13 +328,13 @@ class CognateStore {
 		}
 
 		$dbw = $this->connectionProvider->getPrimaryDatabase( CognateServices::VIRTUAL_DOMAIN );
-		$dbw->delete(
-			'cognate_pages',
-			[
+		$dbw->newDeleteQueryBuilder()
+			->deleteFrom( 'cognate_pages' )
+			->where( [
 				'cgpa_site' => $this->getStringHash( $dbName ),
-			],
-			__METHOD__
-		);
+			] )
+			->caller( __METHOD__ )
+			->execute();
 	}
 
 	/**
