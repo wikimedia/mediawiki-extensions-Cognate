@@ -101,7 +101,7 @@ class PurgeDeletedCognatePages extends Maintenance {
 			->join( CognateStore::PAGES_TABLE_NAME, null, 'cgpa_title = cgti_raw_key' )
 			->where( [
 				'cgpa_site' => $siteKey,
-				'cgpa_title >= ' . $start,
+				$dbrCognate->expr( 'cgpa_title', '>=', $start ),
 			] )
 			->orderBy( 'cgpa_title', SelectQueryBuilder::SORT_ASC )
 			->limit( $this->mBatchSize )

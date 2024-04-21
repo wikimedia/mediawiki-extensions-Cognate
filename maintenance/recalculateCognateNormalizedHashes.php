@@ -83,7 +83,7 @@ class RecalculateCognateNormalizedHashes extends Maintenance {
 			$rows = $this->dbr->newSelectQueryBuilder()
 				->select( [ 'cgti_raw', 'cgti_raw_key', 'cgti_normalized_key' ] )
 				->from( CognateStore::TITLES_TABLE_NAME )
-				->where( [ 'cgti_raw_key > ' . $batchStart ] )
+				->where( $this->dbr->expr( 'cgti_raw_key', '>', $batchStart ) )
 				->orderBy( 'cgti_raw_key', SelectQueryBuilder::SORT_ASC )
 				->limit( $this->mBatchSize )
 				->caller( __METHOD__ )

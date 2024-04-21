@@ -86,9 +86,10 @@ class PopulateCognatePages extends Maintenance {
 				->select( [ 'page_namespace', 'page_title' ] )
 				->from( 'page' )
 				->where( [
-					"page_id BETWEEN $blockStart AND $blockEnd",
+					$dbr->expr( 'page_id', '>=', $blockStart ),
+					$dbr->expr( 'page_id', '<=', $blockEnd ),
 					'page_namespace' => $namespaces,
-					'page_is_redirect = 0',
+					'page_is_redirect' => 0,
 				] )
 				->caller( __METHOD__ )
 				->fetchResultSet();

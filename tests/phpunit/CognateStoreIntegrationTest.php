@@ -54,7 +54,7 @@ class CognateStoreIntegrationTest extends \MediaWikiIntegrationTestCase {
 		$this->assertSelect(
 			'cognate_pages',
 			[ 'cgpa_site', 'cgpa_title', 'cgpa_namespace' ],
-			[ "cgpa_title != {$this->UTPageNameHash}" ],
+			[ $this->getDb()->expr( 'cgpa_title', '!=', $this->UTPageNameHash ) ],
 			[ [ $this->hash( 'enwiktionary' ), $this->hash( 'My_test_page' ), 0 ] ]
 		);
 	}
@@ -74,7 +74,7 @@ class CognateStoreIntegrationTest extends \MediaWikiIntegrationTestCase {
 		$this->assertSelect(
 			'cognate_pages',
 			[ 'cgpa_site', 'cgpa_title', 'cgpa_namespace' ],
-			[ "cgpa_title != {$this->UTPageNameHash}" ],
+			[ $this->getDb()->expr( 'cgpa_title', '!=', $this->UTPageNameHash ) ],
 			[ [ $this->hash( 'enwiktionary' ), $this->hash( 'My_second_test_page' ), 0 ] ]
 		);
 	}
@@ -94,7 +94,7 @@ class CognateStoreIntegrationTest extends \MediaWikiIntegrationTestCase {
 		$this->assertSelect(
 			'cognate_pages',
 			[ 'cgpa_site', 'cgpa_title', 'cgpa_namespace' ],
-			[ "cgpa_title != {$this->UTPageNameHash}" ],
+			[ $this->getDb()->expr( 'cgpa_title', '!=', $this->UTPageNameHash ) ],
 			[
 				[ $this->hash( 'dewiktionary' ), $this->hash( 'My_second_test_page' ), 0 ],
 				[ $this->hash( 'enwiktionary' ), $this->hash( 'My_second_test_page' ), 0 ],
@@ -135,7 +135,7 @@ class CognateStoreIntegrationTest extends \MediaWikiIntegrationTestCase {
 		$this->assertSelect(
 			'cognate_pages',
 			[ 'cgpa_site', 'cgpa_title', 'cgpa_namespace' ],
-			[ "cgpa_title != {$this->UTPageNameHash}" ],
+			[ $this->getDb()->expr( 'cgpa_title', '!=', $this->UTPageNameHash ) ],
 			[]
 		);
 	}
@@ -145,7 +145,7 @@ class CognateStoreIntegrationTest extends \MediaWikiIntegrationTestCase {
 		$this->assertSelect(
 			'cognate_pages',
 			[ 'cgpa_site', 'cgpa_title', 'cgpa_namespace' ],
-			[ "cgpa_title != {$this->UTPageNameHash}" ],
+			[ $this->getDb()->expr( 'cgpa_title', '!=', $this->UTPageNameHash ) ],
 			[]
 		);
 	}
@@ -158,7 +158,7 @@ class CognateStoreIntegrationTest extends \MediaWikiIntegrationTestCase {
 		$this->assertSelect(
 			'cognate_pages',
 			[ 'cgpa_site', 'cgpa_title', 'cgpa_namespace' ],
-			[ "cgpa_title != {$this->UTPageNameHash}" ],
+			[ $this->getDb()->expr( 'cgpa_title', '!=', $this->UTPageNameHash ) ],
 			[ [ $this->hash( 'enwiktionary' ), $this->hash( 'Berlin' ), '0' ] ]
 		);
 	}
@@ -171,7 +171,7 @@ class CognateStoreIntegrationTest extends \MediaWikiIntegrationTestCase {
 		$this->assertSelect(
 			'cognate_pages',
 			[ 'cgpa_site', 'cgpa_title', 'cgpa_namespace' ],
-			[ "cgpa_title != {$this->UTPageNameHash}" ],
+			[ $this->getDb()->expr( 'cgpa_title', '!=', $this->UTPageNameHash ) ],
 			[
 				[ $this->hash( 'frwiktionary' ), $this->hash( 'Foo' ), '1' ],
 				[ $this->hash( 'enwiktionary' ), $this->hash( 'Berlin' ), '0' ],
