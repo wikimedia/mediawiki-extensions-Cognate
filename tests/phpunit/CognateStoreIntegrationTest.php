@@ -51,12 +51,11 @@ class CognateStoreIntegrationTest extends \MediaWikiIntegrationTestCase {
 		$inserts = $this->store->insertPage( 'enwiktionary', new TitleValue( 0, 'My_test_page' ) );
 
 		$this->assertSame( 2, $inserts );
-		$this->assertSelect(
-			'cognate_pages',
-			[ 'cgpa_site', 'cgpa_title', 'cgpa_namespace' ],
-			[ $this->getDb()->expr( 'cgpa_title', '!=', $this->UTPageNameHash ) ],
-			[ [ $this->hash( 'enwiktionary' ), $this->hash( 'My_test_page' ), 0 ] ]
-		);
+		$this->newSelectQueryBuilder()
+			->select( [ 'cgpa_site', 'cgpa_title', 'cgpa_namespace' ] )
+			->from( 'cognate_pages' )
+			->where( $this->getDb()->expr( 'cgpa_title', '!=', $this->UTPageNameHash ) )
+			->assertRowValue( [ $this->hash( 'enwiktionary' ), $this->hash( 'My_test_page' ), 0 ] );
 	}
 
 	public function testInsertPageWithExistingEntry() {
@@ -71,12 +70,11 @@ class CognateStoreIntegrationTest extends \MediaWikiIntegrationTestCase {
 
 		$this->assertSame( 2, $firstInserts );
 		$this->assertSame( 1, $secondInserts );
-		$this->assertSelect(
-			'cognate_pages',
-			[ 'cgpa_site', 'cgpa_title', 'cgpa_namespace' ],
-			[ $this->getDb()->expr( 'cgpa_title', '!=', $this->UTPageNameHash ) ],
-			[ [ $this->hash( 'enwiktionary' ), $this->hash( 'My_second_test_page' ), 0 ] ]
-		);
+		$this->newSelectQueryBuilder()
+			->select( [ 'cgpa_site', 'cgpa_title', 'cgpa_namespace' ] )
+			->from( 'cognate_pages' )
+			->where( $this->getDb()->expr( 'cgpa_title', '!=', $this->UTPageNameHash ) )
+			->assertRowValue( [ $this->hash( 'enwiktionary' ), $this->hash( 'My_second_test_page' ), 0 ] );
 	}
 
 	public function testInsertPageWithExistingEntryOnOtherWiki() {
@@ -91,15 +89,14 @@ class CognateStoreIntegrationTest extends \MediaWikiIntegrationTestCase {
 
 		$this->assertSame( 2, $firstInserts );
 		$this->assertSame( 1, $secondInserts );
-		$this->assertSelect(
-			'cognate_pages',
-			[ 'cgpa_site', 'cgpa_title', 'cgpa_namespace' ],
-			[ $this->getDb()->expr( 'cgpa_title', '!=', $this->UTPageNameHash ) ],
-			[
+		$this->newSelectQueryBuilder()
+			->select( [ 'cgpa_site', 'cgpa_title', 'cgpa_namespace' ] )
+			->from( 'cognate_pages' )
+			->where( $this->getDb()->expr( 'cgpa_title', '!=', $this->UTPageNameHash ) )
+			->assertResultSet( [
 				[ $this->hash( 'dewiktionary' ), $this->hash( 'My_second_test_page' ), 0 ],
 				[ $this->hash( 'enwiktionary' ), $this->hash( 'My_second_test_page' ), 0 ],
-			]
-		);
+			] );
 	}
 
 	public function testSelectLinksForPageReturnsAllInterwikis() {
@@ -132,22 +129,20 @@ class CognateStoreIntegrationTest extends \MediaWikiIntegrationTestCase {
 	public function testInsertAndDeletePageResultsInNoEntry() {
 		$this->store->insertPage( 'enwiktionary', new TitleValue( 0, 'My_test_page' ) );
 		$this->store->deletePage( 'enwiktionary', new TitleValue( 0, 'My_test_page' ) );
-		$this->assertSelect(
-			'cognate_pages',
-			[ 'cgpa_site', 'cgpa_title', 'cgpa_namespace' ],
-			[ $this->getDb()->expr( 'cgpa_title', '!=', $this->UTPageNameHash ) ],
-			[]
-		);
+		$this->newSelectQueryBuilder()
+			->select( [ 'cgpa_site', 'cgpa_title', 'cgpa_namespace' ] )
+			->from( 'cognate_pages' )
+			->where( $this->getDb()->expr( 'cgpa_title', '!=', $this->UTPageNameHash ) )
+			->assertEmptyResult();
 	}
 
 	public function testInsertPages_noPages() {
 		$this->store->insertPages( [] );
-		$this->assertSelect(
-			'cognate_pages',
-			[ 'cgpa_site', 'cgpa_title', 'cgpa_namespace' ],
-			[ $this->getDb()->expr( 'cgpa_title', '!=', $this->UTPageNameHash ) ],
-			[]
-		);
+		$this->newSelectQueryBuilder()
+			->select( [ 'cgpa_site', 'cgpa_title', 'cgpa_namespace' ] )
+			->from( 'cognate_pages' )
+			->where( $this->getDb()->expr( 'cgpa_title', '!=', $this->UTPageNameHash ) )
+			->assertEmptyResult();
 	}
 
 	public function testInsertPages_onePage() {
@@ -155,12 +150,11 @@ class CognateStoreIntegrationTest extends \MediaWikiIntegrationTestCase {
 			[ [ 'site' => 'enwiktionary', 'namespace' => 0, 'title' => 'Berlin' ] ]
 		);
 
-		$this->assertSelect(
-			'cognate_pages',
-			[ 'cgpa_site', 'cgpa_title', 'cgpa_namespace' ],
-			[ $this->getDb()->expr( 'cgpa_title', '!=', $this->UTPageNameHash ) ],
-			[ [ $this->hash( 'enwiktionary' ), $this->hash( 'Berlin' ), '0' ] ]
-		);
+		$this->newSelectQueryBuilder()
+			->select( [ 'cgpa_site', 'cgpa_title', 'cgpa_namespace' ] )
+			->from( 'cognate_pages' )
+			->where( $this->getDb()->expr( 'cgpa_title', '!=', $this->UTPageNameHash ) )
+			->assertRowValue( [ $this->hash( 'enwiktionary' ), $this->hash( 'Berlin' ), '0' ] );
 	}
 
 	public function testInsertPages_multiplePages() {
@@ -168,37 +162,30 @@ class CognateStoreIntegrationTest extends \MediaWikiIntegrationTestCase {
 			[ 'site' => 'enwiktionary', 'namespace' => 0, 'title' => 'Berlin' ],
 			[ 'site' => 'frwiktionary', 'namespace' => 1, 'title' => 'Foo' ],
 		] );
-		$this->assertSelect(
-			'cognate_pages',
-			[ 'cgpa_site', 'cgpa_title', 'cgpa_namespace' ],
-			[ $this->getDb()->expr( 'cgpa_title', '!=', $this->UTPageNameHash ) ],
-			[
+		$this->newSelectQueryBuilder()
+			->select( [ 'cgpa_site', 'cgpa_title', 'cgpa_namespace' ] )
+			->from( 'cognate_pages' )
+			->where( $this->getDb()->expr( 'cgpa_title', '!=', $this->UTPageNameHash ) )
+			->assertResultSet( [
 				[ $this->hash( 'frwiktionary' ), $this->hash( 'Foo' ), '1' ],
 				[ $this->hash( 'enwiktionary' ), $this->hash( 'Berlin' ), '0' ],
-			]
-		);
+			] );
 	}
 
 	public function testInsertSites_noSites() {
 		$this->store->insertSites( [] );
-		$this->assertSelect(
-			'cognate_sites',
-			[ 'cgsi_dbname', 'cgsi_interwiki' ],
-			[],
-			[]
-		);
+		$this->newSelectQueryBuilder()
+			->select( [ 'cgsi_dbname', 'cgsi_interwiki' ] )
+			->from( 'cognate_sites' )
+			->assertEmptyResult();
 	}
 
 	public function testInsertSites_oneSite() {
 		$this->store->insertSites( [ 'enwiktionary' => 'en' ] );
-		$this->assertSelect(
-			'cognate_sites',
-			[ 'cgsi_dbname', 'cgsi_interwiki' ],
-			[],
-			[
-				[ 'enwiktionary', 'en' ],
-			]
-		);
+		$this->newSelectQueryBuilder()
+			->select( [ 'cgsi_dbname', 'cgsi_interwiki' ] )
+			->from( 'cognate_sites' )
+			->assertRowValue( [ 'enwiktionary', 'en' ] );
 	}
 
 	public function testSelectSitesForPage_empty() {
