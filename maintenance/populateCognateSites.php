@@ -4,8 +4,8 @@ namespace Cognate;
 
 use Maintenance;
 use MediaWiki\MediaWikiServices;
-use Site;
-use SiteList;
+use MediaWiki\Site\Site;
+use MediaWiki\Site\SiteList;
 
 if ( getenv( 'MW_INSTALL_PATH' ) !== false ) {
 	require_once getenv( 'MW_INSTALL_PATH' ) . '/maintenance/Maintenance.php';

@@ -5,8 +5,8 @@ namespace Cognate\HookHandler;
 use Cognate\CognateRepo;
 use Cognate\CognateServices;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Title\Title;
-use ParserOutput;
 
 /**
  * @license GPL-2.0-or-later
