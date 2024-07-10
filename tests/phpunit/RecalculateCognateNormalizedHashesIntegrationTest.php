@@ -50,7 +50,7 @@ class RecalculateCognateNormalizedHashesIntegrationTest extends MaintenanceBaseT
 		$this->insertPage( 'PageWithInValidHash', 'Text', $namespace );
 
 		// Manually screw up the hash for "PageWithInValidHash"
-		$this->db->newUpdateQueryBuilder()
+		$this->getdb()->newUpdateQueryBuilder()
 			->update( CognateStore::TITLES_TABLE_NAME )
 			->set( [ 'cgti_normalized_key' => 123 ] )
 			->where( [ 'cgti_raw' => 'PageWithInValidHash' ] )
