@@ -8,7 +8,6 @@ use MediaWiki\Deferred\DeferredUpdates;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleValue;
-use MediaWiki\User\User;
 use MediaWikiIntegrationTestCase;
 use PageArchive;
 
@@ -80,7 +79,7 @@ class CognateIntegrationTest extends MediaWikiIntegrationTestCase {
 		$newTitle = Title::newFromText( $oldTitle->getDBkey() . '-new' );
 
 		$movePage = $services->getMovePageFactory()->newMovePage( $oldTitle, $newTitle );
-		$movePage->move( User::newFromId( 0 ), 'reason', true );
+		$movePage->move( $this->getTestUser()->getUserIdentity(), 'reason', true );
 		DeferredUpdates::doUpdates();
 
 		$this->assertNoTitle( $oldTitle );
