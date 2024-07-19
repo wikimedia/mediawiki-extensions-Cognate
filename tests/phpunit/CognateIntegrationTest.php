@@ -61,7 +61,7 @@ class CognateIntegrationTest extends MediaWikiIntegrationTestCase {
 		$pageDetails = $this->insertPage( $this->pageName );
 		$page = $this->getServiceContainer()->getWikiPageFactory()->newFromID( $pageDetails['id'] );
 
-		$page->doDeleteArticleReal( __METHOD__, $this->getTestSysop()->getUser() );
+		$this->deletePage( $page, __METHOD__ );
 
 		DeferredUpdates::doUpdates();
 
@@ -91,7 +91,7 @@ class CognateIntegrationTest extends MediaWikiIntegrationTestCase {
 		$page = $this->getServiceContainer()->getWikiPageFactory()->newFromID( $pageDetails['id'] );
 		$title = $page->getTitle();
 
-		$page->doDeleteArticleReal( __METHOD__, $this->getTestSysop()->getUser() );
+		$this->deletePage( $page, __METHOD__ );
 
 		DeferredUpdates::doUpdates();
 		$archive = new PageArchive( $title );
