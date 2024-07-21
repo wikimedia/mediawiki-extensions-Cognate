@@ -9,7 +9,6 @@ use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Title\Title;
 use MediaWiki\Title\TitleValue;
 use MediaWikiIntegrationTestCase;
-use PageArchive;
 
 /**
  * @covers \Cognate\CognateHooks
@@ -94,9 +93,10 @@ class CognateIntegrationTest extends MediaWikiIntegrationTestCase {
 		$this->deletePage( $page, __METHOD__ );
 
 		DeferredUpdates::doUpdates();
-		$archive = new PageArchive( $title );
 		// Warning! If the "move" test above is executed first, this undeletes a redirect!
-		$archive->undeleteAsUser( [], $this->getTestSysop()->getUser() );
+		$this->getServiceContainer()->getUndeletePageFactory()
+			->newUndeletePage( $page, $this->getTestSysop()->getAuthority() )
+			->undeleteUnsafe( '' );
 
 		$this->assertTitle( $title );
 	}
