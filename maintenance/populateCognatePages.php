@@ -3,7 +3,6 @@
 namespace Cognate;
 
 use Maintenance;
-use MediaWiki\MediaWikiServices;
 
 if ( getenv( 'MW_INSTALL_PATH' ) !== false ) {
 	require_once getenv( 'MW_INSTALL_PATH' ) . '/maintenance/Maintenance.php';
@@ -37,7 +36,7 @@ class PopulateCognatePages extends Maintenance {
 	}
 
 	public function execute() {
-		$services = MediaWikiServices::getInstance();
+		$services = $this->getServiceContainer();
 		$dbName = $services->getMainConfig()->get( 'DBname' );
 		$namespaces = $services->getMainConfig()->get( 'CognateNamespaces' );
 		$namespaces = array_filter(

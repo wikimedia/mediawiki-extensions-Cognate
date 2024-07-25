@@ -6,7 +6,6 @@ use Cognate\CacheInvalidator;
 use Cognate\CognateRepo;
 use Cognate\CognateStore;
 use Cognate\HookHandler\CognatePageHookHandler;
-use MediaWiki\MediaWikiServices;
 
 /**
  * @coversNothing
@@ -29,8 +28,9 @@ class ServiceWiringTest extends \MediaWikiIntegrationTestCase {
 	 * @dataProvider provideServices
 	 */
 	public function testServiceWiring( $serviceName, $expectedClass ) {
-		$service1 = MediaWikiServices::getInstance()->getService( $serviceName );
-		$service2 = MediaWikiServices::getInstance()->getService( $serviceName );
+		$services = $this->getServiceContainer();
+		$service1 = $services->getService( $serviceName );
+		$service2 = $services->getService( $serviceName );
 
 		$this->assertInstanceOf( $expectedClass, $service1 );
 		$this->assertInstanceOf( $expectedClass, $service2 );

@@ -3,7 +3,6 @@
 namespace Cognate;
 
 use Maintenance;
-use MediaWiki\MediaWikiServices;
 use RuntimeException;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\IReadableDatabase;
@@ -38,7 +37,7 @@ class PurgeDeletedCognatePages extends Maintenance {
 			throw new RuntimeException( 'batch-size must be set to a value of 2 or more.' );
 		}
 
-		$services = MediaWikiServices::getInstance();
+		$services = $this->getServiceContainer();
 
 		$connectionProvider = $services->getConnectionProvider();
 		$dbrCognate = $connectionProvider->getReplicaDatabase( CognateServices::VIRTUAL_DOMAIN );

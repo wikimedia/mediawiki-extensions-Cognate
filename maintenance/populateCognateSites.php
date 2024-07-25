@@ -3,7 +3,6 @@
 namespace Cognate;
 
 use Maintenance;
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Site\Site;
 use MediaWiki\Site\SiteList;
 
@@ -32,7 +31,7 @@ class PopulateCognateSites extends Maintenance {
 
 	public function execute() {
 		$siteGroup = $this->getOption( 'site-group' );
-		$services = MediaWikiServices::getInstance()->getInstance();
+		$services = $this->getServiceContainer();
 
 		$this->output( "Getting sites.\n" );
 		$siteList = $services->getSiteLookup()->getSites();
