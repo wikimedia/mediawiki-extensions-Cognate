@@ -4,6 +4,7 @@ namespace Cognate\Tests;
 
 use Cognate\CognateStore;
 use Cognate\StringHasher;
+use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Title\TitleValue;
 
@@ -100,7 +101,7 @@ class CognateStoreIntegrationTest extends \MediaWikiIntegrationTestCase {
 	}
 
 	public function testSelectLinksForPageReturnsAllInterwikis() {
-		$this->setMwGlobals( 'wgDBname', 'enwiktionary' );
+		$this->overrideConfigValue( MainConfigNames::DBname, 'enwiktionary' );
 		$this->store->insertSites( [
 			'enwiktionary' => 'en',
 			'dewiktionary' => 'de',
