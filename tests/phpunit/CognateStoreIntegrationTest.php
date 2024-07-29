@@ -5,7 +5,6 @@ namespace Cognate\Tests;
 use Cognate\CognateStore;
 use Cognate\StringHasher;
 use MediaWiki\MainConfigNames;
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Title\TitleValue;
 
 /**
@@ -35,7 +34,7 @@ class CognateStoreIntegrationTest extends \MediaWikiIntegrationTestCase {
 
 		$this->markTestSkippedIfNo64bit();
 
-		$this->store = MediaWikiServices::getInstance()->getService( 'CognateStore' );
+		$this->store = $this->getServiceContainer()->getService( 'CognateStore' );
 		$this->hasher = new StringHasher();
 		$this->UTPageNameHash = $this->hash( 'UTPage' );
 	}

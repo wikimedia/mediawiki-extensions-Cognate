@@ -4,7 +4,6 @@ namespace Cognate\Tests;
 
 use Cognate\CognateStore;
 use Cognate\RecalculateCognateNormalizedHashes;
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Tests\Maintenance\MaintenanceBaseTestCase;
 use MediaWiki\Title\TitleValue;
 
@@ -36,7 +35,7 @@ class RecalculateCognateNormalizedHashesIntegrationTest extends MaintenanceBaseT
 		$this->markTestSkippedIfNo64bit();
 
 		$this->overrideConfigValue( 'CognateNamespaces', [ $this->getDefaultWikitextNS() ] );
-		$this->store = MediaWikiServices::getInstance()->getService( 'CognateStore' );
+		$this->store = $this->getServiceContainer()->getService( 'CognateStore' );
 	}
 
 	public function testExecute() {

@@ -3,7 +3,6 @@
 namespace Cognate;
 
 use Maintenance;
-use MediaWiki\MediaWikiServices;
 use Wikimedia\Rdbms\Database;
 use Wikimedia\Rdbms\DBUnexpectedError;
 use Wikimedia\Rdbms\SelectQueryBuilder;
@@ -52,7 +51,7 @@ class RecalculateCognateNormalizedHashes extends Maintenance {
 	}
 
 	private function setupServices() {
-		$services = MediaWikiServices::getInstance();
+		$services = $this->getServiceContainer();
 		$connectionProvider = $services->getConnectionProvider();
 		$this->dbr = $connectionProvider->getReplicaDatabase( CognateServices::VIRTUAL_DOMAIN );
 		$this->dbw = $connectionProvider->getPrimaryDatabase( CognateServices::VIRTUAL_DOMAIN );
@@ -73,7 +72,7 @@ class RecalculateCognateNormalizedHashes extends Maintenance {
 			return true;
 		}
 
-		$services = MediaWikiServices::getInstance();
+		$services = $this->getServiceContainer();
 		$loadBalancerFactory = $services->getDBLoadBalancerFactory();
 		$totalUpdates = 0;
 		$batchStart = (int)$start;
