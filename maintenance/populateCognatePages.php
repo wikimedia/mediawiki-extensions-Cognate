@@ -78,7 +78,6 @@ class PopulateCognatePages extends Maintenance {
 
 		$blockStart = (int)$start;
 		$blockEnd = $blockStart + $this->mBatchSize - 1;
-		$loadBalancerFactory = $services->getDBLoadBalancerFactory();
 
 		while ( $blockStart <= $end ) {
 			$rows = $dbr->newSelectQueryBuilder()
@@ -111,7 +110,7 @@ class PopulateCognatePages extends Maintenance {
 			$blockEnd += $this->mBatchSize;
 			$this->output( "Pass finished.\n" );
 
-			$loadBalancerFactory->waitForReplication();
+			$this->waitForReplication();
 		}
 
 		$this->output( "Done.\n" );

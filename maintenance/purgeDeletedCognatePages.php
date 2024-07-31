@@ -64,13 +64,12 @@ class PurgeDeletedCognatePages extends Maintenance {
 			return true;
 		}
 
-		$loadBalancerFactory = $services->getDBLoadBalancerFactory();
 		$dbwCognate = $connectionProvider->getPrimaryDatabase( CognateServices::VIRTUAL_DOMAIN );
 		$dbr = $this->getDB( DB_REPLICA );
 
 		while ( $start ) {
 			$start = $this->executeMainLoop( $dbr, $dbrCognate, $dbwCognate, $siteKey, $start );
-			$loadBalancerFactory->waitForReplication();
+			$this->waitForReplication();
 		}
 
 		$this->output( "Done.\n" );

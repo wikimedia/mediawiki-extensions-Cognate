@@ -73,7 +73,6 @@ class RecalculateCognateNormalizedHashes extends Maintenance {
 		}
 
 		$services = $this->getServiceContainer();
-		$loadBalancerFactory = $services->getDBLoadBalancerFactory();
 		$totalUpdates = 0;
 		$batchStart = (int)$start;
 
@@ -125,7 +124,7 @@ class RecalculateCognateNormalizedHashes extends Maintenance {
 				$numberOfUpdates . " rows upserted\n"
 			);
 
-			$loadBalancerFactory->waitForReplication();
+			$this->waitForReplication();
 		}
 
 		$this->output( "$totalUpdates hashes recalculated\n" );
