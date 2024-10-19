@@ -2,7 +2,7 @@
 
 namespace Cognate;
 
-use Maintenance;
+use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Site\Site;
 use MediaWiki\Site\SiteList;
 

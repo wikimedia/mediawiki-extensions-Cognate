@@ -2,7 +2,7 @@
 
 namespace Cognate;
 
-use Maintenance;
+use MediaWiki\Maintenance\Maintenance;
 
 if ( getenv( 'MW_INSTALL_PATH' ) !== false ) {
 	require_once getenv( 'MW_INSTALL_PATH' ) . '/maintenance/Maintenance.php';

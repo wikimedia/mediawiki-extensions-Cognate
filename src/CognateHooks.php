@@ -3,7 +3,7 @@
 namespace Cognate;
 
 use Cognate\HookHandler\CognateParseHookHandler;
-use Content;
+use MediaWiki\Content\Content;
 use MediaWiki\Content\Hook\ContentAlterParserOutputHook;
 use MediaWiki\Deferred\DeferrableUpdate;
 use MediaWiki\Hook\PageMoveCompleteHook;

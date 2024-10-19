@@ -7,7 +7,7 @@ namespace Cognate\Tests\HookHandler;
 use Cognate\CognateRepo;
 use Cognate\CognateStore;
 use Cognate\HookHandler\CognatePageHookHandler;
-use Content;
+use MediaWiki\Content\Content;
 use MediaWiki\Deferred\DeferrableUpdate;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Revision\RevisionRecord;

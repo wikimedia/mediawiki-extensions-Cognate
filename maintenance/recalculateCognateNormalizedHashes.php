@@ -2,7 +2,7 @@
 
 namespace Cognate;
 
-use Maintenance;
+use MediaWiki\Maintenance\Maintenance;
 use Wikimedia\Rdbms\Database;
 use Wikimedia\Rdbms\DBUnexpectedError;
 use Wikimedia\Rdbms\SelectQueryBuilder;

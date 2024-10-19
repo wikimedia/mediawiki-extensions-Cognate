@@ -2,7 +2,7 @@
 
 namespace Cognate;
 
-use Maintenance;
+use MediaWiki\Maintenance\Maintenance;
 use RuntimeException;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\IReadableDatabase;
