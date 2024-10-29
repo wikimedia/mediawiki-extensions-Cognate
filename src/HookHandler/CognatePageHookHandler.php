@@ -99,7 +99,7 @@ class CognatePageHookHandler {
 	 */
 	public function onPageContentSaveComplete(
 		LinkTarget $title,
-		RevisionRecord $revisionRecord = null
+		?RevisionRecord $revisionRecord = null
 	) {
 		// A null revision means a null edit / no-op edit was made, no need to process that.
 		if ( $revisionRecord === null ) {

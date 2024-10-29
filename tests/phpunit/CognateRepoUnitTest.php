@@ -24,7 +24,7 @@ class CognateRepoUnitTest extends \MediaWikiIntegrationTestCase {
 	 *
 	 * @return MockObject|CacheInvalidator
 	 */
-	private function getMockCacheInvalidator( array $expectedInvalidateArguments = null ) {
+	private function getMockCacheInvalidator( ?array $expectedInvalidateArguments = null ) {
 		$mock = $this->createMock( CacheInvalidator::class );
 		if ( $expectedInvalidateArguments === null ) {
 			$mock->expects( $this->never() )->method( 'invalidate' );
