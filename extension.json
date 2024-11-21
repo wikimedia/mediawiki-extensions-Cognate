@@ -60,5 +60,11 @@
 	"DatabaseVirtualDomains": [
 		"virtual-cognate"
 	],
+	"InstallerTasks": [
+		{
+			"class": "Cognate\\CognateInstallerTask",
+			"profile": "installPreConfigured"
+		}
+	],
 	"manifest_version": 2
 }

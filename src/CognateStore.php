@@ -289,10 +289,6 @@ class CognateStore {
 	 * @throws RuntimeException
 	 */
 	public function insertSites( array $sites ) {
-		if ( !defined( 'RUN_MAINTENANCE_IF_MAIN' ) && !defined( 'MW_PHPUNIT_TEST' ) ) {
-			throw new RuntimeException( __METHOD__ . ' can only be used for maintenance or tests.' );
-		}
-
 		if ( !$sites ) {
 			return;
 		}
