@@ -2,19 +2,17 @@
 
 namespace Cognate;
 
-use Liuggio\StatsdClient\Factory\StatsdDataFactoryInterface;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Title\TitleFormatter;
 use Psr\Log\LoggerInterface;
 use Wikimedia\Rdbms\DBReadOnlyError;
-use Wikimedia\Stats\NullStatsdDataFactory;
-use Wikimedia\Stats\StatsdAwareInterface;
+use Wikimedia\Stats\StatsFactory;
 
 /**
  * @license GPL-2.0-or-later
  * @author Addshore
  */
-class CognateRepo implements StatsdAwareInterface {
+class CognateRepo {
 
 	/**
 	 * @var CognateStore
@@ -37,34 +35,29 @@ class CognateRepo implements StatsdAwareInterface {
 	private $logger;
 
 	/**
-	 * @var StatsdDataFactoryInterface
+	 * @var StatsFactory
 	 */
-	private $stats;
+	private $statsFactory;
 
 	/**
 	 * @param CognateStore $store
 	 * @param CacheInvalidator $cacheInvalidator
 	 * @param TitleFormatter $titleFormatter
+	 * @param StatsFactory $statsFactory
 	 * @param LoggerInterface $logger
 	 */
 	public function __construct(
 		CognateStore $store,
 		CacheInvalidator $cacheInvalidator,
 		TitleFormatter $titleFormatter,
+		StatsFactory $statsFactory,
 		LoggerInterface $logger
 	) {
 		$this->store = $store;
 		$this->cacheInvalidator = $cacheInvalidator;
 		$this->titleFormatter = $titleFormatter;
+		$this->statsFactory = $statsFactory->withComponent( 'Cognate' );
 		$this->logger = $logger;
-		$this->stats = new NullStatsdDataFactory();
-	}
-
-	/**
-	 * @param StatsdDataFactoryInterface $statsFactory
-	 */
-	public function setStatsdDataFactory( StatsdDataFactoryInterface $statsFactory ) {
-		$this->stats = $statsFactory;
 	}
 
 	/**
@@ -74,15 +67,16 @@ class CognateRepo implements StatsdAwareInterface {
 	 * @return bool
 	 */
 	public function savePage( $dbName, LinkTarget $linkTarget ) {
-		$this->stats->increment( 'Cognate.Repo.savePage' );
-
+		$start = microtime( true );
 		try {
-			$start = microtime( true );
 			$success = $this->store->insertPage( $dbName, $linkTarget );
-			$this->stats->timing( 'Cognate.Repo.savePage.time', 1000 * ( microtime( true ) - $start ) );
-			$this->stats->gauge( 'Cognate.Repo.savePage.inserts', $success );
 		} catch ( DBReadOnlyError $e ) {
 			return false;
+		} finally {
+			$this->statsFactory->getTiming( 'repo_writes_seconds' )
+				->setLabel( 'action', 'savePage' )
+				->copyToStatsdAt( 'Cognate.Repo.savePage.time' )
+				->observe( 1000 * ( microtime( true ) - $start ) );
 		}
 
 		if ( $success ) {
@@ -110,14 +104,16 @@ class CognateRepo implements StatsdAwareInterface {
 	 * @return bool
 	 */
 	public function deletePage( $dbName, LinkTarget $linkTarget ) {
-		$this->stats->increment( 'Cognate.Repo.deletePage' );
-
+		$start = microtime( true );
 		try {
-			$start = microtime( true );
 			$success = $this->store->deletePage( $dbName, $linkTarget );
-			$this->stats->timing( 'Cognate.Repo.deletePage.time', 1000 * ( microtime( true ) - $start ) );
 		} catch ( DBReadOnlyError $e ) {
 			return false;
+		} finally {
+			$this->statsFactory->getTiming( 'repo_writes_seconds' )
+				->setLabel( 'action', 'deletePage' )
+				->copyToStatsdAt( 'Cognate.Repo.deletePage.time' )
+				->observe( 1000 * ( microtime( true ) - $start ) );
 		}
 
 		if ( $success ) {
@@ -134,12 +130,12 @@ class CognateRepo implements StatsdAwareInterface {
 	 * @return string[] interwiki links
 	 */
 	public function getLinksForPage( $dbName, LinkTarget $linkTarget ) {
-		$this->stats->increment( 'Cognate.Repo.getLinksForPage' );
-
 		$start = microtime( true );
 		$linkDetails = $this->store->selectLinkDetailsForPage( $dbName, $linkTarget );
-		$time = 1000 * ( microtime( true ) - $start );
-		$this->stats->timing( 'Cognate.Repo.getLinksForPage.time', $time );
+		$this->statsFactory->getTiming( 'repo_reads_seconds' )
+			->setLabel( 'action', 'getLinksForPage' )
+			->copyToStatsdAt( 'Cognate.Repo.getLinksForPage.time' )
+			->observe( 1000 * ( microtime( true ) - $start ) );
 
 		$links = [];
 		foreach ( $linkDetails as $data ) {
@@ -158,12 +154,12 @@ class CognateRepo implements StatsdAwareInterface {
 	 * @param LinkTarget $linkTarget
 	 */
 	private function invalidateAllSitesForPage( $dbName, LinkTarget $linkTarget ) {
-		$this->stats->increment( 'Cognate.Repo.selectSitesForPage' );
-
 		$start = microtime( true );
 		$sites = $this->store->selectSitesForPage( $linkTarget );
-		$time = 1000 * ( microtime( true ) - $start );
-		$this->stats->timing( 'Cognate.Repo.selectSitesForPage.time', $time );
+		$this->statsFactory->getTiming( 'repo_reads_seconds' )
+			->setLabel( 'action', 'selectSitesForPage' )
+			->copyToStatsdAt( 'Cognate.Repo.selectSitesForPage.time' )
+			->observe( 1000 * ( microtime( true ) - $start ) );
 
 		// In the case of a delete causing cache invalidations we need to add the local site
 		// back to the list as it has already been removed from the database.
