@@ -167,7 +167,7 @@ class CognatePageHookHandler {
 	 * @return null|RevisionRecord
 	 */
 	private function newRevisionRecordFromId( $id ) {
-		return call_user_func( $this->newRevisionFromIdCallable, $id );
+		return ( $this->newRevisionFromIdCallable )( $id );
 	}
 
 	/**
