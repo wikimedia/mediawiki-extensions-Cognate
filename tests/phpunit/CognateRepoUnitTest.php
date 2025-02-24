@@ -10,6 +10,7 @@ use MediaWiki\Title\TitleValue;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+use Wikimedia\Stats\StatsFactory;
 
 /**
  * @covers \Cognate\CognateRepo
@@ -60,6 +61,7 @@ class CognateRepoUnitTest extends \MediaWikiIntegrationTestCase {
 			$store,
 			$this->getMockCacheInvalidator( [ [ 'siteName' ], $titleValue ] ),
 			$this->getMockTitleFormatter(),
+			StatsFactory::newNull(),
 			new NullLogger()
 		);
 		$repo->savePage( 'siteName', $titleValue );
@@ -90,6 +92,7 @@ class CognateRepoUnitTest extends \MediaWikiIntegrationTestCase {
 			$store,
 			$this->getMockCacheInvalidator(),
 			$this->getMockTitleFormatter(),
+			StatsFactory::newNull(),
 			$mockLogger
 		);
 		$repo->savePage( 'siteName', $titleValue );
@@ -107,6 +110,7 @@ class CognateRepoUnitTest extends \MediaWikiIntegrationTestCase {
 			$store,
 			$this->getMockCacheInvalidator( [ [ 'siteName' ], $titleValue ] ),
 			$this->getMockTitleFormatter(),
+			StatsFactory::newNull(),
 			new NullLogger()
 		);
 		$repo->deletePage( 'siteName', $titleValue );
@@ -124,6 +128,7 @@ class CognateRepoUnitTest extends \MediaWikiIntegrationTestCase {
 			$store,
 			$this->getMockCacheInvalidator(),
 			$this->getMockTitleFormatter(),
+			StatsFactory::newNull(),
 			new NullLogger()
 		);
 		$repo->deletePage( 'siteName', $titleValue );
@@ -145,6 +150,7 @@ class CognateRepoUnitTest extends \MediaWikiIntegrationTestCase {
 			$store,
 			$this->getMockCacheInvalidator(),
 			$this->getMockTitleFormatter(),
+			StatsFactory::newNull(),
 			new NullLogger()
 		);
 		$result = $repo->getLinksForPage( 'siteName', $titleValue );

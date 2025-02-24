@@ -17,16 +17,13 @@ return [
 	},
 
 	'CognateRepo' => static function ( MediaWikiServices $services ): CognateRepo {
-		$repo = new CognateRepo(
+		return new CognateRepo(
 			CognateServices::getStore( $services ),
 			CognateServices::getCacheInvalidator( $services ),
 			$services->getTitleFormatter(),
+			$services->getStatsFactory(),
 			CognateServices::getLogger( $services )
 		);
-
-		$repo->setStatsdDataFactory( $services->getStatsdDataFactory() );
-
-		return $repo;
 	},
 
 	'CognateStore' => static function ( MediaWikiServices $services ): CognateStore {
