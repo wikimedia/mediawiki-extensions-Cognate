@@ -59,6 +59,7 @@ class RecalculateCognateNormalizedHashes extends Maintenance {
 		$this->stringNormalizer = new StringNormalizer();
 	}
 
+	/** @inheritDoc */
 	public function execute() {
 		$this->output( "Started processing...\n" );
 		if ( $this->hasOption( 'dry-run' ) ) {

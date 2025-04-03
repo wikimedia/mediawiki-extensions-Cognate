@@ -29,7 +29,7 @@ class CognateParseHookHandler {
 	 */
 	private $dbName;
 
-	public static function newFromGlobalState() {
+	public static function newFromGlobalState(): self {
 		$config = MediaWikiServices::getInstance()->getMainConfig();
 
 		return new CognateParseHookHandler(

@@ -29,6 +29,7 @@ class PopulateCognateSites extends Maintenance {
 		$this->requireExtension( 'Cognate' );
 	}
 
+	/** @inheritDoc */
 	public function execute() {
 		$siteGroup = $this->getOption( 'site-group' );
 		$services = $this->getServiceContainer();

@@ -32,6 +32,7 @@ class PurgeDeletedCognatePages extends Maintenance {
 		$this->requireExtension( 'Cognate' );
 	}
 
+	/** @inheritDoc */
 	public function execute() {
 		if ( $this->mBatchSize <= 1 ) {
 			throw new RuntimeException( 'batch-size must be set to a value of 2 or more.' );

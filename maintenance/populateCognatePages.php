@@ -35,6 +35,7 @@ class PopulateCognatePages extends Maintenance {
 		$this->requireExtension( 'Cognate' );
 	}
 
+	/** @inheritDoc */
 	public function execute() {
 		$services = $this->getServiceContainer();
 		$dbName = $services->getMainConfig()->get( 'DBname' );
