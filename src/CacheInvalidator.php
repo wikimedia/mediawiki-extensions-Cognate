@@ -2,7 +2,7 @@
 
 namespace Cognate;
 
-use JobQueueGroup;
+use MediaWiki\JobQueue\JobQueueGroup;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Title\Title;
 

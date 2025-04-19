@@ -4,8 +4,8 @@ namespace Cognate\Tests;
 
 use Cognate\CacheInvalidator;
 use Cognate\LocalJobSubmitJob;
-use Job;
-use JobQueueGroup;
+use MediaWiki\JobQueue\Job;
+use MediaWiki\JobQueue\JobQueueGroup;
 use MediaWiki\Title\Title;
 use MediaWikiIntegrationTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
