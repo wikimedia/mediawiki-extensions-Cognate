@@ -14,7 +14,7 @@ use MediaWiki\Tests\ExtensionServicesTestBase;
  */
 class CognateServicesTest extends ExtensionServicesTestBase {
 
-	protected string $className = CognateServices::class;
+	protected static string $className = CognateServices::class;
 
 	protected string $serviceNamePrefix = 'Cognate';
 
