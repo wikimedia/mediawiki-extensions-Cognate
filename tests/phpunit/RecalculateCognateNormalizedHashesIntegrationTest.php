@@ -62,7 +62,7 @@ class RecalculateCognateNormalizedHashesIntegrationTest extends MaintenanceBaseT
 		);
 
 		$this->assertTrue( $this->createMaintenance()->execute() );
-		$this->assertMatchesRegularExpression( '/^1 hashes recalculated/m', $this->getActualOutput() );
+		$this->assertMatchesRegularExpression( '/^1 hashes recalculated/m', $this->getActualOutputForAssertion() );
 
 		$this->assertSame(
 			[ $dbName ],
