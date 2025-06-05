@@ -6,6 +6,7 @@ use Cognate\CognateRepo;
 use Cognate\CognateServices;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Parser\ParserOutput;
+use MediaWiki\Parser\ParserOutputLinkTypes;
 use MediaWiki\Title\Title;
 
 /**
@@ -68,12 +69,12 @@ class CognateParseHookHandler {
 			return true;
 		}
 
-		$links = $parserOutput->getLanguageLinks();
+		$links = $parserOutput->getLinkList( ParserOutputLinkTypes::LANGUAGE );
 
 		$presentLanguages = [];
-		foreach ( $links as $linkString ) {
-			$linkParts = explode( ':', $linkString, 2 );
-			$presentLanguages[$linkParts[0]] = true;
+		foreach ( $links as $link ) {
+			$linkTitle = $link['link'];
+			$presentLanguages[$linkTitle->getInterwiki()] = true;
 		}
 
 		$cognateLinks = $this->repo->getLinksForPage( $this->dbName, $title );
@@ -81,11 +82,9 @@ class CognateParseHookHandler {
 		foreach ( $cognateLinks as $cognateLink ) {
 			$cognateLinkParts = explode( ':', $cognateLink, 2 );
 			if ( !array_key_exists( $cognateLinkParts[0], $presentLanguages ) ) {
-				$links[] = $cognateLink;
+				$parserOutput->addLanguageLink( $cognateLink );
 			}
 		}
-
-		$parserOutput->setLanguageLinks( $links );
 
 		return true;
 	}
