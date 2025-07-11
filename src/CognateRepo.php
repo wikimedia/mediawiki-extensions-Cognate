@@ -70,7 +70,7 @@ class CognateRepo {
 		$start = microtime( true );
 		try {
 			$success = $this->store->insertPage( $dbName, $linkTarget );
-		} catch ( DBReadOnlyError $e ) {
+		} catch ( DBReadOnlyError ) {
 			return false;
 		} finally {
 			$this->statsFactory->getTiming( 'repo_writes_seconds' )
@@ -107,7 +107,7 @@ class CognateRepo {
 		$start = microtime( true );
 		try {
 			$success = $this->store->deletePage( $dbName, $linkTarget );
-		} catch ( DBReadOnlyError $e ) {
+		} catch ( DBReadOnlyError ) {
 			return false;
 		} finally {
 			$this->statsFactory->getTiming( 'repo_writes_seconds' )
