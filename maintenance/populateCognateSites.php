@@ -6,11 +6,13 @@ use MediaWiki\Maintenance\Maintenance;
 use MediaWiki\Site\Site;
 use MediaWiki\Site\SiteList;
 
+// @codeCoverageIgnoreStart
 if ( getenv( 'MW_INSTALL_PATH' ) !== false ) {
 	require_once getenv( 'MW_INSTALL_PATH' ) . '/maintenance/Maintenance.php';
 } else {
 	require_once __DIR__ . '/../../../maintenance/Maintenance.php';
 }
+// @codeCoverageIgnoreEnd
 
 /**
  * Maintenance script for populating the Cognate sites table.
@@ -65,5 +67,7 @@ class PopulateCognateSites extends Maintenance {
 
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = PopulateCognateSites::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

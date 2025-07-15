@@ -4,11 +4,13 @@ namespace Cognate;
 
 use MediaWiki\Maintenance\Maintenance;
 
+// @codeCoverageIgnoreStart
 if ( getenv( 'MW_INSTALL_PATH' ) !== false ) {
 	require_once getenv( 'MW_INSTALL_PATH' ) . '/maintenance/Maintenance.php';
 } else {
 	require_once __DIR__ . '/../../../maintenance/Maintenance.php';
 }
+// @codeCoverageIgnoreEnd
 
 /**
  * Maintenance script for populating the cognate page and title tables.
@@ -120,5 +122,7 @@ class PopulateCognatePages extends Maintenance {
 
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = PopulateCognatePages::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd

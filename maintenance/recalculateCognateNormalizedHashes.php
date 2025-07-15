@@ -7,11 +7,13 @@ use Wikimedia\Rdbms\Database;
 use Wikimedia\Rdbms\DBUnexpectedError;
 use Wikimedia\Rdbms\SelectQueryBuilder;
 
+// @codeCoverageIgnoreStart
 if ( getenv( 'MW_INSTALL_PATH' ) !== false ) {
 	require_once getenv( 'MW_INSTALL_PATH' ) . '/maintenance/Maintenance.php';
 } else {
 	require_once __DIR__ . '/../../../maintenance/Maintenance.php';
 }
+// @codeCoverageIgnoreEnd
 
 /**
  * Maintenance script for recalculating the normalized Cognate hashes
@@ -161,5 +163,7 @@ class RecalculateCognateNormalizedHashes extends Maintenance {
 
 }
 
+// @codeCoverageIgnoreStart
 $maintClass = RecalculateCognateNormalizedHashes::class;
 require_once RUN_MAINTENANCE_IF_MAIN;
+// @codeCoverageIgnoreEnd
