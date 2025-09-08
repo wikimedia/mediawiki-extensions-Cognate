@@ -250,7 +250,6 @@ class CognatePageHookHandlerTest extends \MediaWikiIntegrationTestCase {
 	 * @param Title $title
 	 * @param bool $latestRevIsRedirect
 	 * @param bool $latestRevIsNull
-	 *
 	 */
 	private function call_onArticleUndelete(
 		array $namespaces,
