@@ -14,50 +14,16 @@ use Wikimedia\Stats\StatsFactory;
  */
 class CognateRepo {
 
-	/**
-	 * @var CognateStore
-	 */
-	private $store;
+	private StatsFactory $statsFactory;
 
-	/**
-	 * @var CacheInvalidator
-	 */
-	private $cacheInvalidator;
-
-	/**
-	 * @var TitleFormatter
-	 */
-	private $titleFormatter;
-
-	/**
-	 * @var LoggerInterface
-	 */
-	private $logger;
-
-	/**
-	 * @var StatsFactory
-	 */
-	private $statsFactory;
-
-	/**
-	 * @param CognateStore $store
-	 * @param CacheInvalidator $cacheInvalidator
-	 * @param TitleFormatter $titleFormatter
-	 * @param StatsFactory $statsFactory
-	 * @param LoggerInterface $logger
-	 */
 	public function __construct(
-		CognateStore $store,
-		CacheInvalidator $cacheInvalidator,
-		TitleFormatter $titleFormatter,
+		private readonly CognateStore $store,
+		private readonly CacheInvalidator $cacheInvalidator,
+		private readonly TitleFormatter $titleFormatter,
 		StatsFactory $statsFactory,
-		LoggerInterface $logger
+		private readonly LoggerInterface $logger,
 	) {
-		$this->store = $store;
-		$this->cacheInvalidator = $cacheInvalidator;
-		$this->titleFormatter = $titleFormatter;
 		$this->statsFactory = $statsFactory->withComponent( 'Cognate' );
-		$this->logger = $logger;
 	}
 
 	/**

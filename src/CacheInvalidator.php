@@ -12,16 +12,7 @@ use MediaWiki\Title\Title;
  */
 class CacheInvalidator {
 
-	/**
-	 * @var JobQueueGroup
-	 */
-	private $jobQueueGroup;
-
-	/**
-	 * @param JobQueueGroup $jobQueueGroup
-	 */
-	public function __construct( JobQueueGroup $jobQueueGroup ) {
-		$this->jobQueueGroup = $jobQueueGroup;
+	public function __construct( private readonly JobQueueGroup $jobQueueGroup ) {
 	}
 
 	/**

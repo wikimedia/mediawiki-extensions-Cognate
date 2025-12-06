@@ -20,46 +20,16 @@ use Wikimedia\Rdbms\IConnectionProvider;
  */
 class CognateStore {
 
-	/**
-	 * @var IConnectionProvider
-	 */
-	private $connectionProvider;
-
-	/**
-	 * @var StringNormalizer
-	 */
-	private $stringNormalizer;
-
-	/**
-	 * @var StringHasher
-	 */
-	private $stringHasher;
-
-	/**
-	 * @var bool
-	 */
-	private $readOnly;
-
 	public const PAGES_TABLE_NAME = 'cognate_pages';
 	public const SITES_TABLE_NAME = 'cognate_sites';
 	public const TITLES_TABLE_NAME = 'cognate_titles';
 
-	/**
-	 * @param IConnectionProvider $connectionProvider
-	 * @param StringNormalizer $stringNormalizer
-	 * @param StringHasher $stringHasher
-	 * @param bool $readOnly Is Cognate in readonly mode?
-	 */
 	public function __construct(
-		IConnectionProvider $connectionProvider,
-		StringNormalizer $stringNormalizer,
-		StringHasher $stringHasher,
-		$readOnly
+		private readonly IConnectionProvider $connectionProvider,
+		private readonly StringNormalizer $stringNormalizer,
+		private readonly StringHasher $stringHasher,
+		private readonly bool $readOnly,
 	) {
-		$this->connectionProvider = $connectionProvider;
-		$this->stringNormalizer = $stringNormalizer;
-		$this->stringHasher = $stringHasher;
-		$this->readOnly = $readOnly;
 	}
 
 	/**
