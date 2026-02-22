@@ -3,8 +3,9 @@
 namespace Cognate;
 
 use MediaWiki\Maintenance\Maintenance;
-use Wikimedia\Rdbms\Database;
 use Wikimedia\Rdbms\DBUnexpectedError;
+use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\IReadableDatabase;
 use Wikimedia\Rdbms\SelectQueryBuilder;
 
 // @codeCoverageIgnoreStart
@@ -24,12 +25,12 @@ if ( getenv( 'MW_INSTALL_PATH' ) !== false ) {
 class RecalculateCognateNormalizedHashes extends Maintenance {
 
 	/**
-	 * @var Database
+	 * @var IReadableDatabase
 	 */
 	private $dbr;
 
 	/**
-	 * @var Database
+	 * @var IDatabase
 	 */
 	private $dbw;
 
