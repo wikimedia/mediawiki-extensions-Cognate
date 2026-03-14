@@ -45,6 +45,7 @@ class CognateRepo {
 				->observe( 1000 * ( microtime( true ) - $start ) );
 		}
 
+		// @phan-suppress-next-line PhanPossiblyUndeclaredVariable
 		if ( $success ) {
 			$this->invalidateAllSitesForPage( $dbName, $linkTarget );
 		} else {
@@ -82,10 +83,12 @@ class CognateRepo {
 				->observe( 1000 * ( microtime( true ) - $start ) );
 		}
 
+		// @phan-suppress-next-line PhanPossiblyUndeclaredVariable
 		if ( $success ) {
 			$this->invalidateAllSitesForPage( $dbName, $linkTarget );
 		}
 
+		// @phan-suppress-next-line PhanPossiblyUndeclaredVariable
 		return $success;
 	}
 
