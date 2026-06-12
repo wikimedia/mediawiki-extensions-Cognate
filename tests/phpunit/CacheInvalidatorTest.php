@@ -20,7 +20,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 class CacheInvalidatorTest extends MediaWikiIntegrationTestCase {
 
 	public function testJobIsQueued() {
-		$title = Title::newFromText( 'Foo' );
+		$title = Title::makeTitle( NS_MAIN, 'Foo' );
 
 		/** @var JobQueueGroup|MockObject $mockJobQueueGroup */
 		$mockJobQueueGroup = $this->createMock( JobQueueGroup::class );

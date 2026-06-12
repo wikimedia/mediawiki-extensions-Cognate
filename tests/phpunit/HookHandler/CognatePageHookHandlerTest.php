@@ -46,7 +46,7 @@ class CognatePageHookHandlerTest extends \MediaWikiIntegrationTestCase {
 		$this->repo->expects( $this->never() )->method( 'savePage' );
 
 		$this->call_onPageContentSaveComplete(
-			[ NS_PROJECT ], 'abc2', Title::newFromText( 'ArticleDbKey' )
+			[ NS_PROJECT ], 'abc2', Title::makeTitle( NS_MAIN, 'ArticleDbKey' )
 		);
 	}
 
@@ -55,19 +55,20 @@ class CognatePageHookHandlerTest extends \MediaWikiIntegrationTestCase {
 		$this->repo->expects( $this->never() )->method( 'savePage' );
 
 		$this->call_onPageContentSaveComplete(
-			[ 0 ], 'abc2', Title::newFromText( 'ArticleDbKey' ),
+			[ NS_MAIN ], 'abc2', Title::makeTitle( NS_MAIN, 'ArticleDbKey' ),
 			[ 'hasNoRevision', 'hasPreviousRevision' ]
 		);
 	}
 
 	public function test_onPageContentSaveComplete_namespaceMatch_createNewNonRedirect() {
+		$title = Title::makeTitle( NS_MAIN, 'ArticleDbKey' );
 		$this->repo->expects( $this->never() )->method( 'deletePage' );
 		$this->repo->expects( $this->once() )
 			->method( 'savePage' )
-			->with( 'abc2', Title::newFromText( 'ArticleDbKey' ) );
+			->with( 'abc2', $title );
 
 		$this->call_onPageContentSaveComplete(
-			[ 0 ], 'abc2', Title::newFromText( 'ArticleDbKey' ),
+			[ NS_MAIN ], 'abc2', $title,
 			[ 'isNew' ]
 		);
 	}
@@ -76,7 +77,7 @@ class CognatePageHookHandlerTest extends \MediaWikiIntegrationTestCase {
 		$this->repo->expects( $this->never() )->method( 'deletePage' );
 
 		$this->call_onPageContentSaveComplete(
-			[ 0 ], 'abc2', Title::newFromText( 'ArticleDbKey' ),
+			[ NS_MAIN ], 'abc2', Title::makeTitle( NS_MAIN, 'ArticleDbKey' ),
 			[ 'isNew', 'isRedirect' ]
 		);
 	}
@@ -85,7 +86,7 @@ class CognatePageHookHandlerTest extends \MediaWikiIntegrationTestCase {
 		$this->repo->expects( $this->never() )->method( 'deletePage' );
 
 		$this->call_onPageContentSaveComplete(
-			[ 0 ], 'abc2', Title::newFromText( 'ArticleDbKey' ),
+			[ NS_MAIN ], 'abc2', Title::makeTitle( NS_MAIN, 'ArticleDbKey' ),
 			[ 'hasPreviousRevision' ]
 		);
 	}
@@ -94,19 +95,20 @@ class CognatePageHookHandlerTest extends \MediaWikiIntegrationTestCase {
 		$this->repo->expects( $this->never() )->method( 'deletePage' );
 
 		$this->call_onPageContentSaveComplete(
-			[ 0 ], 'abc2', Title::newFromText( 'ArticleDbKey' ),
+			[ NS_MAIN ], 'abc2', Title::makeTitle( NS_MAIN, 'ArticleDbKey' ),
 			[ 'hasPreviousRevision' ]
 		);
 	}
 
 	public function test_onPageContentSaveComplete_namespaceMatch_editRedirectToNonRedirect() {
+		$title = Title::makeTitle( NS_MAIN, 'ArticleDbKey' );
 		$this->repo->expects( $this->never() )->method( 'deletePage' );
 		$this->repo->expects( $this->once() )
 			->method( 'savePage' )
-			->with( 'abc2', Title::newFromText( 'ArticleDbKey' ) );
+			->with( 'abc2', $title );
 
 		$this->call_onPageContentSaveComplete(
-			[ 0 ], 'abc2', Title::newFromText( 'ArticleDbKey' ),
+			[ NS_MAIN ], 'abc2', $title,
 			[]
 		);
 	}
@@ -153,16 +155,17 @@ class CognatePageHookHandlerTest extends \MediaWikiIntegrationTestCase {
 	}
 
 	public function test_onWikiPageDeletionUpdates_namespaceMatch() {
+		$title = Title::makeTitle( NS_MAIN, 'ArticleDbKey' );
 		$this->repo->expects( $this->once() )
 			->method( 'deletePage' )
-			->with( 'abc2', Title::newFromText( 'ArticleDbKey' ) );
+			->with( 'abc2', $title );
 		$this->repo->expects( $this->never() )
 			->method( 'savePage' );
 
 		$updates = $this->call_onWikiPageDeletionUpdates(
-			[ 0 ],
+			[ NS_MAIN ],
 			'abc2',
-			Title::newFromText( 'ArticleDbKey' )
+			$title
 		);
 
 		$this->assertCount( 1, $updates );
@@ -178,7 +181,7 @@ class CognatePageHookHandlerTest extends \MediaWikiIntegrationTestCase {
 		$updates = $this->call_onWikiPageDeletionUpdates(
 			[ NS_PROJECT ],
 			'abc2',
-			Title::newFromText( 'ArticleDbKey' )
+			Title::makeTitle( NS_MAIN, 'ArticleDbKey' )
 		);
 
 		$this->assertSame( [], $updates );
@@ -208,15 +211,16 @@ class CognatePageHookHandlerTest extends \MediaWikiIntegrationTestCase {
 	}
 
 	public function test_onArticleUndelete_namespaceMatch_noRedirect() {
+		$title = Title::makeTitle( NS_MAIN, 'ArticleDbKey' );
 		$this->repo->expects( $this->never() )->method( 'deletePage' );
 		$this->repo->expects( $this->once() )
 			->method( 'savePage' )
-			->with( 'abc2', Title::newFromText( 'ArticleDbKey' ) );
+			->with( 'abc2', $title );
 
 		$this->call_onArticleUndelete(
-			[ 0 ],
+			[ NS_MAIN ],
 			'abc2',
-			Title::newFromText( 'ArticleDbKey' )
+			$title
 		);
 	}
 
@@ -227,7 +231,7 @@ class CognatePageHookHandlerTest extends \MediaWikiIntegrationTestCase {
 		$this->call_onArticleUndelete(
 			[ NS_PROJECT ],
 			'abc2',
-			Title::newFromText( 'ArticleDbKey' )
+			Title::makeTitle( NS_MAIN, 'ArticleDbKey' )
 		);
 	}
 
@@ -236,9 +240,9 @@ class CognatePageHookHandlerTest extends \MediaWikiIntegrationTestCase {
 		$this->repo->expects( $this->never() )->method( 'savePage' );
 
 		$this->call_onArticleUndelete(
-			[ 0 ],
+			[ NS_MAIN ],
 			'abc2',
-			Title::newFromText( 'ArticleDbKey' ),
+			Title::makeTitle( NS_MAIN, 'ArticleDbKey' ),
 			false,
 			true
 		);
@@ -281,18 +285,20 @@ class CognatePageHookHandlerTest extends \MediaWikiIntegrationTestCase {
 	}
 
 	public function test_onTitleMoveComplete_namespaceMatch() {
+		$titleOld = Title::makeTitle( NS_MAIN, 'ArticleDbKeyOld' );
+		$titleNew = Title::makeTitle( NS_MAIN, 'ArticleDbKeyNew' );
 		$this->repo->expects( $this->once() )
 			->method( 'deletePage' )
-			->with( 'abc2', Title::newFromText( 'ArticleDbKeyOld' ) );
+			->with( 'abc2', $titleOld );
 		$this->repo->expects( $this->once() )
 			->method( 'savePage' )
-			->with( 'abc2', Title::newFromText( 'ArticleDbKeyNew' ) );
+			->with( 'abc2', $titleNew );
 
 		$this->call_onTitleMoveComplete(
-			[ 0 ],
+			[ NS_MAIN ],
 			'abc2',
-			Title::newFromText( 'ArticleDbKeyOld' ),
-			Title::newFromText( 'ArticleDbKeyNew' )
+			$titleOld,
+			$titleNew
 		);
 	}
 
@@ -305,38 +311,40 @@ class CognatePageHookHandlerTest extends \MediaWikiIntegrationTestCase {
 		$this->call_onTitleMoveComplete(
 			[ NS_PROJECT ],
 			'abc2',
-			Title::newFromText( 'ArticleDbKeyOld' ),
-			Title::newFromText( 'ArticleDbKeyNew' )
+			Title::makeTitle( NS_MAIN, 'ArticleDbKeyOld' ),
+			Title::makeTitle( NS_MAIN, 'ArticleDbKeyNew' )
 		);
 	}
 
 	public function test_onTitleMoveComplete_namespaceMatchOld() {
+		$titleOld = Title::makeTitle( NS_PROJECT, 'ArticleDbKeyOld' );
 		$this->repo->expects( $this->once() )
 			->method( 'deletePage' )
-			->with( 'abc2', Title::newFromText( 'ArticleDbKeyOld', NS_PROJECT ) );
+			->with( 'abc2', $titleOld );
 		$this->repo->expects( $this->never() )
 			->method( 'savePage' );
 
 		$this->call_onTitleMoveComplete(
 			[ NS_PROJECT ],
 			'abc2',
-			Title::newFromText( 'ArticleDbKeyOld', NS_PROJECT ),
-			Title::newFromText( 'ArticleDbKeyNew' )
+			$titleOld,
+			Title::makeTitle( NS_MAIN, 'ArticleDbKeyNew' )
 		);
 	}
 
 	public function test_onTitleMoveComplete_namespaceMatchNew() {
+		$titleNew = Title::makeTitle( NS_PROJECT, 'ArticleDbKeyNew' );
 		$this->repo->expects( $this->never() )
 			->method( 'deletePage' );
 		$this->repo->expects( $this->once() )
 			->method( 'savePage' )
-			->with( 'abc2', Title::newFromText( 'ArticleDbKeyNew', NS_PROJECT ) );
+			->with( 'abc2', $titleNew );
 
 		$this->call_onTitleMoveComplete(
 			[ NS_PROJECT ],
 			'abc2',
-			Title::newFromText( 'ArticleDbKeyOld' ),
-			Title::newFromText( 'ArticleDbKeyNew', NS_PROJECT )
+			Title::makeTitle( NS_MAIN, 'ArticleDbKeyOld' ),
+			$titleNew
 		);
 	}
 
