@@ -41,7 +41,6 @@ class CognateRepo {
 		} finally {
 			$this->statsFactory->getTiming( 'repo_writes_seconds' )
 				->setLabel( 'action', 'savePage' )
-				->copyToStatsdAt( 'Cognate.Repo.savePage.time' )
 				->observe( 1000 * ( microtime( true ) - $start ) );
 		}
 
@@ -79,7 +78,6 @@ class CognateRepo {
 		} finally {
 			$this->statsFactory->getTiming( 'repo_writes_seconds' )
 				->setLabel( 'action', 'deletePage' )
-				->copyToStatsdAt( 'Cognate.Repo.deletePage.time' )
 				->observe( 1000 * ( microtime( true ) - $start ) );
 		}
 
@@ -103,7 +101,6 @@ class CognateRepo {
 		$linkDetails = $this->store->selectLinkDetailsForPage( $dbName, $linkTarget );
 		$this->statsFactory->getTiming( 'repo_reads_seconds' )
 			->setLabel( 'action', 'getLinksForPage' )
-			->copyToStatsdAt( 'Cognate.Repo.getLinksForPage.time' )
 			->observe( 1000 * ( microtime( true ) - $start ) );
 
 		$links = [];
@@ -127,7 +124,6 @@ class CognateRepo {
 		$sites = $this->store->selectSitesForPage( $linkTarget );
 		$this->statsFactory->getTiming( 'repo_reads_seconds' )
 			->setLabel( 'action', 'selectSitesForPage' )
-			->copyToStatsdAt( 'Cognate.Repo.selectSitesForPage.time' )
 			->observe( 1000 * ( microtime( true ) - $start ) );
 
 		// In the case of a delete causing cache invalidations we need to add the local site
