@@ -58,7 +58,7 @@ class PopulateCognatePages extends Maintenance {
 		}
 
 		$this->output( "Started processing.\n" );
-		$dbr = $this->getDB( DB_REPLICA );
+		$dbr = $this->getReplicaDB();
 
 		$start = $this->getOption( 'start' );
 		if ( $start === null ) {

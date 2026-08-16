@@ -68,7 +68,7 @@ class PurgeDeletedCognatePages extends Maintenance {
 		}
 
 		$dbwCognate = $connectionProvider->getPrimaryDatabase( CognateServices::VIRTUAL_DOMAIN );
-		$dbr = $this->getDB( DB_REPLICA );
+		$dbr = $this->getReplicaDB();
 
 		while ( $start ) {
 			$start = $this->executeMainLoop( $dbr, $dbrCognate, $dbwCognate, $siteKey, $start );
