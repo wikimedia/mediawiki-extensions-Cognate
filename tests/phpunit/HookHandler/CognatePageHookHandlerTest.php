@@ -10,6 +10,7 @@ use Cognate\HookHandler\CognatePageHookHandler;
 use MediaWiki\Content\Content;
 use MediaWiki\Deferred\DeferrableUpdate;
 use MediaWiki\Linker\LinkTarget;
+use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Title\Title;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -56,7 +57,7 @@ class CognatePageHookHandlerTest extends \MediaWikiIntegrationTestCase {
 
 		$this->call_onPageContentSaveComplete(
 			[ NS_MAIN ], 'abc2', Title::makeTitle( NS_MAIN, 'ArticleDbKey' ),
-			[ 'hasNoRevision', 'hasPreviousRevision' ]
+			[ 'hasNoRevision' ]
 		);
 	}
 
@@ -87,7 +88,7 @@ class CognatePageHookHandlerTest extends \MediaWikiIntegrationTestCase {
 
 		$this->call_onPageContentSaveComplete(
 			[ NS_MAIN ], 'abc2', Title::makeTitle( NS_MAIN, 'ArticleDbKey' ),
-			[ 'hasPreviousRevision' ]
+			[]
 		);
 	}
 
@@ -96,7 +97,7 @@ class CognatePageHookHandlerTest extends \MediaWikiIntegrationTestCase {
 
 		$this->call_onPageContentSaveComplete(
 			[ NS_MAIN ], 'abc2', Title::makeTitle( NS_MAIN, 'ArticleDbKey' ),
-			[ 'hasPreviousRevision' ]
+			[]
 		);
 	}
 
@@ -118,7 +119,7 @@ class CognatePageHookHandlerTest extends \MediaWikiIntegrationTestCase {
 	 * @param string $dbName
 	 * @param LinkTarget $linkTarget
 	 * @param string[] $options
-	 *        Value in array: isNew, isRedirect, wasRedirect, hasNoRevision, hasPreviousRevision
+	 *        Value in array: isNew, isRedirect, hasNoRevision
 	 *        Will be false if not included in array
 	 */
 	private function call_onPageContentSaveComplete(
@@ -128,25 +129,15 @@ class CognatePageHookHandlerTest extends \MediaWikiIntegrationTestCase {
 		array $options = []
 	) {
 		$revisionRecord = null;
-		$previousRevisionRecord = null;
 		if ( !in_array( 'hasNoRevision', $options ) ) {
 			$revisionRecord = $this->createMock( RevisionRecord::class );
-			if ( in_array( 'hasPreviousRevision', $options ) ) {
-				$previousContent = $this->createMock( Content::class );
-				$previousContent->method( 'isRedirect' )
-					->willReturn( in_array( 'wasRedirect', $options ) );
-
-				$previousRevisionRecord = $this->createMock( RevisionRecord::class );
-				$previousRevisionRecord->method( 'getContent' )
-					->willReturn( $previousContent );
-			}
 		}
 
-		$handler = new CognatePageHookHandler( $namespaces, $dbName );
-		$handler->overridePreviousRevision(
-			static function ( $revRecord ) use ( $previousRevisionRecord ) {
-				return $previousRevisionRecord;
-			}
+		$handler = new CognatePageHookHandler(
+			$namespaces,
+			$dbName,
+			$this->createMock( RevisionLookup::class ),
+			$this->repo,
 		);
 		$handler->onPageContentSaveComplete(
 			$linkTarget,
@@ -201,7 +192,12 @@ class CognatePageHookHandlerTest extends \MediaWikiIntegrationTestCase {
 	) {
 		$updates = [];
 
-		$handler = new CognatePageHookHandler( $namespaces, $dbName );
+		$handler = new CognatePageHookHandler(
+			$namespaces,
+			$dbName,
+			$this->createMock( RevisionLookup::class ),
+			$this->repo,
+		);
 		$handler->onWikiPageDeletionUpdates(
 			$linkTarget,
 			$updates
@@ -262,13 +258,9 @@ class CognatePageHookHandlerTest extends \MediaWikiIntegrationTestCase {
 		$latestRevIsRedirect = false,
 		$latestRevIsNull = false
 	) {
-		$handler = new CognatePageHookHandler( $namespaces, $dbName );
-		if ( $latestRevIsNull ) {
-			$handler->overrideRevisionNewFromId( static function () {
-				return null;
-			} );
-		} else {
-			$handler->overrideRevisionNewFromId( function () use ( $latestRevIsRedirect ) {
+		$revisionLookup = $this->createMock( RevisionLookup::class );
+		if ( !$latestRevIsNull ) {
+			$revisionLookup->method( 'getRevisionById' )->willReturnCallback( function () use ( $latestRevIsRedirect ) {
 				$content = $this->createMock( Content::class );
 				$content->method( 'isRedirect' )
 					->willReturn( $latestRevIsRedirect );
@@ -278,6 +270,7 @@ class CognatePageHookHandlerTest extends \MediaWikiIntegrationTestCase {
 				return $revision;
 			} );
 		}
+		$handler = new CognatePageHookHandler( $namespaces, $dbName, $revisionLookup, $this->repo );
 
 		$handler->onArticleUndelete(
 			$title
@@ -360,7 +353,12 @@ class CognatePageHookHandlerTest extends \MediaWikiIntegrationTestCase {
 		LinkTarget $linkTarget,
 		LinkTarget $newLinkTarget
 	) {
-		$handler = new CognatePageHookHandler( $namespaces, $dbName );
+		$handler = new CognatePageHookHandler(
+			$namespaces,
+			$dbName,
+			$this->createMock( RevisionLookup::class ),
+			$this->repo,
+		);
 		$handler->onTitleMoveComplete(
 			Title::newFromLinkTarget( $linkTarget ),
 			Title::newFromLinkTarget( $newLinkTarget )

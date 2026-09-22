@@ -38,7 +38,9 @@ return [
 	'CognatePageHookHandler' => static function ( MediaWikiServices $services ): CognatePageHookHandler {
 		return new CognatePageHookHandler(
 			$services->getMainConfig()->get( 'CognateNamespaces' ),
-			$services->getMainConfig()->get( 'DBname' )
+			$services->getMainConfig()->get( 'DBname' ),
+			$services->getRevisionLookup(),
+			CognateServices::getRepo( $services ),
 		);
 	},
 

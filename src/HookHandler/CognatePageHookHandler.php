@@ -2,13 +2,11 @@
 
 namespace Cognate\HookHandler;
 
-use BadMethodCallException;
 use Cognate\CognateRepo;
-use Cognate\CognateServices;
 use MediaWiki\Deferred\DeferrableUpdate;
 use MediaWiki\Deferred\MWCallableUpdate;
 use MediaWiki\Linker\LinkTarget;
-use MediaWiki\MediaWikiServices;
+use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Title\Title;
 
@@ -29,62 +27,19 @@ class CognatePageHookHandler {
 	private $namespaces;
 
 	/**
-	 * @var callable
-	 */
-	private $newRevisionFromIdCallable;
-
-	/**
-	 * @var callable
-	 */
-	private $previousRevisionCallable;
-
-	/**
 	 * @param int[] $namespaces array of namespace ids the hooks should operate on
 	 * @param string $dbName The dbName of the current site
+	 * @param RevisionLookup $revisionLookup
+	 * @param CognateRepo $repo
 	 */
-	public function __construct( array $namespaces, $dbName ) {
+	public function __construct(
+		array $namespaces,
+		$dbName,
+		private readonly RevisionLookup $revisionLookup,
+		private readonly CognateRepo $repo,
+	) {
 		$this->namespaces = $namespaces;
 		$this->dbName = $dbName;
-		$this->newRevisionFromIdCallable = static function ( $id ) {
-			return MediaWikiServices::getInstance()
-				->getRevisionLookup()
-				->getRevisionById( $id );
-		};
-		$this->previousRevisionCallable = static function ( $revRecord ) {
-			return MediaWikiServices::getInstance()
-				->getRevisionLookup()
-				->getPreviousRevision( $revRecord );
-		};
-	}
-
-	/**
-	 * Overrides the use of RevisionLookup::getRevisionById in this class
-	 * This is intended for use while testing and will fail if MW_PHPUNIT_TEST is not defined.
-	 *
-	 * @param callable $callback
-	 */
-	public function overrideRevisionNewFromId( callable $callback ) {
-		if ( !defined( 'MW_PHPUNIT_TEST' ) ) {
-			throw new BadMethodCallException(
-				'Cannot override RevisionLookup::getRevisionById callback in operation.'
-			);
-		}
-		$this->newRevisionFromIdCallable = $callback;
-	}
-
-	/**
-	 * Overrides the use of RevisionLookup::getPreviousRevision in this class
-	 * This is intended for use while testing and will fail if MW_PHPUNIT_TEST is not defined.
-	 *
-	 * @param callable $callback
-	 */
-	public function overridePreviousRevision( callable $callback ) {
-		if ( !defined( 'MW_PHPUNIT_TEST' ) ) {
-			throw new BadMethodCallException(
-				'Cannot override RevisionLookup::getPreviousRevision callback in operation.'
-			);
-		}
-		$this->previousRevisionCallable = $callback;
 	}
 
 	/**
@@ -138,7 +93,7 @@ class CognatePageHookHandler {
 	private function newDeferrableDelete( LinkTarget $linkTarget, $dbName ) {
 		return new MWCallableUpdate(
 			function () use ( $dbName, $linkTarget ) {
-				$this->getRepo()->deletePage( $dbName, $linkTarget );
+				$this->repo->deletePage( $dbName, $linkTarget );
 			},
 			__METHOD__
 		);
@@ -153,21 +108,12 @@ class CognatePageHookHandler {
 	public function onArticleUndelete(
 		Title $title
 	) {
-		$revision = $this->newRevisionRecordFromId( $title->getLatestRevID() );
+		$revision = $this->revisionLookup->getRevisionById( $title->getLatestRevID() );
 		if ( !$this->isActionableTarget( $title ) || $revision == null ) {
 			return;
 		}
 
 		$this->onContentChange( $title );
-	}
-
-	/**
-	 * @param int $id
-	 *
-	 * @return null|RevisionRecord
-	 */
-	private function newRevisionRecordFromId( $id ) {
-		return ( $this->newRevisionFromIdCallable )( $id );
 	}
 
 	/**
@@ -186,12 +132,11 @@ class CognatePageHookHandler {
 		LinkTarget $title,
 		LinkTarget $newTitle
 	) {
-		$repo = $this->getRepo();
 		if ( $this->isActionableTarget( $title ) ) {
-			$repo->deletePage( $this->dbName, $title );
+			$this->repo->deletePage( $this->dbName, $title );
 		}
 		if ( $this->isActionableTarget( $newTitle ) ) {
-			$repo->savePage( $this->dbName, $newTitle );
+			$this->repo->savePage( $this->dbName, $newTitle );
 		}
 	}
 
@@ -209,17 +154,10 @@ class CognatePageHookHandler {
 	}
 
 	/**
-	 * @return CognateRepo
-	 */
-	private function getRepo() {
-		return CognateServices::getRepo();
-	}
-
-	/**
 	 * @param LinkTarget $linkTarget
 	 */
 	private function onContentChange( LinkTarget $linkTarget ) {
-		$this->getRepo()->savePage( $this->dbName, $linkTarget );
+		$this->repo->savePage( $this->dbName, $linkTarget );
 	}
 
 }
