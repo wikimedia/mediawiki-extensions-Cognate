@@ -15,7 +15,7 @@ class StringNormalizer {
 	/**
 	 * @var string[]
 	 */
-	private $replacements = [
+	private const REPLACEMENTS = [
 		// U+02BC and U+2019 normalized to U+0027
 		'ʼ' => '\'',
 		'’' => '\'',
@@ -32,8 +32,8 @@ class StringNormalizer {
 	 */
 	public function normalize( $string ) {
 		return str_replace(
-			array_keys( $this->replacements ),
-			array_values( $this->replacements ),
+			array_keys( self::REPLACEMENTS ),
+			array_values( self::REPLACEMENTS ),
 			$string
 		);
 	}
