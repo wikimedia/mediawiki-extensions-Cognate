@@ -76,7 +76,6 @@ class RecalculateCognateNormalizedHashes extends Maintenance {
 			return true;
 		}
 
-		$services = $this->getServiceContainer();
 		$totalUpdates = 0;
 		$batchStart = (int)$start;
 
