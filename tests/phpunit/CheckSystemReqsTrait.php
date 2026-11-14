@@ -12,7 +12,7 @@ trait CheckSystemReqsTrait {
 	 */
 	protected function markTestSkippedIfNo64bit() {
 		if ( PHP_INT_SIZE !== 8 ) {
-			// StringHasher throws RunTimeException
+			// StringHasher throws RuntimeException
 			$this->markTestSkipped( "Skip test, needs 64bit system" );
 		}
 	}
